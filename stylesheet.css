@@ -2,3 +2,55 @@
     margin:0;
     padding:0;
 }
+body{
+    min-width:1020px;
+}
+@font-face {
+src: url("./font/Stick.woff") format("woff");
+font-family: "Stick";
+font-style: normal;
+font-display: swap;
+}/*
+@font-face {
+src: url("./font/BungeeHairline.woff") format("woff");
+font-family: "BungeeHairline";
+font-style: normal;
+font-display: swap;
+}
+/*
+@font-face {
+    src: url("./font/Orbitron-VariableFont_wght.ttf");
+    font-family: "Orbitron";
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    src: url("./font/PoiretOne-Regular.ttf");
+    font-family: "PoiretOne";
+    font-style: normal;
+    font-display: swap;
+}*/
+@font-face {
+    src: url("./font/JuliusSansOne-Regular.ttf");
+    font-family: "JuliusSansOne";
+    font-style: normal;
+    font-display: swap;
+}
+.gameCanvas{
+    position:absolute;
+    left:0;
+    right:0;
+    margin:auto;
+    cursor:none;
+}
+.canvasWrapper{
+    position:relative;
+    height:540px;
+    width:100%;
+}
+.gameCanvas1{
+    z-index:2;
+}
+.gameCanvas2{
+    z-index:1;
+}
