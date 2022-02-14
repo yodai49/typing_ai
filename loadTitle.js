@@ -2,9 +2,9 @@ var t = 0; //グローバルタイム 毎ターンperformance.now()を格納
 var loadPfnw=performance.now();//ページが開かれた時間を記録しておく
 const WIDTH = 960;
 const HEIGHT = 540;
-const MAIN_FONTNAME = "JuliusSansOne";
+const MAIN_FONTNAME = "Orbitron";
 const JAPANESE_FONTNAME = "Stick";
-const DEBUG_MODE=0;
+const DEBUG_MODE=2;
 const IMG_CNT = 1;//読みこむイメージの総数
 var loadedPfnw=-1,loadingCount=0;
 var SCENE_ANI=400; //ロード終了後のアニメーション時間

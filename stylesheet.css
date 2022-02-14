@@ -17,13 +17,14 @@ font-family: "BungeeHairline";
 font-style: normal;
 font-display: swap;
 }
-/*
+*/
 @font-face {
     src: url("./font/Orbitron-VariableFont_wght.ttf");
     font-family: "Orbitron";
     font-style: normal;
     font-display: swap;
 }
+/*
 @font-face {
     src: url("./font/PoiretOne-Regular.ttf");
     font-family: "PoiretOne";
