@@ -56,8 +56,8 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
     ctx2d.beginPath();
     if(drawPrl.rev==1){ //反転
         ctx2d.moveTo((drawPrl.x1+drawPrl.x2)/2,drawPrl.y1);
-        ctx2d.lineTo(drawPrl.x2,drawPrl.y1);
-        ctx2d.lineTo(drawPrl.x2+(drawPrl.y2-drawPrl.y1)*0.3,drawPrl.y2);
+        ctx2d.lineTo(drawPrl.x2-(drawPrl.y2-drawPrl.y1)*0.3,drawPrl.y1);
+        ctx2d.lineTo(drawPrl.x2,drawPrl.y2);
         ctx2d.lineTo(drawPrl.x1+(drawPrl.y2-drawPrl.y1)*0.3,drawPrl.y2);
         ctx2d.lineTo(drawPrl.x1,drawPrl.y1);
         ctx2d.lineTo((drawPrl.x1+drawPrl.x2)/2,drawPrl.y1);
@@ -71,6 +71,18 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
     }
     ctx2d.stroke();
     ctx2d.fill();
+    if(drawPrl.shadow!=0){
+        var shadowGrad=ctx2d.createLinearGradient(drawPrl.x1,drawPrl.y2,drawPrl.x1,drawPrl.y2+15);
+        shadowGrad.addColorStop(0,'rgba(0,0,0,1)');
+        shadowGrad.addColorStop(0.3,'rgba(0,0,0,0.9)');
+        shadowGrad.addColorStop(1,'rgba(0,0,0,0)');
+        ctx2d.fillStyle=shadowGrad;
+        if(drawPrl.rev==1){　//影を描く
+            ctx2d.fillRect(drawPrl.x1,drawPrl.y2,drawPrl.x2-(drawPrl.x1+(drawPrl.y2-drawPrl.y1)*0.3),15);
+        } else{
+            ctx2d.fillRect(drawPrl.x1,drawPrl.y2,drawPrl.x2-(drawPrl.x1+(drawPrl.y2-drawPrl.y1)*0.3),15);
+        }
+    }
     ctx2d.fillStyle='rgba(' + 
     (TEXT_COLSET[drawPrl.hoverColSet][0]*drawPrl.hoverCounter+TEXT_COLSET[drawPrl.colSet][0]*(10-drawPrl.hoverCounter))/10 + ',' +  
     (TEXT_COLSET[drawPrl.hoverColSet][1]*drawPrl.hoverCounter+TEXT_COLSET[drawPrl.colSet][1]*(10-drawPrl.hoverCounter))/10 + ',' +  
@@ -98,10 +110,10 @@ function drawMsgbox(){//メッセージボックスの描画関数
         } 
         if(b.flg!=1 && b.flg!=2){//指定されたボタンをprlsへプッシュする
             if(b.btns2!=undefined){ //ボタンが２つある時
-                prls.push({isMsgBox:1,x1:WIDTH/2-100,y1:HEIGHT/2+30,x2:WIDTH/2-20,y2:HEIGHT/2+50,colSet:0,hoverColSet:1,hoverCounter:0,text:b.btns1.text,trans:-1,onClick:b.btns1.onClick});
-                prls.push({isMsgBox:1,x1:WIDTH/2+20,y1:HEIGHT/2+30,x2:WIDTH/2+100,y2:HEIGHT/2+50,colSet:0,hoverColSet:1,hoverCounter:0,text:b.btns2.text,trans:-1,onClick:b.btns2.onClick});
+                prls.push({isMsgBox:1,x1:WIDTH/2-100,y1:HEIGHT/2+30,x2:WIDTH/2-20,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:b.btns1.text,trans:-1,onClick:b.btns1.onClick});
+                prls.push({isMsgBox:1,x1:WIDTH/2+20,y1:HEIGHT/2+30,x2:WIDTH/2+100,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:b.btns2.text,trans:-1,onClick:b.btns2.onClick});
             } else{
-                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+30,x2:WIDTH/2+50,y2:HEIGHT/2+50,colSet:0,hoverColSet:1,hoverCounter:0,text:b.btns1.text,trans:-1,onClick:b.btns1.onClick});
+                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+30,x2:WIDTH/2+50,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:b.btns1.text,trans:-1,onClick:b.btns1.onClick});
             }
             msgBox[0].flg=1;
         }
@@ -137,6 +149,17 @@ function drawMenu(){
     for(let i = 0;i < prls.length;i++){
         if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
     }
+    var menuBarGrad = ctx2d.createLinearGradient(0,0,WIDTH,65);
+    menuBarGrad.addColorStop(0,'rgba(15,15,20,0.9)');
+    menuBarGrad.addColorStop(1,'rgba(30,30,42,0.9)');
+    ctx2d.fillStyle=menuBarGrad;
+    ctx2d.fillRect(0,0,WIDTH,50);
+    var menuBarShadowGrad = ctx2d.createLinearGradient(0,50,0,65);
+    menuBarShadowGrad.addColorStop(0,'rgba(0,0,0,1)');
+    menuBarShadowGrad.addColorStop(0.3,'rgba(0,0,0,0.9)');
+    menuBarShadowGrad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx2d.fillStyle=menuBarShadowGrad;
+    ctx2d.fillRect(0,50,WIDTH,65);
 }
 function processMouseEvent(){ //平行四辺形ボタンに対してのホバー処理
     mouseStatus=0;
@@ -175,15 +198,19 @@ function changeScene(prev,next){ //シーン遷移の関数
         }})
     } if(next == 2){
         ctx2dImg.drawImage(backImg[0],0,0,WIDTH,HEIGHT);
-        prls.push({x1:630,y1:100,x2:900,y2:180,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"TITLE",onClick:function(){
+        prls.push({x1:570,y1:100,x2:870,y2:195,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,text:"TITLE",onClick:function(){
             msgBox.push({
                 text:"本当にタイトルに戻りますか？",
                 ani:t,
                 btns1:{text:"OK",onClick:function(){nextScene=1;sceneAni=t}},
                 btns2:{text:"CANCEL",onClick:function(){return 0;}}});}})
-        prls.push({x1:600,y1:200,x2:870,y2:280,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"SETTING",onClick:function(){
+        prls.push({x1:540,y1:215,x2:840,y2:310,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,text:"SETTING",onClick:function(){
             return 0;}})
-        prls.push({x1:600,y1:300,x2:870,y2:440,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:"",rev:1,onClick:function(){
+        prls.push({x1:540,y1:330,x2:858,y2:480,colSet:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"",rev:1,onClick:function(){
+            return 0;}})
+        prls.push({x1:100,y1:100,x2:578,y2:310,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,text:"BATTLE!",rev:0,onClick:function(){
+            return 0;}})
+        prls.push({x1:100,y1:330,x2:558,y2:480,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,text:"AVATOR",rev:1,onClick:function(){
             return 0;}})
         }
 }
