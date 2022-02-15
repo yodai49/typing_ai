@@ -77,8 +77,13 @@ function init() {
     ctx2d.height = HEIGHT;
     ctx2d.textBaseLine="top";
     //画像の格納
-    backImg[0] = new Image();
+    for(var i = 0;i < 6;i++) backImg[i] = new Image();
     backImg[0].src="./img/back_menu.jpeg";
+    backImg[1].src="./img/back_battle.jpeg";
+    backImg[2].src="./img/back_battle2.jpeg";
+    backImg[3].src="./img/back_win.jpeg";
+    backImg[4].src="./img/back_lose.jpeg";
+    backImg[5].src="./img/back_avator.jpeg";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
 
     tick();

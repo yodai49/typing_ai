@@ -1,11 +1,33 @@
 const WIDTH = 960;
 const HEIGHT = 540;
 const MAIN_FONTNAME = "Orbitron";
+const MAIN2_FONTNAME = "BungeeHairline";
 const JAPANESE_FONTNAME = "Stick";
-const DEBUG_MODE=0;//数字の番号のシーンからスタート
-const IMG_CNT = 1;//読みこむイメージの総数
+const DEBUG_MODE=5;//数字の番号のシーンからスタート
+const IMG_CNT = 6;//読みこむイメージの総数
 var SCENE_ANI=400; //ロード終了後のアニメーション時間(DEBUGMODEによって変更するためvarで宣言)
-
+const SETTING_NAME=[
+    "入力方法",
+    "非効率な最適化",
+    "ガチンコモード",
+    "BGM",
+    "SE",
+    "打鍵音",
+    "ミスタイプ音",
+    "相手の打鍵音",
+    "データのリセット"
+]
+const SETTING_SELECT=[
+    ["ローマ字","カナ"],
+    ["有効","無効"],
+    ["ON","OFF"],
+    ["ON","OFF"],
+    ["ON","OFF"],
+    ["ON","OFF"],
+    ["ON","OFF"],
+    ["ON","OFF"],
+    ["リセットする",""],
+]
 const CHARA_SET=[
     "あ","い","う","え","お",
     "か","き","く","け","こ",
