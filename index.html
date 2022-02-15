@@ -4,14 +4,17 @@
     <meta charset="utf-8"/>
     <script src="./const.js"></script>
     <script src="./loadTitle.js"></script>
+    <script src="./data.js"></script>
+    <script src="./avator.js" defer></script>
     <script src="./script.js" defer></script>
     <script src="./wordset.js" defer></script>
     <link rel="stylesheet" href="./stylesheet.css">
   </head>
   <body>
-    <div class="canvasWrapper">
+    <div class="canvasWrapper" id="canvasWrapper">
       <canvas class="gameCanvas gameCanvas1"  id="myCanvas" width="960" height="540"></canvas>
-      <canvas class="gameCanvas gameCanvas2" id="myCanvas2" width="960" height="540"></canvas>  
+      <canvas class="gameCanvas gameCanvas2" id="myCanvas2" width="960" height="540"></canvas>
+      <input type="text" class="nameBoxCreate" id="nameBoxCreate">
     </div>
   </body>
 </html>

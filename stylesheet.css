@@ -55,3 +55,17 @@ font-display: swap;
 .gameCanvas2{
     z-index:1;
 }
+.nameBoxCreate{
+    z-index:3;
+    position:absolute;
+    left:calc(50% - 186px);
+    top:206px;
+    width:200px;
+    font-size:14pt;
+    display:none;
+    background-color:black;
+    color:white;
+    padding:1px;
+    font-family:"Stick",sans-serif;
+    transition:all 0.3s;
+}
