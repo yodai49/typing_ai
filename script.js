@@ -338,8 +338,8 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillStyle=getRGBA(0,0,1);
     ctx2d.fillText("名前",388,172);
     ctx2d.fillText("チーム",379,202);
-    ctx2d.fillText("LV.",120,365);
-    ctx2d.fillText("EXP",210,365);
+    ctx2d.fillText("LV.",120,360);
+    ctx2d.fillText("EXP",210,360);
     ctx2d.font="10pt " + JAPANESE_FONTNAME;
     ctx2d.fillText("kpm",367,242);
     ctx2d.fillText("acc",358,272);
@@ -353,10 +353,22 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText("総打鍵",382,437);
     ctx2d.fillText("総プレイ",374.5,462);
     ctx2d.fillText("総リタイア",367,487);
-    ctx2d.font="14pt " + MAIN2_FONTNAME;
-    ctx2d.fillText("19",160,365);
-    ctx2d.fillText("325,532",250,365);
-
+    ctx2d.font="14pt " + DIGIT_FONTNAME;
+    ctx2d.fillText("19",160,360);
+    ctx2d.fillText("325,532",270,360);
+    ctx2d.font="12pt " + DIGIT_FONTNAME;
+    ctx2d.fillText("9999.9",407,242);
+    ctx2d.fillText("100.0%",398,272);
+    ctx2d.fillText("9999.9",389,322);
+    ctx2d.fillText("9999",525,242);
+    ctx2d.fillText("9999",516,272);
+    ctx2d.fillText("100.0%",507,302);
+    ctx2d.fillText("100.0%",493.5,362);
+    ctx2d.fillText("100.0%",486,387);
+    ctx2d.fillText("100.0%",479.5,412);
+    ctx2d.fillText("999999999",442,437);
+    ctx2d.fillText("999999",464.5,462);
+    ctx2d.fillText("999999",457,487);
 }
 function drawAvator2(){ ///アバター管理画面の描画関数
     for(let i = 0;i < prls.length;i++){

@@ -1,7 +1,7 @@
 const WIDTH = 960;
 const HEIGHT = 540;
 const MAIN_FONTNAME = "Orbitron";
-const MAIN2_FONTNAME = "BungeeHairline";
+const DIGIT_FONTNAME = "Quantico";
 const JAPANESE_FONTNAME = "Stick";
 const DEBUG_MODE=5;//数字の番号のシーンからスタート
 const IMG_CNT = 6;//読みこむイメージの総数
