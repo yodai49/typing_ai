@@ -29,6 +29,30 @@ function drawMouseCursor(){ //マウスカーソルを描画する関数
     ctx2d.stroke();
     ctx2d.fill();
 }
+function drawTeamCircle(x,y,size,team,trans){
+    if(trans == undefined) trans = 1;
+    ctx2d.lineWidth=2;//チームを表す円
+    ctx2d.strokeStyle="rgba(0,0,0,"+trans + ")";
+    let teamGrad=ctx2d.createLinearGradient(x-size,y+size,x+size,y-size);
+    if(team==0){
+        teamGrad.addColorStop(0,'rgba(100,10,10,'+trans + ')');
+        teamGrad.addColorStop(1,'rgba(200,10,10,'+trans+')');
+    } else if(team==1){
+        teamGrad.addColorStop(0,'rgba(10,10,100,'+trans + ')');
+        teamGrad.addColorStop(1,'rgba(10,10,200,'+trans + ')');
+    } else if(team==2){
+        teamGrad.addColorStop(0,'rgba(130,100,10,'+trans + ')');
+        teamGrad.addColorStop(1,'rgba(200,200,10,'+trans + ')');
+    } else { //無所属
+        teamGrad.addColorStop(0,'rgba(50,50,50,'+trans + ')');
+        teamGrad.addColorStop(1,'rgba(130,130,130,'+trans + ')');
+    }
+    ctx2d.fillStyle=teamGrad;
+    ctx2d.beginPath();
+    ctx2d.arc(x,y,size,0,Math.PI*2);
+    ctx2d.fill();
+    ctx2d.stroke();
+}
 function drawPrl(drawPrl){//平行四辺形を描画する関数
     ctx2d.lineWidth=6;
     if(drawPrl.isMsgBox) ctx2d.lineWidth=2;
@@ -45,7 +69,7 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
             [[175,173,188,1.2],[125,123,138,1.2],[185,183,208,1.2]],//透けにくい灰色(メッセージボックス用)
             [[255,192,0,1.2],[127,96,0,1.2],[255,192,0,1.2]],//黄色（決定など）
             [[225,162,0,1.2],[97,66,0,1.2],[225,162,0,1.2]],//黄色ホバー
-            [[185,0,0,1.2],[97,0,0,1.2],[185,0,0,1.2]],//赤  (5)
+            [[185,0,0,1.2],[137,0,0,1.2],[185,0,0,1.2]],//赤  (5)
             [[145,0,0,1.2],[57,0,0,1.2],[145,0,0,1.2]],
             [[0,15,200,1.2],[0,10,120,1.2],[0,15,210,1.2]],//青
             [[0,5,180,1.2],[0,5,130,1.2],[0,5,180,1.2]],
@@ -58,7 +82,7 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
     const FRAME_COLSET=[[20,20,20,0.8],[0,0,0,0.8],[20,23,20,0.8],[40,20,5,0.8],[40,20,5,0.8],
                         [20,23,20,0],[20,23,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],];
     const TEXT_COLSET=[[0,0,0],[0,0,0],[0,0,0],[255,255,255],[255,255,255],
-                        [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[255,255,255],[0,0,0],[255,255,255],[255,255,255]];
+                        [255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[0,0,0],[255,255,255],[255,255,255]];
     for(var i = 0;i < 3;i++){
         drawGrad.addColorStop(i/2+0.1*(i==1),'rgba(' + 
          (PRL_COLSET[drawPrl.hoverColSet][i][0]*drawPrl.hoverCounter+PRL_COLSET[drawPrl.colSet][i][0]*(10-drawPrl.hoverCounter))/10 + ',' +  
@@ -203,7 +227,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                                     avatorData[0].name=tempName;
                                     document.getElementById("nameBoxChange").style.display="none";
                                     msgBox.push({
-                                        text:"名前を「"+ tempName+"」に変更しました。メニュー画面に戻るまで、変更は保存されません。",
+                                        text:"名前を「"+ tempName+"」に変更しました。",
                                         ani:t,
                                         btns1:{text:"OK",onClick:function(){}}
                                     })
@@ -276,6 +300,53 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.font="11pt " + JAPANESE_FONTNAME;
             ctx2d.fillText("チームの変更には、アイテム「鞍替えの紋章」",WIDTH/2-144,HEIGHT/2-30);
             ctx2d.fillText("を消費します。どのチームに変更しますか？",WIDTH/2-144,HEIGHT/2-10);
+        }  else if(msgBox[0].selectBattleAvatorWindow){//戦う相手の選択ウィンドウ
+            if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//ボタンをprlsへプッシュする
+                prls.push({isMsgBox:1,x1:WIDTH/2+50,y1:HEIGHT/2+112,x2:WIDTH/2+205,y2:HEIGHT/2+162,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:8,text:"BATTLE!",trans:-1,onClick:function(){
+                    if(localAvator[selectBattleAvatorClass].length > selectBattleAvator){
+                        sceneAni=t;
+                        nextScene=3;////バトル開始ボタン　敵データのセットなどをここにおく
+                        battleAni=t;//バトル開始時のアニメーション
+                        enemyAvatorData = localAvator[selectBattleAvatorClass][selectBattleAvator];
+                    } else{
+                        //敵を選択していないのにバトルを押した時　効果音などをここに入れる
+                    }
+                }});
+                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+132,x2:WIDTH/2+45,y2:HEIGHT/2+162,shadow:0,colSet:14,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:2,text:"CANCEL",trans:-1,onClick:function(){}});
+                for(let i = 0;i < 5;i++){
+                    prls.push({isMsgBox:1,x1:WIDTH/2-197+i*48,y1:HEIGHT/2-162,x2:WIDTH/2-152+i*48,y2:HEIGHT/2-142,id:i,shadow:0,colSet:0+(i == selectBattleAvatorClass),noDestruct:1,textSize:0.9,hoverColSet:1,hoverCounter:0,lineWidth:3,text:AVATOR_CLASS_TEXT[i],trans:-1,onClick:function(){
+                        for(let j = 0;j < prls.length;j++){
+                            if(prls[j].id == i){
+                                prls[j].colSet=1;
+                            }else if(prls[j].id>=0 && prls[j].id<=4){
+                                prls[j].colSet=0;
+                            } 
+                        }
+                        selectBattleAvatorClass=i;
+                        selectBattleAvator=0;
+//                        setAvatorSelectButtonEach(localAvator);
+                        setAvatorSelectButton(localAvator);
+                    }});
+                }
+                setAvatorSelectButton(localAvator);
+                prls.push({isMsgBox:1,x1:WIDTH/2+130,y1:HEIGHT/2-162,x2:WIDTH/2+288,y2:HEIGHT/2-130,shadow:0,colSet:14,textSize:0.9,hoverColSet:13,lineWidth:4,hoverCounter:0,text:"アバターの管理",trans:-1,onClick:function(){
+                    sceneAni=t;
+                    nextScene=6;
+                }});
+                prls.push({isMsgBox:1,x1:WIDTH/2-269,y1:HEIGHT/2-117,x2:WIDTH/2+28,y2:HEIGHT/2+100,shadow:0,colSet:14,textSize:0.9,hoverColSet:14,lineWidth:2,noDestruct:1,hoverCounter:0,text:"",trans:-1});
+                prls.push({isMsgBox:1,x1:WIDTH/2-28,y1:HEIGHT/2-117,x2:WIDTH/2+275,y2:HEIGHT/2+100,shadow:0,colSet:0,textSize:0.9,hoverColSet:0,lineWidth:4,noDestruct:1,hoverCounter:0,text:"",trans:-1});
+                for(let i = 0;i < 6;i++){
+                    prls.push({isMsgBox:1,x1:WIDTH/2-25-i*9,y1:HEIGHT/2-78+i*30,x2:WIDTH/2+10-i*9,y2:HEIGHT/2-58+i*30,id:i+10,shadow:0,colSet:0+3*(i == selectBattleAvator),noDestruct:1,textSize:0.9,hoverColSet:1+3*(i == selectBattleAvator),hoverCounter:0,lineWidth:3,text:"選択",trans:-1,onClick:function(){
+                        if(localAvator[selectBattleAvatorClass].length<=i) return 0;
+                        selectBattleAvator=i;
+                        setAvatorSelectButton(localAvator);
+                    }});
+                    ctx2d.fillText("- - -",WIDTH/2-190-i*9,HEIGHT/2-65+i*30);
+                }
+                setAvatorSelectButton(localAvator);
+                msgBox[0].flg=1;
+            }
+            drawPrl({x1:WIDTH/2-300,y1:HEIGHT/2-170,x2:WIDTH/2+300,y2:HEIGHT/2+170,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
         } else if(msgBox[0].createAvatorWindow==1){ //アバター作成ウィンドウ
             if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//作成ボタンをprlsへプッシュする
                 prls.push({isMsgBox:1,x1:WIDTH/2+110,y1:HEIGHT/2+78,x2:WIDTH/2+240,y2:HEIGHT/2+128,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:5,text:"作成！",trans:-1,onClick:function(){
@@ -403,6 +474,120 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     drawPrl({isMsgBox:1,x1:WIDTH/2-100+70*i,y1:HEIGHT/2+13,x2:WIDTH/2-40+70*i,y2:HEIGHT/2+38,shadow:0,colSet:11,textSize:0.8,hoverColSet:11,lineWidth:0,hoverCounter:0,text:"",trans:-1});
                 }
             }
+        } else if(msgBox[0].selectBattleAvatorWindow){//バトル相手選択ウィンドウ
+            ctx2d.font="8pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle=getRGBA(9,0,myAni);
+            ctx2d.fillText("NAME",WIDTH/2-190+9,HEIGHT/2-65-30);
+            ctx2d.fillText("KPM",WIDTH/2-70+15,HEIGHT/2-65-30);
+            ctx2d.font="10pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            for (let i = 0;i < 6;i++){
+                if(localAvator[selectBattleAvatorClass].length>i){
+                    let styleGrad=ctx2d.createLinearGradient(WIDTH/2-83-i*9,HEIGHT/2-70+i*30+7,WIDTH/2-83-i*9+15,HEIGHT/2-70+i*30+7);
+                    if(localAvator[selectBattleAvatorClass][i].style == 0){
+                        styleGrad.addColorStop(0,"rgba(180,220,220," + myAni*0.8 + ")");
+                        styleGrad.addColorStop(1,"rgba(80,120,120," + myAni*0.8 + ")");
+                    } else{
+                        styleGrad.addColorStop(0,"rgba(220,180,220," + myAni*0.8 + ")");
+                        styleGrad.addColorStop(1,"rgba(120,80,120," + myAni*0.8 + ")");
+                    }
+                    ctx2d.fillStyle=styleGrad;
+                    ctx2d.fillRect(WIDTH/2-83-i*9,HEIGHT/2-67+i*30,15,4);
+                    //有利なチームなら矢印を表示
+                    if(msgBox[0].flg!=2 && localAvator[selectBattleAvatorClass][i].team != 3 && (3+avatorData[0].team-localAvator[selectBattleAvatorClass][i].team)%3 == 2){
+                        ctx2d.drawImage(arrowImg,WIDTH/2-213-i*9,HEIGHT/2-78+i*30 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
+                    }
+                    ctx2d.fillStyle=getRGBA(0,0,myAni);
+                    if(localAvator[selectBattleAvatorClass][i].name.length>=8){
+                        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+                    }
+                    ctx2d.fillText(localAvator[selectBattleAvatorClass][i].name,WIDTH/2-174-i*9,HEIGHT/2-65+i*30);
+                    if(localAvator[selectBattleAvatorClass][i].name.length>=8){
+                        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+                    }
+                    ctx2d.fillText(INPUT_STYLE_SHORT[localAvator[selectBattleAvatorClass][i].style],WIDTH/2-80-i*9,HEIGHT/2-65+i*30);
+                    if(localAvator[selectBattleAvatorClass][i].typingData.kpm-battleData.kpm>50){//格上
+                        ctx2d.fillStyle=getRGBA(11,0,myAni);
+                    } else if(localAvator[selectBattleAvatorClass][i].typingData.kpm-battleData.kpm<-50){//格下
+                        ctx2d.fillStyle=getRGBA(10,0,myAni);
+                    }
+                    ctx2d.fillText(processShowData(localAvator[selectBattleAvatorClass][i].typingData.kpm),WIDTH/2-59-i*9,HEIGHT/2-65+i*30);
+                    if(msgBox[0].flg!=2) drawTeamCircle(WIDTH/2-188-i*9,HEIGHT/2-70+i*30,5,localAvator[selectBattleAvatorClass][i].team);
+                } else {
+                    ctx2d.fillStyle=getRGBA(0,0,myAni);
+                    ctx2d.fillText("- - -",WIDTH/2-190-i*9,HEIGHT/2-65+i*30);
+                    ctx2d.fillText("-",WIDTH/2-92-i*9,HEIGHT/2-65+i*30);
+                    ctx2d.fillText("---",WIDTH/2-65-i*9,HEIGHT/2-65+i*30);
+                }
+            }
+            drawPrl({isMsgBox:1,x1:WIDTH/2+93,y1:HEIGHT/2-116,x2:WIDTH/2+93+40,y2:HEIGHT/2-101,shadow:0,colSet:3,noDestruct:1,textSize:0.9,hoverColSet:3,hoverCounter:0,lineWidth:0.1,text:"YOU",trans:-1});
+            drawPrl({isMsgBox:1,x1:WIDTH/2+93+140,y1:HEIGHT/2-116,x2:WIDTH/2+93+140+40,y2:HEIGHT/2-101,shadow:0,colSet:13,noDestruct:1,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:0.1,text:"ENEMY",trans:-1});
+            ctx2d.font="16pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            ctx2d.fillText("VS",WIDTH/2+120,HEIGHT/2-45);
+            drawPrl({isMsgBox:1,x1:WIDTH/2-183+selectBattleAvatorClass*48,y1:HEIGHT/2-141,x2:WIDTH/2-180+selectBattleAvatorClass*48,y2:HEIGHT/2-116,shadow:0,colSet:13,noDestruct:13,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
+            if(msgBox[0].flg!=2){
+                drawAvator(avatorData[0],WIDTH/2+5,HEIGHT/2-105,WIDTH/2+125,HEIGHT/2+5,t,1);//自分側データの描画
+                drawStar(avatorData[0],WIDTH/2+10,HEIGHT/2,15);
+                drawTeamCircle(WIDTH/2+20,HEIGHT/2-10,5,avatorData[0].team);
+            }
+            if(localAvator[selectBattleAvatorClass][selectBattleAvator] != null){//敵側のデータの描画
+                if(msgBox[0].flg!=2 && localAvator[selectBattleAvatorClass][selectBattleAvator].team != 3 && (3+avatorData[0].team-localAvator[selectBattleAvatorClass][selectBattleAvator].team)%3 == 2){
+                    ctx2d.drawImage(arrowImg,WIDTH/2+123,HEIGHT/2-20 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
+                }
+                drawPrl({isMsgBox:1,x1:WIDTH/2-220-selectBattleAvator*9,y1:HEIGHT/2-83+selectBattleAvator*30,x2:
+                    WIDTH/2+15-selectBattleAvator*9,y2:HEIGHT/2-54+selectBattleAvator*30,shadow:0,colSet:12,noDestruct:1,textSize:0.9,hoverColSet:12,hoverCounter:0,lineWidth:2,text:"",trans:-1});
+                if(msgBox[0].flg!=2){
+                    drawAvator(localAvator[selectBattleAvatorClass][selectBattleAvator],WIDTH/2+145,HEIGHT/2-105,WIDTH/2+255,HEIGHT/2+5,t*1.1,1);
+                    drawStar(localAvator[selectBattleAvatorClass][selectBattleAvator],WIDTH/2+140,HEIGHT/2,15);
+                    drawTeamCircle(WIDTH/2+150,HEIGHT/2-10,5,localAvator[selectBattleAvatorClass][selectBattleAvator].team);    
+                }
+            } else{
+                drawGhost(WIDTH/2+140,HEIGHT/2-115,WIDTH/2+260,HEIGHT/2+5,t*1.1,1);
+            }
+            ctx2d.lineWidth=1;
+            ctx2d.strokeStyle=getRGBA(0,0,myAni);
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            for(let i = 0;i < 4;i++){
+                if(i==0) ctx2d.font="10pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
+                if(i==1) ctx2d.font="8pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
+                ctx2d.beginPath();
+                ctx2d.moveTo(WIDTH/2+0-i*5.4,HEIGHT/2+38+i*18);
+                ctx2d.lineTo(WIDTH/2+220-i*5.4,HEIGHT/2+38+i*18);
+                ctx2d.stroke();
+                ctx2d.fillText(BATTLE_INFO[i],WIDTH/2+110-ctx2d.measureText(BATTLE_INFO[i]).width/2-i*5.4,HEIGHT/2+35+i*18);
+                let drawINFO="";
+                if(i==0) drawINFO= avatorData[0].name;
+                if(i==1) drawINFO= playData.level;
+                if(i==2) drawINFO= battleData.kpm;
+                if(i==3) drawINFO= processShowData(Number((battleData.stroke-battleData.miss)/battleData.stroke*100).toFixed(1))+"%";
+                ctx2d.fillText(drawINFO,WIDTH/2+50-ctx2d.measureText(drawINFO).width/2-i*5.4,HEIGHT/2+35+i*18);
+                if(localAvator[selectBattleAvatorClass][selectBattleAvator] != null){//敵側のデータ
+                    drawINFO="";
+                    if(i==0) drawINFO= localAvator[selectBattleAvatorClass][selectBattleAvator].name;
+                    if(i==1) drawINFO= localAvator[selectBattleAvatorClass][selectBattleAvator].level;
+                    if(i==2) drawINFO= localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.kpm;
+                    if(i==3) drawINFO= processShowData(Number((localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.stroke-localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.miss)/localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.stroke*100).toFixed(1))+"%";
+                    if((i==1 && drawINFO<playData.level) || (i==2 && drawINFO<battleData.kpm) || (i==3 && battleData.stroke && drawINFO  < Number((battleData.stroke-battleData.miss)/battleData.stroke*100).toFixed(1))){
+                        //アバターに勝っている
+                        let infoGrad = ctx2d.createLinearGradient(WIDTH/2+29-i*5.4,HEIGHT/2+33+i*18+3,WIDTH/2+29-i*5.4+40,HEIGHT/2+33+i*18-3);
+                        infoGrad.addColorStop(0,"rgba(130,0,0," + 0.9*myAni + ")");
+                        infoGrad.addColorStop(0.4,"rgba(250,0,0," + 0.3*myAni + ")");
+                        infoGrad.addColorStop(1,"rgba(50,0,0," + 0.9*myAni + ")");
+                        ctx2d.fillStyle=infoGrad;
+                        ctx2d.fillRect(WIDTH/2+29-i*5.4,HEIGHT/2+33+i*18,40,3);
+                    } else if((i==1 && drawINFO>playData.level) || (i==2 && drawINFO>battleData.kpm) || (i==3 && (!battleData.stroke || drawINFO > Number((battleData.stroke-battleData.miss)/battleData.stroke*100).toFixed(1)))){
+                        let infoGrad = ctx2d.createLinearGradient(WIDTH/2+154-i*5.4,HEIGHT/2+33+i*18+3,WIDTH/2+154-i*5.4+40,HEIGHT/2+33+i*18-3)
+                        infoGrad.addColorStop(0,"rgba(130,0,0," + 0.9*myAni + ")");
+                        infoGrad.addColorStop(0.4,"rgba(250,0,0," + 0.3*myAni + ")");
+                        infoGrad.addColorStop(1,"rgba(50,0,0," + 0.9*myAni + ")");
+                        ctx2d.fillStyle=infoGrad;
+                        ctx2d.fillRect(WIDTH/2+154-i*5.4,HEIGHT/2+33+i*18,40,3);
+                    }
+                    ctx2d.fillStyle=getRGBA(0,0,myAni);
+                    ctx2d.fillText(drawINFO,WIDTH/2+175-ctx2d.measureText(drawINFO).width/2-i*5.4,HEIGHT/2+35+i*18);                        
+                }
+            }
         }
     }
 }
@@ -421,12 +606,44 @@ function drawTitle(){ ///タイトル画面の描画関数
         if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
     }
 }
+function setAvatorSelectButton(myLocalAvator){
+    for(let i = 0;i < prls.length;i++){
+        if(prls[i].id>=10 && prls[i].id <= 15){
+            if (myLocalAvator[selectBattleAvatorClass].length<=prls[i].id-10){
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+            } else if(prls[i].id-10==selectBattleAvator){
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
+            }  else{
+                prls[i].colSet=0;
+                prls[i].hoverColSet=1;
+            }
+        }
+    }
+}
 function drawMenu(){
+    pfnw=performance.now();
     drawLoadingCircle(HEIGHT/2+40,HEIGHT/2,HEIGHT/2-25,t/3.2,1000);//////////動く丸
     drawLoadingCircle(WIDTH-25-HEIGHT/3,HEIGHT/3-10,HEIGHT/3-20,-t/3,1000);//////////動く丸
     drawLoadingCircle(WIDTH-100,HEIGHT-60,50,t/2.6,1000);
     for(let i = 0;i < prls.length;i++){
         if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
+    }
+    if(dailyMission.event){//イベント開催時
+        drawPrl({x1:658,y1:324,x2:834,y2:350,rev:1,lineWidth:0.1,shadow:0,colSet:3+dailyMission.event*2,hoverColSet:3+dailyMission.event*2,hoverCounter:0,textSize:1,text:TEAM_TEXT[dailyMission.event-1] + "イベント開催中！"});
+    }
+    for(let i = 0;i < 3;i++){
+        if(dailyMission.detail[i].progress == dailyMission.detail[i].max){
+            drawPrl({x1:567+i*9.6,y1:384+i*32,x2:826+i*9.6,y2:412+i*32,rev:1,lineWidth:1,shadow:0,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.6,text:""});
+            drawPrl({x1:760+i*9.6,y1:380+i*32,x2:826+i*9.6,y2:396+i*32,rev:1,lineWidth:1,shadow:0,colSet:3,hoverColSet:3,hoverCounter:0,textSize:0.9,text:"CLEAR"});
+        } else if(dailyMission.detail[i].team){
+            drawPrl({x1:567+i*9.6,y1:384+i*32,x2:826+i*9.6,y2:412+i*32,rev:1,lineWidth:1,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
+            drawPrl({x1:558+i*9.6,y1:384+i*32,x2:574+i*9.6,y2:412+i*32,rev:1,lineWidth:0.1,shadow:0,colSet:3+dailyMission.detail[i].team*2,hoverColSet:3+dailyMission.detail[i].team*2,hoverCounter:0,textSize:0.6,text:""});
+        } else{
+            drawPrl({x1:567+i*9.6,y1:384+i*32,x2:826+i*9.6,y2:412+i*32,rev:1,lineWidth:1,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
+            drawPrl({x1:558+i*9.6,y1:384+i*32,x2:574+i*9.6,y2:412+i*32,rev:1,lineWidth:0.1,shadow:0,colSet:13,hoverColSet:13,hoverCounter:0,textSize:0.6,text:""});
+        }
     }
     var menuBarGrad = ctx2d.createLinearGradient(0,0,WIDTH,60); ///メニューバー
     menuBarGrad.addColorStop(0,'rgba(75,75,80,0.95)');
@@ -440,40 +657,94 @@ function drawMenu(){
     menuBarShadowGrad.addColorStop(1,'rgba(0,0,0,0)');
     ctx2d.fillStyle=menuBarShadowGrad;
     ctx2d.fillRect(0,60,WIDTH,75);
+    var menuBarMiniGrad = ctx2d.createLinearGradient(WIDTH-120,0,WIDTH,0);
+    menuBarMiniGrad.addColorStop(1,'rgba(0,0,40,1)');
+    menuBarMiniGrad.addColorStop(0.7,'rgba(0,0,20,0.9)');
+    menuBarMiniGrad.addColorStop(0,'rgba(30,30,40,1)');
+    ctx2d.fillStyle=menuBarMiniGrad;
+    ctx2d.fillRect(WIDTH-120,20,120,8);
     ctx2d.font="19pt " + MAIN_FONTNAME;//AVA-TYPEの文字
     ctx2d.fillStyle=getRGBA(2,0,1);
     ctx2d.fillText("AVA-TYPE",(WIDTH-ctx2d.measureText("AVA-TYPE").width)/2,40);
     ctx2d.font="14pt " + JAPANESE_FONTNAME;
     ctx2d.fillText(avatorData[0].name,65,36);
+    ctx2d.font="11pt " + JAPANESE_FONTNAME;
+    ctx2d.fillText("LV. " + playData.level,WIDTH-ctx2d.measureText("LV. " + playData.level).width-30,24);
+    drawStar(avatorData[0],WIDTH-122,32,21);
     drawAvator(avatorData[0],5,5,55,55,t,1);//アバターの画像
     drawLoadingCircle(WIDTH/2+110,30,15,-t/2.7,1000); //メニューバーここまで
-    ctx2d.fillStyle=getRGBA(0,0,1); //デイリーミッション
+    ctx2d.fillStyle=getRGBA(0,0,1); //デイリーミッション系
     ctx2d.font="19pt " + MAIN_FONTNAME;
     ctx2d.fillText("DAILY",560,370);
+    ctx2d.font="8pt " + JAPANESE_FONTNAME;
+    ctx2d.fillText("更新まであと",651,370);
+    ctx2d.font="14pt " + DIGIT_FONTNAME;
+    let myDate = new Date();
+    myDate.setHours(myDate.getHours() - 5);
+    if(myDate.getSeconds()==0) myDate.setMinutes(myDate.getMinutes() - 1);
+    let hours = myDate.getHours();
+    let minutes =myDate.getMinutes();
+    let seconds= myDate.getSeconds();
+    if(dailyMission.date!= myDate.getDate()) setDailyMission();//デイリーミッションの更新処理
+    ctx2d.fillText(("00"+(24-hours-1)).slice(-2) + ":"+("00"+(60-minutes-1)).slice(-2)+":"+("00"+Number(60-seconds)%60).slice(-2),721,370);
+    //達成度合い等ここから
+    for(let i = 0;i < 3;i++){
+        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+        ctx2d.fillText(getMissionText(dailyMission.detail[i]),573+9.6*i,394 + i * 32);
+        ctx2d.fillText(dailyMission.detail[i].progress,583+9.6*i,408 + i * 32);
+        ctx2d.fillText("/",598+9.6*i,408 + i * 32);
+        ctx2d.fillText(dailyMission.detail[i].max,603+9.6*i,408 + i * 32);
+        ctx2d.fillText(dailyMission.detail[i].achieve,750+9.6*i,408 + i * 32);
+        ctx2d.fillText("マイル",773+9.6*i,408 + i * 32);
+        for(let j = 0;j < 5;j++){
+            drawPrl({x1:627+j*20+i*6.9,y1:400+i*32,x2:643+j*20+i*6.9,y2:408+i*32,rev:1,lineWidth:3,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
+            if(dailyMission.detail[i].progress && Math.min(1,Math.max(0,(dailyMission.detail[i].progress-dailyMission.detail[i].max*0.2*j)/(dailyMission.detail[i].max*0.2)))>0) 
+                drawPrl({x1:627+j*20+i*6.9,y1:400+i*32,rev:1,x2:627+i*6.9+j*20+16*Math.min(1,Math.max(0,(dailyMission.detail[i].progress-dailyMission.detail[i].max*0.2*j)/(dailyMission.detail[i].max*0.2))),y2:408+i*32,lineWidth:3,shadow:0,colSet:5,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});    
+        }
+        ctx2d.drawImage(coinImg,730+9.6*i,396+i*32,15,15);
+    }
+
+    //デイリーミッションここまで
     drawAvator(avatorData[0],165,375,245,455,t+72,1);//アバター横のアバター画像
     ctx2d.font="14pt " + JAPANESE_FONTNAME;
-    ctx2d.beginPath();
-    ctx2d.arc(ctx2d.measureText(avatorData[0].name).width+83,30,7,0,Math.PI*2);
-    ctx2d.lineWidth=1;
-    let teamGrad=ctx2d.createLinearGradient(ctx2d.measureText(avatorData[0].name).width+83,37,ctx2d.measureText(avatorData[0].name).width+94,23);
-    if(avatorData[0].team==0){
-        teamGrad.addColorStop(0,'rgba(100,10,10,1)');
-        teamGrad.addColorStop(0,'rgba(200,10,10,1)');
-    } else if(avatorData[0].team==1){
-        teamGrad.addColorStop(0,'rgba(10,10,100,1)');
-        teamGrad.addColorStop(0,'rgba(10,10,200,1)');
-    } else if(avatorData[0].team==2){
-        teamGrad.addColorStop(0,'rgba(130,100,10,1)');
-        teamGrad.addColorStop(0,'rgba(200,200,10,1)');
-    }
-    ctx2d.fillStyle=teamGrad;
-    ctx2d.strokeStyle=getRGBA(0,0,1);
-    ctx2d.fill();
-    ctx2d.stroke();
+    drawTeamCircle(ctx2d.measureText(avatorData[0].name).width+83,30,7,avatorData[0].team);
 }
 function drawBattle(){ ///バトル画面の描画関数
     for(let i = 0;i < prls.length;i++){
         if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
+    }
+    if(t-battleAni < 3000){ //開始時のアニメーション
+        let battleOpeningOffset=Math.floor(30-(9*1030/(1000*((t-battleAni-250)/1000)+9/1000))-1);
+        if(isNaN(battleOpeningOffset)) battleOpeningOffset=WIDTH;
+        ctx2d.fillStyle="rgba(0,0,0,"+Math.min(1,Math.max(0,((3000-(t-battleAni))/200)))+")";
+        ctx2d.fillRect(0,0,WIDTH,HEIGHT);
+        drawLoadingCircle(WIDTH/2,HEIGHT/2,HEIGHT/2-20,t*5,1000,Math.min(1,Math.max(0,((3000-(t-battleAni))/200))));
+        drawPrl({x1:50,y1:HEIGHT-50,x2:WIDTH*1.5/3-40,y2:HEIGHT-10,colSet:13,trans:Math.min(1,Math.max(0,((3000-(t-battleAni))/200))),hoverColSet:13,hoverCounter:0,textSize:0.6,text:""});
+        drawPrl({x1:60+WIDTH*1.5/3,y1:HEIGHT/2+80,x2:WIDTH-50,y2:HEIGHT/2+130,colSet:13,trans:Math.min(1,Math.max(0,((3000-(t-battleAni))/200))),hoverColSet:13,hoverCounter:0,textSize:0.6,text:""});
+        drawAvator(avatorData[0],Math.min(WIDTH-200,battleOpeningOffset/15)+50,HEIGHT*1/3-20,Math.min(WIDTH-200,battleOpeningOffset/15)+WIDTH*1.5/3-40,-20+HEIGHT*1/3+WIDTH*1.5/3-90,t,Math.min(1,Math.max(0,((3000-(t-battleAni))/200))));
+        drawAvator(enemyAvatorData,-Math.min(WIDTH-200,battleOpeningOffset/15)+WIDTH*1.5/3+40,20,-Math.min(WIDTH-200,battleOpeningOffset/15)+WIDTH-40,20+WIDTH*1.5/3-90,t,Math.min(1,Math.max(0,((3000-(t-battleAni))/200))));
+        ctx2d.fillStyle="rgba(255,255,255,"+(0.4+0.3*Math.sin(t/100))*Math.min(1,Math.max(0,((3000-(t-battleAni))/200)))+")";
+        ctx2d.font="36pt " + MAIN_FONTNAME;
+        ctx2d.fillText("BATTLE!",20,80);
+        ctx2d.fillStyle="rgba(255,255,255,"+Math.min(1,Math.max(0,((3000-(t-battleAni))/200)))+")";
+        ctx2d.font="10pt " + MAIN_FONTNAME;
+        ctx2d.fillText("kpm",40,HEIGHT-80);
+        ctx2d.fillText("kpm",WIDTH-140,HEIGHT-220);
+        ctx2d.font="28pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
+        ctx2d.fillText(avatorData[0].name,battleOpeningOffset+70,170);
+        ctx2d.fillText(enemyAvatorData.name,-battleOpeningOffset+WIDTH-300,HEIGHT-80);
+        ctx2d.fillText(Math.floor(battleData.kpm),70,HEIGHT-40);
+        ctx2d.fillText(Math.floor(enemyAvatorData.typingData.kpm),WIDTH-130,HEIGHT-180);
+        ctx2d.fillStyle="rgba(200,0,0,"+Math.min(1,Math.max(0,((3000-(t-battleAni))/200)))+")";
+        ctx2d.fillText("VS",(WIDTH-ctx2d.measureText("VS").width)/2,HEIGHT/2);
+        drawTeamCircle(60,220,16,avatorData[0].team,Math.min(1,Math.max(0,((3000-(t-battleAni))/200))));
+        drawTeamCircle(WIDTH-370,60,16,enemyAvatorData.team,Math.min(1,Math.max(0,((3000-(t-battleAni))/200))));
+        drawPrl({x1:WIDTH/2-120,y1:HEIGHT-75,x2:WIDTH/2-110+180,y2:HEIGHT-85+43,colSet:2,trans:Math.min(1,Math.max(0,((3000-(t-battleAni))/200))),hoverColSet:2,hoverCounter:0,textSize:0.6,text:""});
+        drawPrl({x1:WIDTH/2-120+120,y1:HEIGHT-85-70,x2:WIDTH/2-110+300,y2:HEIGHT-85-37,colSet:2,trans:Math.min(1,Math.max(0,((3000-(t-battleAni))/200))),hoverColSet:2,hoverCounter:0,textSize:0.6,text:""});
+        if(t-battleAni < 3000-200){
+            drawStar(avatorData[0],WIDTH/2-110,HEIGHT-73,30);
+            drawStar(enemyAvatorData,WIDTH/2+10,HEIGHT-153,30);    
+        }
     }
 }
 function drawResult(){ ///結果画面の描画関数
@@ -551,18 +822,38 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText(processShowData(battleData.esc),457,487);
     ctx2d.fillText(playData.coin,775-ctx2d.measureText(playData.coin).width,430);
     ctx2d.fillText(processShowData(getNextLvExp(playData)),160-ctx2d.measureText(processShowData(getNextLvExp(playData))).width/2,457);
-    if(getNextStarKPM(avatorData[0],battleData) >0){//KPM不足時
-        ctx2d.fillText(processShowData(getNextStarKPM(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarKPM(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
-    } else if(getNextStarStroke(avatorData[0],battleData)>0){//ストローク不足時
+    ctx2d.strokeStyle=getRGBA(0,0,1);//　　円（星）
+    ctx2d.lineWidth=5;
+    ctx2d.beginPath();
+    ctx2d.arc(280,450,52,0,Math.PI*2);
+    ctx2d.stroke();
+    ctx2d.strokeStyle="rgba(130,0,0,1)";//　　円の星　赤
+    if(getNextStarStroke(avatorData[0],battleData)>0){//ストローク不足時
         ctx2d.fillText(processShowData(getNextStarStroke(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarStroke(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
-    } else{
+        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+        ctx2d.fillText("STROKE",280-ctx2d.measureText("STROKE").width/2,477);
+        ctx2d.beginPath();
+        ctx2d.arc(280,450,52,Math.PI*-0.5,Math.PI*(getNextStarStroke(avatorData[0],battleData,1)*2-0.5));
+        ctx2d.stroke();
+    }else if(getNextStarKPM(avatorData[0],battleData) >0){//KPM不足時
         ctx2d.fillText(processShowData(getNextStarKPM(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarKPM(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
+        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+        ctx2d.fillText("KPM",280-ctx2d.measureText("KPM").width/2,477);
+        ctx2d.beginPath();
+        ctx2d.arc(280,450,52,Math.PI*-0.5,Math.PI*(getNextStarKPM(avatorData[0],battleData,1)*2-0.5));
+        ctx2d.stroke();    
+    } else {//最高レベル
+        ctx2d.fillText(processShowData(getNextStarKPM(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarKPM(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
+        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+        ctx2d.fillText("STROKE",280-ctx2d.measureText("STROKE").width/2,477);
+        ctx2d.beginPath();
+        ctx2d.arc(280,450,52,Math.PI*-0.5,Math.PI*(2-0.5));
+        ctx2d.stroke();    
     }
     ctx2d.font="8pt " + JAPANESE_FONTNAME;
     ctx2d.fillText("次Lvまで",160-ctx2d.measureText("次Lvまで").width/2,435);
     ctx2d.fillText("EXP",160-ctx2d.measureText("EXP").width/2,477);
     ctx2d.fillText("次のスターまで",280-ctx2d.measureText("次のスターまで").width/2,435);
-    ctx2d.fillText("STROKE",280-ctx2d.measureText("STROKE").width/2,477);
     for(let i = 0;i<10;i++){
         ctx2d.fillStyle=getRGBA(0,0,Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5)));
         if(i == avatorData[0].item[selectParts]){
@@ -589,33 +880,16 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText(ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].substr(0,19),620,366);
     ctx2d.fillText(ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].substr(19,19),620,383);
     drawStar(avatorData[0],165,368,20);
+    drawTeamCircle(459,196,6,avatorData[0].team);
 
-    let teamGrad=ctx2d.createLinearGradient(454,201,464,191);
-    if(avatorData[0].team==0){
-        teamGrad.addColorStop(0,'rgba(100,10,10,1)');
-        teamGrad.addColorStop(0,'rgba(200,10,10,1)');
-    } else if(avatorData[0].team==1){
-        teamGrad.addColorStop(0,'rgba(10,10,100,1)');
-        teamGrad.addColorStop(0,'rgba(10,10,200,1)');
-    } else if(avatorData[0].team==2){
-        teamGrad.addColorStop(0,'rgba(130,100,10,1)');
-        teamGrad.addColorStop(0,'rgba(200,200,10,1)');
-    }
-    ctx2d.fillStyle=teamGrad;
-    ctx2d.strokeStyle=getRGBA(0,0,1);
-    ctx2d.lineWidth=2;
-    ctx2d.beginPath();
-    ctx2d.arc(459,196,6,0,Math.PI*2);
-    ctx2d.fill();
-    ctx2d.stroke();
-
-    ctx2d.strokeStyle=getRGBA(0,0,1);//　　円
-    ctx2d.lineWidth=4;
+    ctx2d.strokeStyle=getRGBA(0,0,1);//　　円（レベル)
+    ctx2d.lineWidth=5;
     ctx2d.beginPath();
     ctx2d.arc(160,450,52,0,Math.PI*2);
     ctx2d.stroke();
+    ctx2d.strokeStyle="rgba(130,0,0,1)";//　　円　赤
     ctx2d.beginPath();
-    ctx2d.arc(280,450,52,0,Math.PI*2);
+    ctx2d.arc(160,450,52,-Math.PI*0.5,Math.PI*(getNextLvExp(playData,1)*2-0.5));
     ctx2d.stroke();
 }
 function drawAvator2(){ ///アバター管理画面の描画関数
@@ -675,8 +949,8 @@ function setItemButtons(parts){
                 prls[i].hoverColSet=1;
             } else if(playData.item[parts][prls[i].id] == 1){
                 prls[i].text="装備中";
-                prls[i].colSet=13;
-                prls[i].hoverColSet=13;
+                prls[i].colSet=3;
+                prls[i].hoverColSet=3;
             } else if(playData.item[parts][prls[i].id] == 2){
                 prls[i].text="購入";
                 prls[i].colSet=3;
@@ -790,7 +1064,7 @@ function changeScene(prev,next){ //シーン遷移の関数
         prls.push({x1:540,y1:340,x2:858,y2:490,colSet:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"",rev:1,onClick:function(){
             return 0;}})
         prls.push({x1:100,y1:110,x2:578,y2:320,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,text:"BATTLE!",subText:"対戦",rev:0,onClick:function(){
-            nextScene=3,sceneAni=t;}})
+            msgBox.push({selectBattleAvatorWindow:1,ani:t});}})
         prls.push({x1:100,y1:340,x2:558,y2:490,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,text:"AVATOR",subText:"アバター",rev:1,onClick:function(){
             nextScene=5,sceneAni=t;}})
     }  else if(next==3){//試合
@@ -898,7 +1172,8 @@ function changeScene(prev,next){ //シーン遷移の関数
                     msgBox.push({
                         text:"すべてのプレイデータをリセットしますか？　プレイデータをダウンロードしていない場合、データの復元はできません。",
                         ani:t,
-                        btns1:{text:"OK",onClick:function(){resetData(),nextScene=1,sceneAni=t;}},
+                        btns1:{text:"OK",onClick:function(){resetData(),
+                            msgBox.push({text:"すべてのプレイデータをリセットしました。タイトル画面へ戻ります。",ani:t,btns1:{text:"OK",onClick:function(){nextScene=1,sceneAni=t;}}})}},
                         btns2:{text:"CANCEL",onClick:function(){return 0;}}})
                     }
                 })
@@ -950,9 +1225,9 @@ function init() {
         ///////////////
         if(sceneAni){
             if(nextScene!=scene){
-                ctx2d.fillStyle="rgba(0,0,0," + (t-sceneAni)/(SCENE_ANI * (1+(scene==1 || scene==0)))+")";
+                ctx2d.fillStyle="rgba(0,0,0," + (t-sceneAni)/(SCENE_ANI * (1+1*(scene==1 || scene==0|| nextScene == 3)))+")";
                 ctx2d.fillRect(0,0,WIDTH,HEIGHT);
-                if(t-sceneAni > SCENE_ANI * (1+(scene==1 || scene==0))) scene=nextScene,sceneAni=t,changeScene(scene,nextScene);
+                if(t-sceneAni > SCENE_ANI * (1+1*(scene==1 || scene==0 || nextScene == 3))) scene=nextScene,sceneAni=t,changeScene(scene,nextScene);
             } else{
                 ctx2d.fillStyle="rgba(0,0,0," + (1-(t-sceneAni)/SCENE_ANI)+")";
                 ctx2d.fillRect(0,0,WIDTH,HEIGHT);

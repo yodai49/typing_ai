@@ -3,14 +3,15 @@ const HEIGHT = 540;
 const MAIN_FONTNAME = "Orbitron";
 const DIGIT_FONTNAME = "Quantico";
 const JAPANESE_FONTNAME = "Stick";
-const DEBUG_MODE=5;//数字の番号のシーンからスタート
-const IMG_CNT = 21;//読みこむイメージの総数
+const DEBUG_MODE=2;//数字の番号のシーンからスタート
+const IMG_CNT = 22;//読みこむイメージの総数
 const COEF_R2K=1.5;//ローマ字からカナへのkpm変換の係数
 var SCENE_ANI=400; //ロード終了後のアニメーション時間(DEBUGMODEによって変更するためvarで宣言)
 const TEAM_TEXT=["RED","BLUE","YELLOW"];
-const KPM_STAR=[0,150,250,400,550,700];//スターごとの必要KPM
+const KPM_STAR=[0,0,0,0,0,150,0,0,0,0,250,0,0,0,0,400,0,0,0,0,550,0,0,0,0,700,0,0,0,0];//スターごとの必要KPM
 const STROKE_STAR=[0,500,2000,4000,8000,12000,18000,25000,33000,42000,55000,65000,77000,88500,100000,120000,150000,185000,240000,300000,320000,350000,390000,440000,500000,580000,670000,780000,890000,1000000];
 const PARTS_TEXT=["HEAD","BODY1","BODY2","LIMBS","OTHER"];
+const AVATOR_CLASS_TEXT = ["COM","EVENT","USER1","USER2","USER3"];
 const SETTING_NAME=[
     "入力方法",
     "非効率な最適化",
@@ -22,6 +23,8 @@ const SETTING_NAME=[
     "相手の打鍵音",
     "データのリセット"
 ]
+const INPUT_STYLE_SHORT=["R","K"];
+const BATTLE_INFO=["","LV","KPM","ACC"];
 const SETTING_SELECT=[
     ["ローマ字","カナ"],
     ["有効","無効"],

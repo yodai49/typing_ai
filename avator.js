@@ -53,8 +53,12 @@ function drawBody1(myAvator,x1,y1,x2,y2,t,trans){//体を描画
         [[169,150,0,1,0],[160,122,22,1,0.4],[191,146,36,1,1]],//金
         [[0,0,0,0.3,0],[0,0,0,0.05,0.4],[0,0,0,0.2,1]],//透明
         [[210,210,240,1,0.2],[240,210,213,1,0.4],[244,244,244,1,1]]];//幻    
-        var bodyGrad = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.742),getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.35));
-    for(var i = 0;i < BODY1_GRAD_COLSET[myAvator.item[1]].length;i++){
+    var bodyGrad = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.742),getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.35));
+    if(myAvator==-1) {
+        ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
+        ctx2d.fillRect(getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.35),getDrawPos(x1,x2,0.72)-getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.742)-getDrawPos(y1,y2,0.35));
+        return 0;    
+    }for(var i = 0;i < BODY1_GRAD_COLSET[myAvator.item[1]].length;i++){
         bodyGrad.addColorStop(BODY1_GRAD_COLSET[myAvator.item[1]][i][4],"rgba(" + 
         BODY1_GRAD_COLSET[myAvator.item[1]][i][0]+","+
         BODY1_GRAD_COLSET[myAvator.item[1]][i][1]+","+
@@ -183,7 +187,15 @@ function drawLimbs(myAvator,x1,y1,x2,y2,t,trans){ //手足を描画
         [[0,0,0,0.3,0],[0,0,0,0.05,0.4],[0,0,0,0.2,1]],//透明
         [[210,210,240,1,0.2],[240,210,213,1,0.4],[244,244,244,1,1]]//幻
     ]
-    if(myAvator.item[3]==0 ||myAvator.item[3]==1 ||myAvator.item[3]==2 ||myAvator.item[3]==3 ||myAvator.item[3]==4){//ノーマル
+    if(myAvator==-1){
+        ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
+        ctx2d.fillRect(getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.28)-getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.79)-getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.745),getDrawPos(x1,x2,0.46)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.9)-getDrawPos(y1,y2,0.74));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.745),getDrawPos(x1,x2,0.62)-getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.9)-getDrawPos(y1,y2,0.74));
+        return 0;
+    } 
+    if(myAvator.item[3]==0 ||myAvator.item[3]==1 ||myAvator.item[3]==2 ||myAvator.item[3]==3 ||myAvator.item[3]==4){//ノーマルの手足
         ctx2d.fillStyle="rgba(140,60,0," + trans + ")";
         ctx2d.fillRect(getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.28)-getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
         ctx2d.fillRect(getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.79)-getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
@@ -272,6 +284,11 @@ function drawHead(myAvator,x1,y1,x2,y2,t,trans){//頭を描画
         [[0,0,0,0.3,0],[0,0,0,0.05,0.4],[0,0,0,0.2,1]],//透明
         [[210,210,240,1,0.2],[240,210,213,1,0.4],[244,244,244,1,1]]];//幻
     var headGrad = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35),getDrawPos(x1,x2,0.65),getDrawPos(y1,y2,0.1));
+    if(myAvator==-1) {
+        ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
+        ctx2d.fillRect(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.1),getDrawPos(x1,x2,0.65)-getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35)-getDrawPos(y1,y2,0.1));
+        return 0;    
+    }
     for(var i = 0;i < HEAD_GRAD_COLSET[myAvator.item[0]].length;i++){
         headGrad.addColorStop(HEAD_GRAD_COLSET[myAvator.item[0]][i][4],"rgba(" + 
         HEAD_GRAD_COLSET[myAvator.item[0]][i][0]+","+
@@ -294,6 +311,11 @@ function drawAvator(myAvator,x1,y1,x2,y2,t,trans){//アバターを描画する�
     drawBody1(myAvator,x1,y1,x2,y2,t,trans);
     drawOthers(myAvator,x1,y1,x2,y2,t,trans);//その他　鞍替えの紋章はbody1のあと、body2の前のため、この位置
     drawBody2(myAvator,x1,y1,x2,y2,t,trans);
+}
+function drawGhost(x1,y1,x2,y2,t,trans){//アバターの影を描画する関数
+    drawHead(-1,x1,y1,x2,y2,t,trans);
+    drawBody1(-1,x1,y1,x2,y2,t,trans);
+    drawLimbs(-1,x1,y1,x2,y2,t,trans);
 }
 function drawStar(myAvator,x,y,size){
     var starNum=myAvator.star%5;

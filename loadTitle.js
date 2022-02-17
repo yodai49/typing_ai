@@ -11,62 +11,36 @@ window.addEventListener('DOMContentLoaded', function(){ //クリックイベン�
 
     });
 });
-
-function getRGBA(col,T,t,r,g,b){
-    // 色の指定に使う関数　Tは点滅の周期(0で点滅なし)、tはカウント用、固定透明度 colに-1を指定するとr,g,bが有効
-    const COLSET = [[0,0,0], //BLACK
-                    [15,15,25], // DARK GRAY BLUE
-                    [240,240,240],// WHITE
-                    [160,25,15],//DEEP RED
-                    [107,76,0], //黄土色
-                    [111,28,3],//茶色
-                    [83,10,140],//紫色
-                    [255,234,145],//クリーム色
-                    [180,30,20]]; //やや明るい赤
-    if(col>=0){
-        r=COLSET[col][0];
-        g=COLSET[col][1];
-        b=COLSET[col][2];
-    }
-    if(T){
-        return "rgba("  + r + "," + g + "," + b + "," + (0.4+0.3*Math.sin(t/T*Math.PI*2)) + ")";
-    } else{
-        return "rgba("  + r + "," + g + "," + b + ","+t+")";
-    }
-}
-function processShowData(data){//データ表示時にNaNなどが表示されないようにする関数
-    if(isNaN(data) || (data == undefined) || (data == null)) return "---";
-    return data;
-}
-function drawLoadingCircle(x,y,size,t,speed){
+function drawLoadingCircle(x,y,size,t,speed,trans){
+    if(trans == undefined) trans=1;
     ctx2d.lineWidth=size*0.08;
     var ani = [];
     for(var i = 0;i < 5;i++){
         ani[i] = (t/speed+0.5*Math.sin((t+i*130)/speed))*Math.PI;
     }
 
-    ctx2d.strokeStyle=getRGBA(3,0,0.8);
+    ctx2d.strokeStyle=getRGBA(3,0,trans*0.8);
     ctx2d.beginPath();
     ctx2d.arc(x,y,size,Math.PI*0.3/10+ani[0],Math.PI*1/2+ani[0]);
     ctx2d.stroke();
 
     ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(4,0,0.8);
+    ctx2d.strokeStyle=getRGBA(4,0,trans*0.8);
     ctx2d.arc(x,y,size,Math.PI*(1/2+0.8/10)+ani[1],Math.PI*(1-0.5/10)+ani[1]);
     ctx2d.stroke();
 
     ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(5,0,0.8);
+    ctx2d.strokeStyle=getRGBA(5,0,trans*0.8);
     ctx2d.arc(x,y,size,Math.PI+ani[2],Math.PI*(2-0.2/5)+ani[2]);
     ctx2d.stroke();
 
     ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(6,0,0.8);
+    ctx2d.strokeStyle=getRGBA(6,0,trans*0.8);
     ctx2d.arc(x,y,size*0.84,Math.PI*0.8/5+ani[3],Math.PI*3/5+ani[3]);
     ctx2d.stroke();
 
     ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(7,0,0.8);
+    ctx2d.strokeStyle=getRGBA(7,0,trans*0.8);
     ctx2d.arc(x,y,size*0.84,Math.PI*3.8/5+ani[4],Math.PI*8/5+ani[4]);
     ctx2d.stroke();
 }
@@ -90,6 +64,9 @@ function init() {
     coinImg=new Image();
     coinImg.src="./img/coin.png";
     coinImg.onload=()=>{imgLoadedCnt++;};
+    arrowImg=new Image();
+    arrowImg.src="./img/uparrow.png";
+    arrowImg.onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < 7;i++) starImg[i] = new Image(),starImg[i].src="./img/star_" + i + ".png";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < starImg.length;i++) starImg[i].onload=()=>{imgLoadedCnt++};
