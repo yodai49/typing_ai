@@ -40,7 +40,7 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
         if(msgBox[0].flg==2 && drawPrl.trans<0) drawPrl.trans=Math.max(-1,-1+(t-msgBox[0].ani)/200);
     }
     var drawGrad=ctx2d.createLinearGradient(drawPrl.x2,drawPrl.y1,drawPrl.x1,drawPrl.y2);
-    const PRL_COLSET=[[[213,213,213,1],[141,141,141,1],[230,230,230,1]], //灰色用
+    const PRL_COLSET=[[[213,213,223,1],[141,141,151,1],[230,230,235,1]], //灰色用
             [[165,163,168,1],[125,123,128,1],[175,173,178,1]], //灰色ホバー用
             [[175,173,188,1.2],[125,123,138,1.2],[185,183,208,1.2]],//透けにくい灰色(メッセージボックス用)
             [[255,192,0,1.2],[127,96,0,1.2],[255,192,0,1.2]],//黄色（決定など）
@@ -54,10 +54,10 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
             [[0,0,0,0.8],[0,0,0,0.8],[0,0,0,0.8]],//黒やや透明
             [[0,0,0,0],[0,0,0,0],[0,0,0,0]],//透明　枠のみ
             [[40,40,40,1.2],[2,3,8,1.2],[40,40,40,1.2]],//濃い灰色（キャンセル系） 13
-            [[141,141,141,0.75],[34,42,53,0.81],[135,135,135,1]],];//画面のタイトル用 14
+            [[141,141,141,0.85],[34,42,53,0.81],[135,135,135,1]],];//画面のタイトル用 14
     const FRAME_COLSET=[[20,20,20,0.8],[0,0,0,0.8],[20,23,20,0.8],[40,20,5,0.8],[40,20,5,0.8],
                         [20,23,20,0],[20,23,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],];
-    const TEXT_COLSET=[[30,30,30],[30,30,30],[30,30,30],[255,255,255],[255,255,255],
+    const TEXT_COLSET=[[0,0,0],[0,0,0],[0,0,0],[255,255,255],[255,255,255],
                         [0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[255,255,255],[0,0,0],[255,255,255],[255,255,255]];
     for(var i = 0;i < 3;i++){
         drawGrad.addColorStop(i/2+0.1*(i==1),'rgba(' + 
@@ -67,8 +67,8 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
     }
     if(drawPrl.shadow!=0){　//影を描く
         var shadowGrad=ctx2d.createLinearGradient(drawPrl.x1,drawPrl.y2,drawPrl.x1,drawPrl.y2+15);
-        shadowGrad.addColorStop(0,'rgba(0,0,0,'+drawPrl.trans+')');
-        shadowGrad.addColorStop(0.3,'rgba(0,0,0,'+drawPrl.trans*0.9+')');
+        shadowGrad.addColorStop(0,'rgba(0,0,0,'+drawPrl.trans*0.8+')');
+        shadowGrad.addColorStop(0.3,'rgba(0,0,0,'+drawPrl.trans*0.7+')');
         shadowGrad.addColorStop(1,'rgba(0,0,0,0)');
         ctx2d.fillStyle=shadowGrad;
         if(drawPrl.rev==1){
@@ -76,6 +76,27 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
         } else{
             ctx2d.fillRect(drawPrl.x1-ctx2d.lineWidth/2,drawPrl.y2,drawPrl.x2-(drawPrl.x1+(drawPrl.y2-drawPrl.y1)*0.3)+ctx2d.lineWidth,15);
         }
+        ctx2d.beginPath();
+        if(drawPrl.rev==1){ //反転の影
+            ctx2d.moveTo(drawPrl.x1-ctx2d.lineWidth/2,drawPrl.y1);
+            ctx2d.lineTo(drawPrl.x1-ctx2d.lineWidth/2,drawPrl.y1+15);
+            ctx2d.lineTo(drawPrl.x1-ctx2d.lineWidth/2+(drawPrl.y2-drawPrl.y1)*0.3,drawPrl.y2+15);
+            ctx2d.lineTo(drawPrl.x1+(drawPrl.y2-drawPrl.y1)*0.3-ctx2d.lineWidth/2,drawPrl.y2);
+            ctx2d.lineTo(drawPrl.x1-ctx2d.lineWidth/2,drawPrl.y1);
+//            shadowGrad=ctx2d.createLinearGradient(drawPrl.x2,drawPrl.y2,drawPrl.x2-15/0.3,drawPrl.y2+15);
+        } else{ //通常の影
+            ctx2d.moveTo(drawPrl.x2+ctx2d.lineWidth/2,drawPrl.y1);
+            ctx2d.lineTo(drawPrl.x2+ctx2d.lineWidth/2,drawPrl.y1+15);
+            ctx2d.lineTo(drawPrl.x2+ctx2d.lineWidth/2-(drawPrl.y2-drawPrl.y1)*0.3,drawPrl.y2+15);
+            ctx2d.lineTo(drawPrl.x2+ctx2d.lineWidth/2-(drawPrl.y2-drawPrl.y1)*0.3,drawPrl.y2);
+            ctx2d.moveTo(drawPrl.x2+ctx2d.lineWidth/2,drawPrl.y1);
+            //shadowGrad=ctx2d.createLinearGradient(drawPrl.x2,drawPrl.y2,drawPrl.x2+15/0.3,drawPrl.y2+15);
+        }/*
+        shadowGrad.addColorStop(0,'rgba(0,0,0,'+drawPrl.trans+')');
+        shadowGrad.addColorStop(0.3,'rgba(0,0,0,'+drawPrl.trans*0.9+')');
+        shadowGrad.addColorStop(1,'rgba(0,0,0,0)');*/
+        ctx2d.fillStyle='rgba(0,0,0,0.4)';
+        ctx2d.fill();
     }
     ctx2d.fillStyle=drawGrad;
     ctx2d.strokeStyle='rgba(' + 
@@ -130,24 +151,132 @@ function drawMsgbox(){//メッセージボックスの描画関数
             msgBox.shift();
             return 0;
         }
-        if(msgBox[0].createAvatorWindow!=1){ //アバター作成ウィンドウ以外
-            if(myCharAni>=28 || myCharAni >= msgBox[0].text.length) randomChar1 = "";
-            if(myCharAni<28 || myCharAni >= 56 || myCharAni >= msgBox[0].text.length) randomChar2 = "";
-            if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//指定されたボタンをprlsへプッシュする
-                if(msgBox[0].btns2!=undefined){ //ボタンが２つある時
-                    prls.push({isMsgBox:1,x1:WIDTH/2-100,y1:HEIGHT/2+30,x2:WIDTH/2-20,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
-                    prls.push({isMsgBox:1,x1:WIDTH/2+20,y1:HEIGHT/2+30,x2:WIDTH/2+100,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns2.text,trans:-1,onClick:msgBox[0].btns2.onClick});
-                } else{
-                    prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+30,x2:WIDTH/2+50,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
-                }
+        if(msgBox[0].changeNameWindow){ //アバターの名前変更ウィンドウ
+            if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//作成ボタンをprlsへプッシュする
+                prls.push({isMsgBox:1,x1:WIDTH/2-123,y1:HEIGHT/2+23,x2:WIDTH/2-20,y2:HEIGHT/2+48,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:5,text:"変更",trans:-1,onClick:function(){
+                    //アバター作成可能判定処理をここへ
+                    let tempName=document.getElementById("nameBoxChange").value;
+                    if(tempName.length>8){ //9文字以上
+                        document.getElementById("nameBoxChange").style.display="none";
+                        msgBox.push({
+                            text:"名前が長すぎます。8文字以内にしてください。",
+                            ani:t,
+                            btns1:{text:"OK",onClick:function(){ //アバター作成の初期ウィンドウを表示
+                                msgBox.push({changeNameWindow:1,
+                                text:"",
+                                ani:t+200,
+                                flg:0,
+                                });}}});
+                    } else if(tempName.length==0){//名前が未入力
+                        document.getElementById("nameBoxChange").style.display="none";
+                        msgBox.push({
+                            text:"名前を入力してください。",
+                            ani:t,
+                            btns1:{text:"OK",onClick:function(){ //アバター作成の初期ウィンドウを表示
+                                msgBox.push({changeNameWindow:1,
+                                text:"",
+                                ani:t+200,
+                                flg:0,
+                                });}}});
+                    }else { 
+                        let invalidChara=" :?#[]!$&'()*+,;=\"<>%~|",invalidFlg=0;
+                        for(let i = 0;i < invalidChara.length;i++){
+                            if(tempName.indexOf(invalidChara.substr(i,1))!=-1) invalidFlg=1;
+                        }
+                        if(invalidFlg){//使用できない文字が含まれていた時
+                            document.getElementById("nameBoxChange").style.display="none";
+                            msgBox.push({
+                                text:"名前に使用できない文字が含まれています。",
+                                ani:t,
+                                btns1:{text:"OK",onClick:function(){ //アバター作成の初期ウィンドウを表示
+                                    msgBox.push({changeNameWindow:1,
+                                    text:"",
+                                    ani:t+200,
+                                    flg:0,
+                                    });}}});
+                        } else{//作成可能な時
+                            document.getElementById("nameBoxChange").style.display="none";
+                            msgBox.push({
+                                text:"名前を「" + tempName + "」に変更しますか？",
+                                ani:t,
+                                btns1:{text:"OK",onClick:function(){ //名称変更
+                                    avatorData[0].name=tempName;
+                                    document.getElementById("nameBoxChange").style.display="none";
+                                    msgBox.push({
+                                        text:"名前を「"+ tempName+"」に変更しました。メニュー画面に戻るまで、変更は保存されません。",
+                                        ani:t,
+                                        btns1:{text:"OK",onClick:function(){}}
+                                    })
+                                }},
+                                btns2:{text:"CANCEL",onClick:function(){msgBox.push({
+                                    text:"名前の変更をキャンセルしました。",
+                                    ani:t,
+                                    btns1:{text:"OK",onClick:function(){}}
+                                })}}});
+                        }
+                    }
+                }});
+                prls.push({isMsgBox:1,x1:WIDTH/2-10,y1:HEIGHT/2+23,x2:WIDTH/2+88,y2:HEIGHT/2+48,shadow:0,colSet:13,textSize:0.8,hoverColSet:11,hoverCounter:0,text:"キャンセル",trans:-1,onClick:function(){document.getElementById("nameBoxChange").style.display="none";}});
+                document.getElementById("nameBoxChange").style.display="inline";
+                document.getElementById("nameBoxChange").value=avatorData[0].name;
                 msgBox[0].flg=1;
             }
-            drawPrl({x1:WIDTH/2-250,y1:HEIGHT/2-50,x2:WIDTH/2+250,y2:HEIGHT/2+60,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni,onClick:function(){return 0}})
+            drawPrl({x1:WIDTH/2-200,y1:HEIGHT/2-100,x2:WIDTH/2+200,y2:HEIGHT/2+60,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
+            ctx2d.font="18pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            ctx2d.fillText("名前の変更",WIDTH/2-143,HEIGHT/2-70);
             ctx2d.font="12pt " + JAPANESE_FONTNAME;
-            ctx2d.fillStyle="rgba(0,0,0,"  + myAni + ")";
-            ctx2d.fillText(msgBox[0].text.substr(0,Math.min(28,myCharAni))+randomChar1,WIDTH/2-218,HEIGHT/2-15);
-            ctx2d.fillText(msgBox[0].text.substr(28,Math.min(28,myCharAni-28))+randomChar2,WIDTH/2-218,HEIGHT/2+8);
-        } else{ //アバター作成ウィンドウ
+            ctx2d.fillText("新しい名前を入力してください。",WIDTH/2-149,HEIGHT/2-40);
+        } else if(msgBox[0].changeTeamWindow){//アバターのチーム変更ウィンドウ
+            if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//作成ボタンをprlsへプッシュする
+                prls.push({isMsgBox:1,x1:WIDTH/2-123,y1:HEIGHT/2+63,x2:WIDTH/2-20,y2:HEIGHT/2+88,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:5,text:"変更",trans:-1,onClick:function(){
+                    if(avatorData[0].team!=avatorData[1].team){
+                        msgBox.push({
+                            text:"「鞍替えの紋章」を使用して、チームを" + TEAM_TEXT[avatorData[1].team] + "に変更しますか？　変更は保存され、メニュー画面に戻ります。",
+                            ani:t,
+                            btns1:{text:"YES",onClick:function(){ //チーム変更
+                                avatorData[0].team=avatorData[1].team;
+                                playData.item[4][2]=0;//アイテム消費
+                                document.getElementById("nameBoxChange").style.display="none";
+                                msgBox.push({
+                                    text:"チームを"+ TEAM_TEXT[avatorData[1].team]+"に変更しました。メニュー画面に戻ります。",
+                                    ani:t,
+                                    btns1:{text:"OK",onClick:function(){setAvatorData(0),saveData(),sceneAni=t,nextScene=2;}}
+                                })
+                            }},
+                            btns2:{text:"NO",onClick:function(){//変更のキャンセル
+                                avatorData[1].team=avatorData[0].team;
+                                msgBox.push({text:"チームの変更をキャンセルしました。",
+                                    ani:t,
+                                    btns1:{text:"OK",onClick:function(){}}
+                            })}}});
+                    } else{
+                        msgBox.push({
+                            text:"現在と同じチームです。",
+                            ani:t,
+                            btns1:{text:"OK",onClick:function(){
+                                msgBox.push({changeTeamWindow:1,
+                                    text:"",
+                                    ani:t,
+                                    flg:0});
+                            }}
+                        })
+                    }
+                }});
+                prls.push({isMsgBox:1,x1:WIDTH/2-10,y1:HEIGHT/2+63,x2:WIDTH/2+88,y2:HEIGHT/2+88,shadow:0,colSet:13,textSize:0.8,hoverColSet:11,hoverCounter:0,text:"キャンセル",trans:-1,onClick:function(){document.getElementById("nameBoxChange").style.display="none";}});
+                prls.push({isMsgBox:1,x1:WIDTH/2-100,y1:HEIGHT/2+13,x2:WIDTH/2-40,y2:HEIGHT/2+38,shadow:0,colSet:5,textSize:0.9,hoverColSet:6,hoverCounter:0,text:"",trans:-1,noDestruct:1,onClick:function(){avatorData[1].team=0;}});
+                prls.push({isMsgBox:1,x1:WIDTH/2-30,y1:HEIGHT/2+13,x2:WIDTH/2+30,y2:HEIGHT/2+38,shadow:0,colSet:7,textSize:0.8,hoverColSet:8,hoverCounter:0,text:"",trans:-1,noDestruct:1,onClick:function(){avatorData[1].team=1;}});
+                prls.push({isMsgBox:1,x1:WIDTH/2+40,y1:HEIGHT/2+13,x2:WIDTH/2+100,y2:HEIGHT/2+38,shadow:0,colSet:9,textSize:0.8,hoverColSet:10,hoverCounter:0,text:"",trans:-1,noDestruct:1,onClick:function(){avatorData[1].team=2;}});
+                msgBox[0].flg=1;
+            }
+            drawPrl({x1:WIDTH/2-200,y1:HEIGHT/2-100,x2:WIDTH/2+200,y2:HEIGHT/2+100,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
+            ctx2d.font="18pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            ctx2d.fillText("チームの変更",WIDTH/2-143,HEIGHT/2-65);
+            ctx2d.font="11pt " + JAPANESE_FONTNAME;
+            ctx2d.fillText("チームの変更には、アイテム「鞍替えの紋章」",WIDTH/2-144,HEIGHT/2-30);
+            ctx2d.fillText("を消費します。どのチームに変更しますか？",WIDTH/2-144,HEIGHT/2-10);
+        } else if(msgBox[0].createAvatorWindow==1){ //アバター作成ウィンドウ
             if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//作成ボタンをprlsへプッシュする
                 prls.push({isMsgBox:1,x1:WIDTH/2+110,y1:HEIGHT/2+78,x2:WIDTH/2+240,y2:HEIGHT/2+128,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:5,text:"作成！",trans:-1,onClick:function(){
                     //アバター作成可能判定処理をここへ
@@ -210,7 +339,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                         }
                     }
                 }});
-                prls.push({isMsgBox:1,x1:WIDTH/2+30,y1:HEIGHT/2+98,x2:WIDTH/2+110,y2:HEIGHT/2+128,shadow:0,colSet:13,textSize:0.8,hoverColSet:13,hoverCounter:0,text:"キャンセル",trans:-1,onClick:function(){document.getElementById("nameBoxCreate").style.display="none";}});
+                prls.push({isMsgBox:1,x1:WIDTH/2+30,y1:HEIGHT/2+98,x2:WIDTH/2+110,y2:HEIGHT/2+128,shadow:0,colSet:13,textSize:0.8,hoverColSet:11,hoverCounter:0,text:"キャンセル",trans:-1,onClick:function(){document.getElementById("nameBoxCreate").style.display="none";}});
                 prls.push({isMsgBox:1,x1:WIDTH/2-160,y1:HEIGHT/2+50,x2:WIDTH/2-120,y2:HEIGHT/2+80,shadow:0,colSet:5,hoverColSet:6,hoverCounter:0,lineWidth:0,text:"",trans:-1,noDestruct:1,onClick:function(){avatorData[0].team=0;}}); //チーム選択ボタン
                 prls.push({isMsgBox:1,x1:WIDTH/2-110,y1:HEIGHT/2+50,x2:WIDTH/2-70,y2:HEIGHT/2+80,shadow:0,colSet:7,hoverColSet:8,hoverCounter:0,lineWidth:0,text:"",trans:-1,noDestruct:1,onClick:function(){avatorData[0].team=1;}});
                 prls.push({isMsgBox:1,x1:WIDTH/2-60,y1:HEIGHT/2+50,x2:WIDTH/2-20,y2:HEIGHT/2+80,shadow:0,colSet:9,hoverColSet:10,hoverCounter:0,lineWidth:0,text:"",trans:-1,noDestruct:1,onClick:function(){avatorData[0].team=2;}});
@@ -229,6 +358,23 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillText("所属チーム",WIDTH/2-270,HEIGHT/2+70);
             drawPrl({x1:WIDTH/2+13,y1:HEIGHT/2-130,x2:WIDTH/2+300,y2:HEIGHT/2+63,colSet:13,hoverColSet:13,shadow:0,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
             drawAvator(avatorData[0],WIDTH/2+58,HEIGHT/2-128,WIDTH/2+255,HEIGHT/2+55,t,myAni);
+        } else{
+            if(myCharAni>=28 || myCharAni >= msgBox[0].text.length) randomChar1 = "";
+            if(myCharAni<28 || myCharAni >= 56 || myCharAni >= msgBox[0].text.length) randomChar2 = "";
+            if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//指定されたボタンをprlsへプッシュする
+                if(msgBox[0].btns2!=undefined){ //ボタンが２つある時
+                    prls.push({isMsgBox:1,x1:WIDTH/2-100,y1:HEIGHT/2+30,x2:WIDTH/2-20,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
+                    prls.push({isMsgBox:1,x1:WIDTH/2+20,y1:HEIGHT/2+30,x2:WIDTH/2+100,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns2.text,trans:-1,onClick:msgBox[0].btns2.onClick});
+                } else{
+                    prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+30,x2:WIDTH/2+50,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
+                }
+                msgBox[0].flg=1;
+            }
+            drawPrl({x1:WIDTH/2-250,y1:HEIGHT/2-50,x2:WIDTH/2+250,y2:HEIGHT/2+60,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni,onClick:function(){return 0}})
+            ctx2d.font="12pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle="rgba(0,0,0,"  + myAni + ")";
+            ctx2d.fillText(msgBox[0].text.substr(0,Math.min(28,myCharAni))+randomChar1,WIDTH/2-218,HEIGHT/2-15);
+            ctx2d.fillText(msgBox[0].text.substr(28,Math.min(28,myCharAni-28))+randomChar2,WIDTH/2-218,HEIGHT/2+8);
         }
         for(let i = 0;i < prls.length;i++){
             if(prls[i].isMsgBox==1) drawPrl(prls[i]);
@@ -247,6 +393,14 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     drawPrl({isMsgBox:1,x1:WIDTH/2-143.5+i*85,y1:HEIGHT/2-5,x2:WIDTH/2-68.5+i*85,y2:HEIGHT/2+25,shadow:0,colSet:3,lineWidth:4,hoverColSet:4,hoverCounter:0,lineWidth:6,textSize:0.9,text:INPUT_TYPE[i],trans:-1,noDestruct:1});
                 } else{
                     drawPrl({isMsgBox:1,x1:WIDTH/2-143.5+i*85,y1:HEIGHT/2-5,x2:WIDTH/2-68.5+i*85,y2:HEIGHT/2+25,shadow:0,colSet:13,lineWidth:4,hoverColSet:13,hoverCounter:0,lineWidth:2,textSize:0.9,text:INPUT_TYPE[i],trans:-1,noDestruct:1});
+                }
+            }
+        } else if(msgBox[0].changeTeamWindow){//チーム変更ウィンドウ
+            for(let i = 0;i < 3;i++){
+                if (i == avatorData[1].team){
+                    drawPrl({isMsgBox:1,x1:WIDTH/2-100+70*i,y1:HEIGHT/2+13,x2:WIDTH/2-40+70*i,y2:HEIGHT/2+38,shadow:0,colSet:12,textSize:0.8,hoverColSet:12,lineWidth:7,hoverCounter:0,text:"",trans:-1});
+                } else{
+                    drawPrl({isMsgBox:1,x1:WIDTH/2-100+70*i,y1:HEIGHT/2+13,x2:WIDTH/2-40+70*i,y2:HEIGHT/2+38,shadow:0,colSet:11,textSize:0.8,hoverColSet:11,lineWidth:0,hoverCounter:0,text:"",trans:-1});
                 }
             }
         }
@@ -297,10 +451,11 @@ function drawMenu(){
     ctx2d.font="19pt " + MAIN_FONTNAME;
     ctx2d.fillText("DAILY",560,370);
     drawAvator(avatorData[0],165,375,245,455,t+72,1);//アバター横のアバター画像
+    ctx2d.font="14pt " + JAPANESE_FONTNAME;
     ctx2d.beginPath();
-    ctx2d.arc(ctx2d.measureText(avatorData[0].name).width+68,30,7,0,Math.PI*2);
+    ctx2d.arc(ctx2d.measureText(avatorData[0].name).width+83,30,7,0,Math.PI*2);
     ctx2d.lineWidth=1;
-    var teamGrad=ctx2d.createLinearGradient(ctx2d.measureText(avatorData[0].name).width+31,37,ctx2d.measureText(avatorData[0].name).width+44,23);
+    let teamGrad=ctx2d.createLinearGradient(ctx2d.measureText(avatorData[0].name).width+83,37,ctx2d.measureText(avatorData[0].name).width+94,23);
     if(avatorData[0].team==0){
         teamGrad.addColorStop(0,'rgba(100,10,10,1)');
         teamGrad.addColorStop(0,'rgba(200,10,10,1)');
@@ -327,20 +482,40 @@ function drawResult(){ ///結果画面の描画関数
     }
 }
 function drawAvator1(){ ///アバターきせかえ画面の描画関数
+    drawLoadingCircle(WIDTH/2+40,HEIGHT/2-200,240,t/3.2,1000);//////////動く丸
+    drawLoadingCircle(WIDTH-HEIGHT/3,HEIGHT/3+290,HEIGHT/3-20,-t/3,1000);//////////動く丸
+    drawLoadingCircle(100,HEIGHT-60,150,t/2.6,1000);
     drawPrl({x1:60,y1:143,x2:648,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
     drawPrl({x1:125,y1:152,x2:378,y2:331,lineWidth:2,shadow:0,colSet:11,hoverColSet:11,hoverCounter:0,textSize:0.6,text:""});
     drawPrl({x1:572,y1:90,x2:WIDTH-25,y2:HEIGHT-100,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
-    drawAvator(avatorData[0],146,152,352,331,t,1);
+    drawPrl({x1:592,y1:140,x2:910,y2:400,shadow:0,colSet:1,hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,text:""});
+    drawPrl({x1:600,y1:348,x2:842,y2:395,shadow:0,colSet:1,trans:Math.min(1,Math.max(0,(t-selectPartsAni)/300-11/5)),hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,text:""});
+    for(let i = 0;i < 5;i++){
+        drawPrl({x1:467+i*23,y1:312,x2:487+i*23,y2:320,lineWidth:3,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
+        if(battleData.battle && Math.max(0,(battleData.win-battleData.battle*0.2*i)/(battleData.battle*0.2))>0) drawPrl({x1:467+i*23,y1:312,x2:469+i*23+18*Math.min(1,Math.max(0,(battleData.win-battleData.battle*0.2*i)/(battleData.battle*0.2))),y2:320,lineWidth:3,shadow:0,colSet:5,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
+    }
+    drawPrl({x1:690+selectParts*50,y1:120,x2:697+selectParts*50,y2:138,lineWidth:0.1,shadow:0,colSet:13,hoverColSet:13,hoverCounter:0,textSize:0.6,text:""});
+    drawAvator(avatorData[0],146,156,352,335,t,1);
     for(let i = 0;i < prls.length;i++){
         if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
     }
-    ctx2d.font="14pt " + JAPANESE_FONTNAME;
+    ctx2d.font="13.5pt " + JAPANESE_FONTNAME;
     ctx2d.fillStyle=getRGBA(0,0,1);
     ctx2d.fillText("名前",388,172);
     ctx2d.fillText("チーム",379,202);
+    if(avatorData[0].name.length>=8){
+        ctx2d.font="12pt " + JAPANESE_FONTNAME;
+    }
+    ctx2d.fillText(avatorData[0].name,458,172);
+    ctx2d.font="13.5pt " + JAPANESE_FONTNAME;
+    ctx2d.fillText(TEAM_TEXT[avatorData[0].team],471,202);
     ctx2d.fillText("LV.",120,360);
     ctx2d.fillText("EXP",210,360);
+    ctx2d.font="12pt " + JAPANESE_FONTNAME;
+    ctx2d.drawImage(coinImg,600,408,33,33);
+    ctx2d.fillText("所持コイン",630,430);
     ctx2d.font="10pt " + JAPANESE_FONTNAME;
+    ctx2d.fillText("マイル",785,430);
     ctx2d.fillText("kpm",367,242);
     ctx2d.fillText("acc",358,272);
     ctx2d.fillText("換算kpm",349,302);
@@ -354,21 +529,94 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText("総プレイ",374.5,462);
     ctx2d.fillText("総リタイア",367,487);
     ctx2d.font="14pt " + DIGIT_FONTNAME;
-    ctx2d.fillText("19",160,360);
-    ctx2d.fillText("325,532",270,360);
+    ctx2d.fillText(playData.level,160,360);
+    ctx2d.fillText(playData.exp,270,360);
     ctx2d.font="12pt " + DIGIT_FONTNAME;
-    ctx2d.fillText("9999.9",407,242);
-    ctx2d.fillText("100.0%",398,272);
-    ctx2d.fillText("9999.9",389,322);
-    ctx2d.fillText("9999",525,242);
-    ctx2d.fillText("9999",516,272);
-    ctx2d.fillText("100.0%",507,302);
-    ctx2d.fillText("100.0%",493.5,362);
-    ctx2d.fillText("100.0%",486,387);
-    ctx2d.fillText("100.0%",479.5,412);
-    ctx2d.fillText("999999999",442,437);
-    ctx2d.fillText("999999",464.5,462);
-    ctx2d.fillText("999999",457,487);
+    let inputStyle=playData.settings[0];
+    ctx2d.fillText(processShowData(battleData.kpm),407,242);
+    ctx2d.fillText(processShowData(Number((battleData.stroke-battleData.miss)/battleData.stroke*100).toFixed(1)) + "%",398,272);
+    if(inputStyle==0){//換算kpm
+        ctx2d.fillText("---",389,322);
+    } else{
+        ctx2d.fillText(processShowData(battleData.kpm)*COEF_R2K,389,322);//換算kpm 要修正
+    }
+    ctx2d.fillText(processShowData(battleData.win),525,242);
+    ctx2d.fillText(processShowData(battleData.battle-battleData.win),516,272);
+    ctx2d.fillText(processShowData(Number(battleData.win/battleData.battle*100).toFixed(1))+"%",507,302);
+    ctx2d.fillText(processShowData(Number(battleData.detail[0].win/battleData.detail[0].battle*100).toFixed(1))+"%",493.5,362);
+    ctx2d.fillText(processShowData(Number(battleData.detail[1].win/battleData.detail[1].battle*100).toFixed(1))+"%",486,387);
+    ctx2d.fillText(processShowData(Number(battleData.detail[2].win/battleData.detail[2].battle*100).toFixed(1))+"%",479.5,412);
+    ctx2d.fillText(processShowData(battleData.stroke),472,437,100);
+    ctx2d.fillText(processShowData(battleData.win + battleData.loes),464.5,462);
+    ctx2d.fillText(processShowData(battleData.esc),457,487);
+    ctx2d.fillText(playData.coin,775-ctx2d.measureText(playData.coin).width,430);
+    ctx2d.fillText(processShowData(getNextLvExp(playData)),160-ctx2d.measureText(processShowData(getNextLvExp(playData))).width/2,457);
+    if(getNextStarKPM(avatorData[0],battleData) >0){//KPM不足時
+        ctx2d.fillText(processShowData(getNextStarKPM(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarKPM(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
+    } else if(getNextStarStroke(avatorData[0],battleData)>0){//ストローク不足時
+        ctx2d.fillText(processShowData(getNextStarStroke(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarStroke(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
+    } else{
+        ctx2d.fillText(processShowData(getNextStarKPM(avatorData[0],battleData)),280-ctx2d.measureText(processShowData(getNextStarKPM(avatorData[0],battleData))).width/2,457);//円の内部のテキスト
+    }
+    ctx2d.font="8pt " + JAPANESE_FONTNAME;
+    ctx2d.fillText("次Lvまで",160-ctx2d.measureText("次Lvまで").width/2,435);
+    ctx2d.fillText("EXP",160-ctx2d.measureText("EXP").width/2,477);
+    ctx2d.fillText("次のスターまで",280-ctx2d.measureText("次のスターまで").width/2,435);
+    ctx2d.fillText("STROKE",280-ctx2d.measureText("STROKE").width/2,477);
+    for(let i = 0;i<10;i++){
+        ctx2d.fillStyle=getRGBA(0,0,Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5)));
+        if(i == avatorData[0].item[selectParts]){
+            ctx2d.fillStyle=getRGBA(0,900,t);
+        }
+        if((playData.item[selectParts][i]==0 || playData.item[selectParts][i] == 2) && ITEM_DATA[selectParts][i][1]!=-1){
+            ctx2d.fillText(ITEM_DATA[selectParts][i][0],675-i*6,156+i*20);
+            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,755-i*6,142+i*20,18,18);
+            ctx2d.fillText(ITEM_DATA[selectParts][i][1],775-i*6,156+i*20);
+            ctx2d.fillText("マイル",805-i*6,156+i*20);
+        } else if((playData.item[selectParts][i]==0 || playData.item[selectParts][i] == 2) && ITEM_DATA[selectParts][i][1]==-1){
+            ctx2d.fillText("？？？",675-i*6,156+i*20);
+            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,755-i*6,142+i*20,18,18);
+            ctx2d.fillText("- - -",775-i*6,156+i*20);
+            ctx2d.fillText("マイル",805-i*6,156+i*20);
+        }else{
+            ctx2d.fillText(ITEM_DATA[selectParts][i][0],675-i*6,156+i*20);
+            if(ITEM_DATA[selectParts][i][0]!="装備なし"){
+                ctx2d.fillText("購入済み",795-i*6,156+i*20);
+            }
+        }
+    }
+    ctx2d.fillStyle=getRGBA(0,0,Math.min(1,Math.max(0,(t-selectPartsAni)/300-11/5)));
+    ctx2d.fillText(ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].substr(0,19),620,366);
+    ctx2d.fillText(ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].substr(19,19),620,383);
+    drawStar(avatorData[0],165,368,20);
+
+    let teamGrad=ctx2d.createLinearGradient(454,201,464,191);
+    if(avatorData[0].team==0){
+        teamGrad.addColorStop(0,'rgba(100,10,10,1)');
+        teamGrad.addColorStop(0,'rgba(200,10,10,1)');
+    } else if(avatorData[0].team==1){
+        teamGrad.addColorStop(0,'rgba(10,10,100,1)');
+        teamGrad.addColorStop(0,'rgba(10,10,200,1)');
+    } else if(avatorData[0].team==2){
+        teamGrad.addColorStop(0,'rgba(130,100,10,1)');
+        teamGrad.addColorStop(0,'rgba(200,200,10,1)');
+    }
+    ctx2d.fillStyle=teamGrad;
+    ctx2d.strokeStyle=getRGBA(0,0,1);
+    ctx2d.lineWidth=2;
+    ctx2d.beginPath();
+    ctx2d.arc(459,196,6,0,Math.PI*2);
+    ctx2d.fill();
+    ctx2d.stroke();
+
+    ctx2d.strokeStyle=getRGBA(0,0,1);//　　円
+    ctx2d.lineWidth=4;
+    ctx2d.beginPath();
+    ctx2d.arc(160,450,52,0,Math.PI*2);
+    ctx2d.stroke();
+    ctx2d.beginPath();
+    ctx2d.arc(280,450,52,0,Math.PI*2);
+    ctx2d.stroke();
 }
 function drawAvator2(){ ///アバター管理画面の描画関数
     for(let i = 0;i < prls.length;i++){
@@ -414,6 +662,84 @@ function processMouseEvent(){ //平行四辺形ボタンに対してのホバー
         }
     }
 }
+function setItemButtons(parts){
+    for(let i = 0;i < prls.length;i++){
+        if(0<=prls[i].id && prls[i].id<=9){ //装着のボタンなら
+            if(playData.item[parts][prls[i].id] == 0){
+                if(ITEM_DATA[parts][prls[i].id][1] != -1){
+                    prls[i].text="選択";
+                } else{
+                    prls[i].text="- - -";
+                }
+                prls[i].colSet=0;
+                prls[i].hoverColSet=1;
+            } else if(playData.item[parts][prls[i].id] == 1){
+                prls[i].text="装備中";
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+            } else if(playData.item[parts][prls[i].id] == 2){
+                prls[i].text="購入";
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
+            } else if(playData.item[parts][prls[i].id] == 3){
+                prls[i].text="装備";
+                prls[i].colSet=14;
+                prls[i].hoverColSet=1;
+            }
+        }
+    }
+}
+function sendChangeRequest(parts,num){
+    if(playData.item[parts][num]==0 && ITEM_DATA[parts][num][1] != -1){//未所持　試着する
+        avatorData[0].item[parts] = num;
+        for(let i = 0;i < 10;i++) {
+            if(playData.item[parts][i] == 1) playData.item[parts][i] = 3;
+            if(playData.item[parts][i] == 2) playData.item[parts][i] = 0; 
+        }
+        playData.item[parts][num] = 2;
+    } else if(playData.item[parts][num] == 1){ //装備中時
+
+    } else if(playData.item[parts][num] == 2){ //試着時
+        //購入の可否を判断
+        if(playData.coin < ITEM_DATA[parts][num][1]){
+            msgBox.push({
+                text:"コインが足りません。",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){}}});
+        } else{
+            msgBox.push({
+                text:ITEM_DATA[parts][num][0] + "を購入しますか？",
+                ani:t,
+                btns1:{text:"YES",onClick:function(){
+                    for(let i = 0;i < 10;i++) {
+                        if(playData.item[parts][i] == 1) playData.item[parts][i] = 3;
+                        if(playData.item[parts][i] == 2) playData.item[parts][i] = 0; 
+                    }
+                    playData.item[parts][num] = 1;
+                    playData.coin-=ITEM_DATA[parts][num][1];
+                    avatorData[0].item[parts] = num;
+                    setAvatorData(0);
+                    saveData();
+                    msgBox.push({
+                        text:ITEM_DATA[parts][num][0] + "を購入しました！",
+                        ani:t,
+                        btns1:{text:"OK",onClick:function(){}}});
+                    sendChangeRequest(parts,num);
+                    setItemButtons(parts);
+                }},
+                btns2:{text:"NO",onClick:function(){}}});
+
+        }
+    } else if(playData.item[parts][num] == 3){ //持っているが未着用
+        avatorData[0].item[parts] = num;
+        for(let i = 0;i < 10;i++) {
+            if(playData.item[parts][i] == 1) playData.item[parts][i] = 3;
+            if(playData.item[parts][i] == 2) playData.item[parts][i] = 0; 
+        }
+        playData.item[parts][num] = 1;
+    } 
+    setItemButtons(parts);
+}
 function processClick(){
     for(var i = 0;i < prls.length;i++){
         if(prls[i].hoverCounter && sceneAni==0) {
@@ -438,6 +764,8 @@ function changeScene(prev,next){ //シーン遷移の関数
                     text:"AVA-TYPEへようこそ！　まずはアバターの作成を行いましょう。",
                     ani:t,
                     btns1:{text:"OK",onClick:function(){ //アバター作成の初期ウィンドウを表示
+                        resetData();
+                        saveData();
                         msgBox.push({createAvatorWindow:1,
                         text:"",
                         ani:t+200,
@@ -475,17 +803,73 @@ function changeScene(prev,next){ //シーン遷移の関数
         ctx2dImg.drawImage(backImg[5],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:14,textSize:0.8,text:"AVATOR"});
         prls.push({x1:430,y1:90,x2:663,y2:130,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"アバター管理",onClick:function(){nextScene=6,sceneAni=t}});
-        prls.push({x1:550,y1:HEIGHT-90,x2:720,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"SAVE",subText:"保存",onClick:function(){
-            nextScene=2,sceneAni=t,setAvatorData(0),saveData();}});
-        prls.push({x1:710,y1:HEIGHT-90,x2:880,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"CANCEL",subText:"キャンセル",onClick:function(){
-            msgBox.push({
-                text:"変更を保存せずにメニュー画面へ戻りますか？",
+        for(let i = 0;i < 5;i++){
+            prls.push({x1:675+i*50,y1:100,x2:722+i*50,y2:120,shadow:0,colSet:0+(i==0),hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,id:i+10,text:PARTS_TEXT[i],onClick:function(){
+                selectParts=i,selectPartsAni=t,setItemButtons(selectParts);
+                for(let j = 0;j < prls.length;j++){//選択中のタブの色を変える
+                    if(prls[j].id==10+i){
+                        prls[j].colSet=1;
+                    } else if(prls[j].id>=10 && prls[j].id<=14){
+                        if(playData.item[prls[j].id-10][avatorData[0].item[prls[j].id-10]] == 2){
+                            prls[j].colSet=14;
+                        } else {
+                            prls[j].colSet=0;
+                        }
+                    }
+                }
+
+            }});
+        }
+        for(let i = 0;i < 10;i++){
+            prls.push({x1:849-i*6,y1:146+i*20,x2:902-i*6,y2:162+i*20,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:1.2,id:i,text:"選択",onClick:function(){
+                sendChangeRequest(selectParts,i);
+            }});
+        }
+        setItemButtons(selectParts);
+        prls.push({x1:650,y1:HEIGHT-90,x2:826,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"BACK",subText:"戻る",onClick:function(){
+            /* 試着中のアイテムをチェック　*/
+            let selectingFlg=0;
+            for(let i = 0;i < 5;i++){
+                if(playData.item[i][avatorData[0].item[i]] == 2){
+                    selectingFlg=1;
+                }
+            }
+            if(selectingFlg) {
+                msgBox.push({
+                    text:"選択中の未購入アイテムがあります。デフォルト装備に戻し、メニューへ戻りますか？",
+                    ani:t,
+                    btns1:{text:"YES",onClick:function(){
+                        for(let i = 0;i < 5;i++){
+                            if(playData.item[i][avatorData[0].item[i]] == 2){
+                                playData.item[i][avatorData[0].item[i]]=0;
+                                playData.item[i][0]=1;
+                                avatorData[0].item[i] = 0;
+                            }
+                        }
+                        nextScene=2,sceneAni=t,setAvatorData(0),saveData();
+                    }},
+                    btns2:{text:"NO",onClick:function(){}}});
+            } else {
+                nextScene=2,sceneAni=t,setAvatorData(0),saveData();}}
+            });
+        prls.push({x1:589,y1:157,x2:629,y2:177,shadow:0,lineWidth:2,colSet:13,hoverColSet:11,hoverCounter:0,textSize:1,text:"変更",onClick:function(){
+            msgBox.push({changeNameWindow:1,
+                text:"",
                 ani:t,
-                btns1:{text:"OK",onClick:function(){nextScene=2,sceneAni=t;
-                setAvatorData(1),
-                saveData()}},
-                btns2:{text:"CANCEL",onClick:function(){return 0;}}})
-        }});
+                flg:0});}});
+        prls.push({x1:580,y1:187,x2:620,y2:207,shadow:0,lineWidth:2,colSet:13,hoverColSet:11,hoverCounter:0,textSize:1,text:"変更",onClick:function(){
+            if(playData.item[4][2]!=0){ //アイテムを持っているとき
+                msgBox.push({changeTeamWindow:1,
+                text:"",
+                ani:t,
+                flg:0});
+            } else{　//持っていない時
+                msgBox.push({
+                    text:"所属チームを変更するには、アイテム「鞍替えの紋章」が必要です。",
+                    ani:t,
+                    btns1:{text:"OK",onClick:function(){}}})
+            }}});
+    
     } else if(next==6){//アバター管理
         ctx2dImg.drawImage(backImg[0],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.8,text:"AVATOR"});
@@ -499,10 +883,10 @@ function changeScene(prev,next){ //シーン遷移の関数
             msgBox.push({
                 text:"変更を保存せずにメニュー画面へ戻りますか？",
                 ani:t,
-                btns1:{text:"OK",onClick:function(){nextScene=2,sceneAni=t;
+                btns1:{text:"YES",onClick:function(){nextScene=2,sceneAni=t;
                 for(let i = 0;i < 9;i++){playData.settings[i] = previousSettings[i]};
                 saveData()}},
-                btns2:{text:"CANCEL",onClick:function(){return 0;}}})
+                btns2:{text:"NO",onClick:function(){return 0;}}})
         }});
         for(let i = 0; i < 9;i++){
             let offset= 10*(i >= 3) + 10*(i>=8);

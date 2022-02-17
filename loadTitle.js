@@ -34,7 +34,10 @@ function getRGBA(col,T,t,r,g,b){
         return "rgba("  + r + "," + g + "," + b + ","+t+")";
     }
 }
-
+function processShowData(data){//データ表示時にNaNなどが表示されないようにする関数
+    if(isNaN(data) || (data == undefined) || (data == null)) return "---";
+    return data;
+}
 function drawLoadingCircle(x,y,size,t,speed){
     ctx2d.lineWidth=size*0.08;
     var ani = [];
@@ -84,8 +87,23 @@ function init() {
     backImg[3].src="./img/back_win.jpeg";
     backImg[4].src="./img/back_lose.jpeg";
     backImg[5].src="./img/back_avator.jpeg";
+    coinImg=new Image();
+    coinImg.src="./img/coin.png";
+    coinImg.onload=()=>{imgLoadedCnt++;};
+    for(var i = 0;i < 7;i++) starImg[i] = new Image(),starImg[i].src="./img/star_" + i + ".png";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
-
+    for(var i = 0;i < starImg.length;i++) starImg[i].onload=()=>{imgLoadedCnt++};
+    for(var i  = 0;i < 7;i++){
+        otherPartsImg[i] = new Image();
+        if(i ==0){
+            otherPartsImg[i].src = "./img/crown_silver.png";
+        }  else if(i == 1){
+            otherPartsImg[i].src = "./img/crown_gold.png";
+        }else{
+            otherPartsImg[i].src = "./img/sword" + (i-2) + ".png";
+        }
+        otherPartsImg[i].onload=()=>{imgLoadedCnt++;};
+    }
     tick();
 
     function tick() {
@@ -99,7 +117,10 @@ function init() {
         ctx2d.fillRect(0,0,WIDTH,HEIGHT);
     
         ctx2d.font="24px " + MAIN_FONTNAME;
-        if(loadingCount){
+        if(scene!=0){
+            ctx2d.fillStyle=getRGBA(2,0,1);
+            ctx2d.fillText("ERROR",(WIDTH-ctx2d.measureText("ERROR").width)/2,HEIGHT/2);
+        }else if(loadingCount){
             ctx2d.fillStyle=getRGBA(2,0,1);
             ctx2d.fillText("LOADED!",(WIDTH-ctx2d.measureText("LOADED!").width)/2,HEIGHT/2);
         } else{
@@ -108,6 +129,6 @@ function init() {
         }
         drawLoadingCircle(WIDTH/2,HEIGHT/2,100,t,1000);
         if(DEBUG_MODE) SCENE_ANI=100;
-        if(sceneAni || performance.now() - sceneAni < SCENE_ANI*2.5) requestAnimationFrame(tick);
+        if(imgLoadedCnt!=IMG_CNT || sceneAni || performance.now() - sceneAni < SCENE_ANI*2.5) requestAnimationFrame(tick);
     }
 }

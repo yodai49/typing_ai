@@ -75,3 +75,17 @@ font-display: swap;
     font-family:"Stick",sans-serif;
     transition:all 0.3s;
 }
+.nameBoxChange{
+    z-index:3;
+    position:absolute;
+    left:calc(50% - 100px);
+    top:246px;
+    width:200px;
+    font-size:14pt;
+    display:none;
+    background-color:black;
+    color:white;
+    padding:1px;
+    font-family:"Stick",sans-serif;
+    transition:all 0.3s;
+}
