@@ -92,9 +92,10 @@ function getRome(s,noOpt){
             if(afterS.substr(afterS.length-1,1) == "*"){//「ん」の場合
                 if(i == s.length-1){//末尾の「ん」はnが2回必要
                     afterS=afterS.substr(0,afterS.length-1) + "nn";
-                } else{//その他  あ行orな行or「ん」が続くなら2回必要
+                } else{//その他  あ行orな行orや行or「ん」が続くなら2回必要
                     if(s[i+1] == "あ" || s[i+1] == "い" || s[i+1] == "う" || s[i+1] == "え" || s[i+1] == "お" || s[i+1] == "ん"
-                    || s[i+1] == "な" || s[i+1] == "に" || s[i+1] == "ぬ" || s[i+1] == "ね" || s[i+1] == "の"){
+                    || s[i+1] == "な" || s[i+1] == "に" || s[i+1] == "ぬ" || s[i+1] == "ね" || s[i+1] == "の"
+                    || s[i+1] == "や" || s[i+1] == "ゆ" || s[i+1] == "よ"){
                         afterS=afterS.substr(0,afterS.length-1) + "nn";
                     } else{
                         afterS=afterS.substr(0,afterS.length-1) + "n";
@@ -175,17 +176,71 @@ function checkOpt(targetStr,typingStr,typistMode){
             }
         }
     }
-    if(targetStr.substr(typingStr.length-1,1) == "x"){ /// nn>xn
-        if(typingStr.substr(typingStr.length-1,1) == "n"){
+    if(targetStr.substr(typingStr.length-1,1) == "n"){ /// nn>xn
+        if(typingStr.substr(typingStr.length-1,1) == "x"){
             if(typingStr.substr(typingStr.length-1,1) =="n" && !(targetStr.substr(typingStr.length,1) == "a"||targetStr.substr(typingStr.length,1) == "i"||targetStr.substr(typingStr.length,1) == "u"||targetStr.substr(typingStr.length,1) == "e"||targetStr.substr(typingStr.length,1) == "o")){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "x" + targetStr.substr(typingStr.length)};
             }
         }
     }
-    //syo>sho
-    //ti>chi
-    //tya>cha,cya
-    //zya>jya,ja
+    if(targetStr.substr(typingStr.length-1,1) == "y"){ /// sya>sha
+        if(typingStr.substr(typingStr.length-1,1) == "h"){
+            if(targetStr.substr(typingStr.length-2,1) == "s"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "h" + targetStr.substr(typingStr.length)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "t"){ /// ti>chi
+        if(typingStr.substr(typingStr.length-1,1) == "c"){
+            if(targetStr.substr(typingStr.length,1) == "i"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "ch" + targetStr.substr(typingStr.length)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "t"){ /// tya>cha
+        if(typingStr.substr(typingStr.length-1,1) == "c"){
+            if(targetStr.substr(typingStr.length,1) == "y"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "ch" + targetStr.substr(typingStr.length+1)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "h"){ /// cha>cya
+        if(typingStr.substr(typingStr.length-1,1) == "y"){
+            if(targetStr.substr(typingStr.length-2,1) == "c" && (typingStr.substr(typingStr.length,1) != "i")){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "y" + targetStr.substr(typingStr.length)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "h"){ ///  hu>fu
+        if(typingStr.substr(typingStr.length-1,1) == "f"){
+            if(typingStr.substr(typingStr.length,1) != "u"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "f" + targetStr.substr(typingStr.length)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "i"){ //si>shi
+        if(typingStr.substr(typingStr.length-1,1) == "h"){
+            if(targetStr.substr(typingStr.length-2,1) == "s"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "h" + targetStr.substr(typingStr.length-1)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "z"){     //zya>ja
+        if(typingStr.substr(typingStr.length-1,1) == "j"){
+            if(targetStr.substr(typingStr.length,1) == "y" && (targetStr.substr(typingStr.length+1,1) != "i")){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "j" + targetStr.substr(typingStr.length+1)};
+            } else if(targetStr.substr(typingStr.length,1) == "y" && (targetStr.substr(typingStr.length+1,1) == "i")){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "j" + targetStr.substr(typingStr.length)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-2,1) == "j"){     //ja>jya
+        if(typingStr.substr(typingStr.length-1,1) == "y"){
+            if(targetStr.substr(typingStr.length,1) == "a" ||targetStr.substr(typingStr.length,1) == "u" ||targetStr.substr(typingStr.length,1) == "e" ||targetStr.substr(typingStr.length,1) == "o"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "y" + targetStr.substr(typingStr.length-1)};
+            }
+        }
+    }
     //cca cci jjiなど
     return {isMiss:1,newTargetStr:targetStr};//それ以外なら不受理（最適化未実装)
 }
