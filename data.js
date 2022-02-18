@@ -10,7 +10,7 @@ var otherPartsImg=[];//冠、剣の画像
 var coinImg,arrowImg;//コインと矢印の画像
 var firstLaunchFlg=0;//初回起動を検知するフラグ
 var selectParts=0,selectPartsAni=0;//着せかえ画面で選択中のパーツを保存
-var battleAni=0,enemyAvatorData;
+var battleAni=0,enemyAvatorData,battleResult,battleStatus=0,typedText="",enemyTypedText="";//バトルデータの保持用 battlestatusは0ならアニメーション中、1ならカウントダウン中、2ならゲーム中、3ならゲームの待機中、4なら終了アニメーション中
 var selectBattleAvator=0,selectBattleAvatorClass=0,selectBattleAvatorAni=0;//選択中のバトルアバター
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
@@ -207,14 +207,14 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
                 dailyMission.detail[i].achieve=dailyMission.detail[i].max*2;
                 dailyMission.detail[i].require=(Math.floor(myRand[i] / 10)%6)/10+0.7;
                 dailyMission.detail[i].achieve*=((dailyMission.detail[i].require*2)-0.4);
-                dailyMission.detail[i].require*=myAvatorData.kpm;
+                dailyMission.detail[i].require*=battleData.kpm;
             } else if(myRand[i]%42 <= 28){
                 dailyMission.detail[i].type = 7;
                 dailyMission.detail[i].max=myRand[i] % 5+2;
                 dailyMission.detail[i].achieve=dailyMission.detail[i].max*2.5;
                 dailyMission.detail[i].require=(Math.floor(myRand[i] / 10)%6)/10+0.7;
                 dailyMission.detail[i].achieve*=((dailyMission.detail[i].require*2)-0.4);
-                dailyMission.detail[i].require*=myAvatorData.kpm;
+                dailyMission.detail[i].require*=battleData.kpm;
             } else if(myRand[i]%42 <= 31){
                 dailyMission.detail[i].type = 8;
                 dailyMission.detail[i].max=myRand[i] % 5+2;
@@ -226,13 +226,13 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
                 dailyMission.detail[i].max=1;
                 dailyMission.detail[i].require=(myRand[i] % 4)*0.1+0.7;
                 dailyMission.detail[i].achieve=10*(1+(dailyMission.detail[i].max-0.7)*2.5);
-                dailyMission.detail[i].require*=myAvatorData.kpm;
+                dailyMission.detail[i].require*=battleData.kpm;
             } else if(myRand[i]%42 <= 34){
                 dailyMission.detail[i].type = 10;
                 dailyMission.detail[i].max=1;
                 dailyMission.detail[i].require=(myRand[i] % 4)*0.1+0.7;
                 dailyMission.detail[i].achieve=20*(1+(dailyMission.detail[i].max-0.7)*2.5);
-                dailyMission.detail[i].require*=myAvatorData.kpm;
+                dailyMission.detail[i].require*=battleData.kpm;
             } else if(myRand[i]%42 <= 36){
                 dailyMission.detail[i].type = 11;
                 dailyMission.detail[i].max=(myRand[i] % 13)*10+30;
@@ -270,7 +270,7 @@ function saveData(){//データをローカルストレージへ保存する関�
 }
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
     if(avatorData==null || force) avatorData=avatorData = [{name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:0,typingData:{kpm:0},kind:0},{name:"NoName",team:0,star:0,item:[0,0,0,0,0],style:1,typingData:{kpm:0},kind:0}];
-    if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,1,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
+    if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,kpm:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) localAvator = [ //デフォルトアバターのデータ
     [{name:"SAMPLE1",team:3,star:0,level:5,item:[5,6,0,0,0],style:0,typingData:{kpm:124,kpmR:124,stroke:17,miss:1},kind:0},//kpmは換算　kpmRは実際のkpm
