@@ -10,7 +10,8 @@ var otherPartsImg=[];//冠、剣の画像
 var coinImg,arrowImg;//コインと矢印の画像
 var firstLaunchFlg=0;//初回起動を検知するフラグ
 var selectParts=0,selectPartsAni=0;//着せかえ画面で選択中のパーツを保存
-var battleAni=0,enemyAvatorData,battleResult,battleStatus=0,typedText="",enemyTypedText="";//バトルデータの保持用 battlestatusは0ならアニメーション中、1ならカウントダウン中、2ならゲーム中、3ならゲームの待機中、4なら終了アニメーション中
+var battleAni=0,enemyAvatorData,battleResult,battleStatus=0,typedText="",enemyTypedText="",totalLossTime=0,lossTimeT=0,lossTimeSum=0,getWord=0;//バトルデータの保持用 battlestatusは0ならアニメーション中、1ならカウントダウン中、2ならゲーム中、3ならゲームの待機中、4なら終了アニメーション中
+var missAni=0,missChar=0,enemyMissAni=0,enemyMissChar=0,lastKpm=0,wordT=0,lastKpmE=0;//missAniはミスをした時のtを格納　missCharはミスした位置
 var selectBattleAvator=0,selectBattleAvatorClass=0,selectBattleAvatorAni=0;//選択中のバトルアバター
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
@@ -35,12 +36,18 @@ function getNextLvExp(myPlayData,ratioMode){ //次レベルまでの必要EXPを
     }
 }
 function getNextStarKPM(myAvatorData,myBattleData,ratioMode){ //次のスターまでの必要KPMを計算する
-    let star=myAvatorData.star;
+    // 2つの入力方式のうち高い方の数値を採用 ただしその方式における入力数が2000未満なら他を採用
+    //返却するのは構造体　{style:入力方式　value:値}　ratioMode==0の時、値は必要なKPMの値をそのまま返す
+    //myAvatorDataは配列で渡す！
+    let star=myAvatorData[0].star;
     if(star==29) return "MAX_LEVEL";
+    let style=1;
+    if(KPM_STAR[0][star+1]-myAvatorData[0].typingData.kpm <KPM_STAR[1][star+1]- myAvatorData[1].typingData.kpm || isNaN(myAvatorData[1].typingData.kpm)) style=0;
+    if(myAvatorData[style].typingData.stroke < 2000) style=1-style;
     if(ratioMode){
-        return Math.min(1,myBattleData.kpm/KPM_STAR[star+1]);
+        return {value:Math.min(1,myAvatorData[style].typingData.kpm/KPM_STAR[style][star+1]),style:style};
     } else{
-        return Math.max(0,KPM_STAR[star+1]-myBattleData.kpm);
+        return {value:Math.max(0,KPM_STAR[style][star+1]),style:style};
     }
 }
 function getNextStarStroke(myAvatorData,myBattleData,ratioMode){ //次のスターまでの必要打鍵数を計算する
@@ -67,6 +74,8 @@ function getRGBA(col,T,t,r,g,b){
                     [180,180,180],//灰色　９
                     [120,205,120], //黄緑10
                     [100,0,0],//くらい赤 11
+                    [210,140,0],//明るい黄色 12
+                    []
                 ];
     if(col>=0){
         r=COLSET[col][0];
@@ -80,7 +89,7 @@ function getRGBA(col,T,t,r,g,b){
     }
 }
 function processShowData(data){//データ表示時にNaNなどが表示されないようにする関数
-    if(isNaN(data) || (data == undefined) || (data == null)) return "---";
+    if(isNaN(data) || (data == undefined) || (data == null) || (data == -1)) return "---";
     return data;
 }
 function getPseudoRandom(max,mode){//現在の日付から疑似乱数を返す //maxは最大値　//modeは乱数のモード
@@ -269,9 +278,9 @@ function saveData(){//データをローカルストレージへ保存する関�
     firstLaunchFlg=0;
 }
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
-    if(avatorData==null || force) avatorData=avatorData = [{name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:0,typingData:{kpm:0},kind:0},{name:"NoName",team:0,star:0,item:[0,0,0,0,0],style:1,typingData:{kpm:0},kind:0}];
+    if(avatorData==null || force) avatorData=avatorData = [{name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:0,typingData:{kpm:-1,stroke:0},kind:0,cp:0},{name:"NoName",team:0,star:0,item:[0,0,0,0,0],style:1,typingData:{kpm:-1,stroke:0},kind:0,cp:0}];
     if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
-    if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,kpm:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
+    if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) localAvator = [ //デフォルトアバターのデータ
     [{name:"SAMPLE1",team:3,star:0,level:5,item:[5,6,0,0,0],style:0,typingData:{kpm:124,kpmR:124,stroke:17,miss:1},kind:0},//kpmは換算　kpmRは実際のkpm
     {name:"SAMPLE2",team:0,star:0,level:8,item:[4,3,0,0,0],style:1,typingData:{kpm:179,kpmR:124,stroke:18,miss:1},kind:0},
