@@ -75,14 +75,14 @@ const KEY_KANA_SET=[
     ["か","tT"],["き","gG"],["く","hH"],["け",":*"],["こ","bB"],
     ["さ","xX"],["し","dD"],["す","rR"],["せ","pP"],["そ","cC"],
     ["た","qQ"],["ち","aA"],["つ","z"],["て","wW"],["と","sS"],
-    ["な","uU"],["に","iI"],["ぬ","1!"],["ね",",<"],["の","kK"],
+    ["な","uU"],["に","iI"],["ぬ","1!"],["ね",","],["の","kK"],
     ["は","fF"],["ひ","vV"],["ふ","2\""],["へ","^~"],["ほ","-="],
     ["ま","jJ"],["み","nN"],["む","]}"],["め","/?"],["も","mM"],
     ["や","7"],["ゆ","8"],["よ","9"],["゛","\@\`"],["゜","[{"],
-    ["ら","oO"],["り","lL"],["る",".>"],["れ",";+"],["ろ","_"],
+    ["ら","oO"],["り","lL"],["る","."],["れ",";+"],["ろ","_"],
     ["わ","0"],["を","0"],["ん","yY"],["ー","¥|"],
     ["ぁ","A"],["ぃ","E"],["ぅ","$"],["ぇ","%"],["ぉ","&"],
-    ["ゃ","'"],["ゅ","("],["ょ",")"],["っ","Z"]]
+    ["ゃ","'"],["ゅ","("],["ょ",")"],["っ","Z"],["、","<"],["。",">"]]
 const DIATRIC_SET=[
     ["がぎぐげござじずぜぞだぢづでどばびぶべぼ","かきくけこさしすせそたちつてとはひふへほ"],
     ["ぱぴぷぺぽ","はひふへほ"]
@@ -198,7 +198,7 @@ function checkOpt(targetStr,typingStr,typistMode){
         if(typingStr.substr(typingStr.length-1,1) == "c"){
             if(targetStr.substr(typingStr.length,1) == "a" || targetStr.substr(typingStr.length,1) == "u" || targetStr.substr(typingStr.length,1) == "o"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "c" + targetStr.substr(typingStr.length)};
-            } else if (targetStr.substr(typingStr.length,1) == "k" && (targetStr.substr(typingStr.length+1,1) == "a" || targetStr.substr(typingStr.length+1,1) == "u" || targetStr.substr(typingStr.length+1,1) == "o")){
+            } else if (typingStr.substr(typingStr.length-1,1) != "k" && targetStr.substr(typingStr.length,1) == "k" && (targetStr.substr(typingStr.length+1,1) == "a" || targetStr.substr(typingStr.length+1,1) == "u" || targetStr.substr(typingStr.length+1,1) == "o")){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "cc" + targetStr.substr(typingStr.length+1)};
             }
         }
@@ -207,7 +207,7 @@ function checkOpt(targetStr,typingStr,typistMode){
         if(typingStr.substr(typingStr.length-1,1) == "c"){
             if(targetStr.substr(typingStr.length,1) == "i" || targetStr.substr(typingStr.length,1) == "e"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "c" + targetStr.substr(typingStr.length)};
-            } else if (targetStr.substr(typingStr.length,1) == "s" && (targetStr.substr(typingStr.length+1,1) == "i" || targetStr.substr(typingStr.length+1,1) == "e")){
+            } else if (typingStr.substr(typingStr.length-1,1) != "s" && targetStr.substr(typingStr.length,1) == "s" && (targetStr.substr(typingStr.length+1,1) == "i" || targetStr.substr(typingStr.length+1,1) == "e")){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "cc" + targetStr.substr(typingStr.length+1)};
             }
         }
@@ -216,7 +216,7 @@ function checkOpt(targetStr,typingStr,typistMode){
         if(typingStr.substr(typingStr.length-1,1) == "j"){
             if(targetStr.substr(typingStr.length,1) == "i"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "j" + targetStr.substr(typingStr.length)};
-            } else if (targetStr.substr(typingStr.length,1) == "z" && targetStr.substr(typingStr.length+1,1) == "i"){
+            } else if (typingStr.substr(typingStr.length-1,1) != "z" && targetStr.substr(typingStr.length,1) == "z" && targetStr.substr(typingStr.length+1,1) == "i"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "jj" + targetStr.substr(typingStr.length+1)};
             }
         }
@@ -273,9 +273,9 @@ function checkOpt(targetStr,typingStr,typistMode){
             }
         }
     }
-    if(typistMode) return {isMiss:1,newTargetStr:targetStr};
-
+    if(typistMode) return {isMiss:1,newTargetStr:targetStr};//タイピストモードで受理するものはここまで
     //非効率なものの処理 sya→silyaなど　あとで書く
+
 
     return {isMiss:1,newTargetStr:targetStr};//それ以外なら不受理（最適化未実装)
 }
