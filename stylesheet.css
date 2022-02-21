@@ -56,10 +56,22 @@ font-display: swap;
     width:100%;
 }
 .gameCanvas1{
-    z-index:2;
+    z-index:10;
 }
-.gameCanvas2{
-    z-index:1;
+.gameCanvas3{
+    z-index:30;
+}
+.gameCanvas2_5{
+    z-index:25;
+}
+.gameCanvas3_5{
+    z-index:35;
+}
+.gameCanvas4{
+    z-index:40;
+}
+.gameCanvas2_3{
+    z-index:23;
 }
 .nameBoxCreate{
     z-index:3;

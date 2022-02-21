@@ -5,7 +5,7 @@ const DIGIT_FONTNAME = "Quantico";
 const JAPANESE_FONTNAME = "Stick";
 const TYPING_FONTNAME="sans-serif";
 const DEBUG_MODE=3;//数字の番号のシーンからスタート
-const IMG_CNT = 22;//読みこむイメージの総数
+const IMG_CNT = 24;//読みこむイメージの総数
 const COEF_R2K=1.5;//ローマ字からカナへのkpm変換の係数
 const TEAM_BONUS = 25;//チームのボーナス値　%で指定
 var SCENE_ANI=400; //ロード終了後のアニメーション時間(DEBUGMODEによって変更するためvarで宣言)
@@ -15,10 +15,12 @@ const TEAM_TEXT=["RED","BLUE","YELLOW"];
 const KPM_STAR=[[0,0,0,0,0,150,0,0,0,0,250,0,0,0,0,400,0,0,0,0,550,0,0,0,0,700,0,0,0,0],[0,0,0,0,0,100,0,0,0,0,180,0,0,0,0,280,0,0,0,0,380,0,0,0,0,500,0,0,0,0]];//スターごとの必要KPM
 const STROKE_STAR=[0,1000,3000,5000,8000,12000,18000,25000,33000,42000,55000,65000,77000,88500,100000,120000,150000,185000,240000,300000,320000,350000,390000,440000,500000,580000,670000,780000,890000,1000000];
 const PARTS_TEXT=["HEAD","BODY1","BODY2","LIMBS","OTHER"];
-const BONUS_NAME=["ワードボーナス","正確性ボーナス","チームボーナス","アイテムボーナス","アバターボーナス"];
+PARTS_TEXT_SHORT=["H","1","2","L","O"];
+const BONUS_NAME=["ワードボーナス","正確性ボーナス","チームボーナス","アイテムボーナス","エネミーボーナス"];
 const RANK_TEXT=["S","A","B","C","D","E"];
 const AVATOR_CLASS_TEXT = ["COM","EVENT","USER1","USER2","USER3"];
-const RESULT_TEXT=[["kpm","acc","今回のCP"],["獲得ワード","損失ワード","打鍵数"]];
+const AVATOR_KIND_TEXT=["USER","EVENT","COM"];
+const RESULT_TEXT=[["kpm","acc","新しいCP"],["獲得ワード","損失ワード","打鍵数"]];
 const SETTING_NAME=[
     "入力方法",
     "非効率な最適化",

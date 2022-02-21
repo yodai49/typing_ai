@@ -2,12 +2,14 @@ var t = 0; //グローバルタイム 毎ターンperformance.now()を格納
 var scene=0;//シーン遷移  0:ローディング画面　1:タイトル画面
 var nextScene=0;//次のシーン
 var sceneAni=0;//シーンのアニメーション
-var ctx2d,ctx2dImg;//キャンバス（メイン）とキャンバス（背景画像）
+var ctx2d,ctx2dImg,ctx2dSt,ctx2dCr,ctx2dSt2,ctx2d2;//キャンバス（メイン）とキャンバス（背景画像）とキャンバス（静止用）
+// ctx2d 動く一番上　＞　ctx2dSt2 静止の一番上　＞　ctx2d メインキャンバス　＞　ctx2dSt 静止用　＞　ctx2dCr　サークル用　＞　ctx2dImg　背景用　の順番に積み上げ
 var mouseX=0,mouseY=0,clickX=0,clickY=0,mouseStatus=0;
 var backImg= [],imgLoadedCnt=0;//背景イメージ格納用
 var starImg=[];//スターの画像格納用
 var otherPartsImg=[];//冠、剣の画像
 var coinImg,arrowImg;//コインと矢印の画像
+var pWinImg,kWinImg;
 var firstLaunchFlg=0;//初回起動を検知するフラグ
 var selectParts=0,selectPartsAni=0;//着せかえ画面で選択中のパーツを保存
 var battleAni=0,enemyAvatorData,battleResult,battleStatus=0,typedText="",enemyTypedText="",totalLossTime=0,lossTimeT=0,lossTimeSum=0,getWord=0;//バトルデータの保持用 battlestatusは0ならアニメーション中、1ならカウントダウン中、2ならゲーム中、3ならゲームの待機中、4なら終了アニメーション中
@@ -21,19 +23,28 @@ var localAvator;
 var todayBattleData;
 var dailyMission;
 
-function getNextLvExp(myPlayData,ratioMode){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
+function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
     let lv=myPlayData.level;
     let tempExp=8,prevTempExp=0;
+    if(offSet == undefined || isNaN(offSet)) offSet=0;//アニメーション用のズレ
     for(let i = 2;i <= lv;i++){
         prevTempExp=tempExp;
         tempExp=Math.floor(tempExp*1.05+(i+1)*10);
     }
     if(ratioMode){
         if(lv==99) return 1;
-        return Math.min(1,Math.max(0,(myPlayData.exp-prevTempExp)/(tempExp-prevTempExp)));
+        return Math.min(1,Math.max(0,(myPlayData.exp-prevTempExp-offSet)/(tempExp-prevTempExp)));
     } else{
-        return tempExp-myPlayData.exp;
+        return tempExp-myPlayData.exp+offSet;
     }
+}
+function getLvExp(lv){//レベルだけから必要Expを計算する関数
+    let tempExp=8,prevTempExp=0;
+    for(let i = 2;i <= lv;i++){
+        prevTempExp=tempExp;
+        tempExp=Math.floor(tempExp*1.05+(i+1)*10);
+    }
+    return tempExp;
 }
 function getNextStarKPM(myAvatorData,myBattleData,ratioMode){ //次のスターまでの必要KPMを計算する
     // 2つの入力方式のうち高い方の数値を採用 ただしその方式における入力数が2000未満なら他を採用
@@ -74,9 +85,9 @@ function getRGBA(col,T,t,r,g,b){
                     [180,180,180],//灰色　９
                     [120,205,120], //黄緑10
                     [100,0,0],//くらい赤 11
-                    [210,140,0],//明るい黄色 12
+                    [210,180,0],//明るい黄色 12
                     [20,20,80],//暗い青　13
-                    [200,150,17],//黄土２ 14
+                    [200,50,17],//オレンジ 14
                     []
                 ];
     if(col>=0){

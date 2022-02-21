@@ -7,42 +7,43 @@ window.addEventListener('load', init); //ロードイベント登録
 window.addEventListener('DOMContentLoaded', function(){ //クリックイベント登録
     ctx2d=document.getElementById("myCanvas").getContext("2d");
     ctx2dImg=document.getElementById("myCanvas2").getContext("2d");
-    window.addEventListener("keydown", function(e){
-
-    });
+    ctx2dSt=document.getElementById("myCanvas2_5").getContext("2d");
+    ctx2dCr=document.getElementById("myCanvas2_3").getContext("2d");
+    ctx2dSt2=document.getElementById("myCanvas3_5").getContext("2d");
+    ctx2d2=document.getElementById("myCanvas4").getContext("2d");
 });
 function drawLoadingCircle(x,y,size,t,speed,trans){
     if(trans == undefined) trans=1;
-    ctx2d.lineWidth=size*0.08;
+    ctx2dCr.lineWidth=size*0.08;
     var ani = [];
     for(var i = 0;i < 5;i++){
         ani[i] = (t/speed+0.5*Math.sin((t+i*130)/speed))*Math.PI;
     }
 
-    ctx2d.strokeStyle=getRGBA(3,0,trans*0.8);
-    ctx2d.beginPath();
-    ctx2d.arc(x,y,size,Math.PI*0.3/10+ani[0],Math.PI*1/2+ani[0]);
-    ctx2d.stroke();
+    ctx2dCr.strokeStyle=getRGBA(3,0,trans*0.8);
+    ctx2dCr.beginPath();
+    ctx2dCr.arc(x,y,size,Math.PI*0.3/10+ani[0],Math.PI*1/2+ani[0]);
+    ctx2dCr.stroke();
 
-    ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(4,0,trans*0.8);
-    ctx2d.arc(x,y,size,Math.PI*(1/2+0.8/10)+ani[1],Math.PI*(1-0.5/10)+ani[1]);
-    ctx2d.stroke();
+    ctx2dCr.beginPath();
+    ctx2dCr.strokeStyle=getRGBA(4,0,trans*0.8);
+    ctx2dCr.arc(x,y,size,Math.PI*(1/2+0.8/10)+ani[1],Math.PI*(1-0.5/10)+ani[1]);
+    ctx2dCr.stroke();
 
-    ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(5,0,trans*0.8);
-    ctx2d.arc(x,y,size,Math.PI+ani[2],Math.PI*(2-0.2/5)+ani[2]);
-    ctx2d.stroke();
+    ctx2dCr.beginPath();
+    ctx2dCr.strokeStyle=getRGBA(5,0,trans*0.8);
+    ctx2dCr.arc(x,y,size,Math.PI+ani[2],Math.PI*(2-0.2/5)+ani[2]);
+    ctx2dCr.stroke();
 
-    ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(6,0,trans*0.8);
-    ctx2d.arc(x,y,size*0.84,Math.PI*0.8/5+ani[3],Math.PI*3/5+ani[3]);
-    ctx2d.stroke();
+    ctx2dCr.beginPath();
+    ctx2dCr.strokeStyle=getRGBA(6,0,trans*0.8);
+    ctx2dCr.arc(x,y,size*0.84,Math.PI*0.8/5+ani[3],Math.PI*3/5+ani[3]);
+    ctx2dCr.stroke();
 
-    ctx2d.beginPath();
-    ctx2d.strokeStyle=getRGBA(7,0,trans*0.8);
-    ctx2d.arc(x,y,size*0.84,Math.PI*3.8/5+ani[4],Math.PI*8/5+ani[4]);
-    ctx2d.stroke();
+    ctx2dCr.beginPath();
+    ctx2dCr.strokeStyle=getRGBA(7,0,trans*0.8);
+    ctx2dCr.arc(x,y,size*0.84,Math.PI*3.8/5+ani[4],Math.PI*8/5+ani[4]);
+    ctx2dCr.stroke();
 }
 
 
@@ -67,6 +68,12 @@ function init() {
     arrowImg=new Image();
     arrowImg.src="./img/uparrow.png";
     arrowImg.onload=()=>{imgLoadedCnt++};
+    pWinImg=new Image();
+    pWinImg.src="./img/pwin.png";
+    pWinImg.onload=()=>{imgLoadedCnt++};
+    kWinImg=new Image();
+    kWinImg.src="./img/kwin.png";
+    kWinImg.onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < 7;i++) starImg[i] = new Image(),starImg[i].src="./img/star_" + i + ".png";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < starImg.length;i++) starImg[i].onload=()=>{imgLoadedCnt++};
