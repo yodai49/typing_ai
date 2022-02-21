@@ -75,6 +75,8 @@ function getRGBA(col,T,t,r,g,b){
                     [120,205,120], //黄緑10
                     [100,0,0],//くらい赤 11
                     [210,140,0],//明るい黄色 12
+                    [20,20,80],//暗い青　13
+                    [200,150,17],//黄土２ 14
                     []
                 ];
     if(col>=0){
@@ -144,7 +146,7 @@ function getMissionText(myMission){//ミッションのテキストを返す関�
     }
 }
 function setDailyMission(){ //その日のデイリーミッションをセットし、その日のデータをリセットする関数
-    var myDate = new Date();
+    let myDate = new Date();
     let day = myDate.getDay();//曜日
     let inputStyle=0;
     dailyMission.battle=0;
@@ -165,7 +167,7 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
     }
     myDate.setHours(myDate.getHours() - 5);
     if(myDate.getSeconds()==0) myDate.setMinutes(myDate.getMinutes() - 1);
-    dailyMission.date=myDate.getDate();
+    dailyMission.date=day;
     let myRand=[];
     for(let i = 0;i < 3;i++){
         myRand[i]= getPseudoRandom(10000,i); //0-9999までの乱数を格納
@@ -272,10 +274,10 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
                 dailyMission.detail[i].max=myRand[i] % 8+3;
                 dailyMission.detail[i].achieve=dailyMission.detail[i].max*4;
             } 
-            dailyMission.detail[i].progress=0;
-            dailyMission.detail[i].max=Math.ceil(dailyMission.detail[i].max);
-            dailyMission.detail[i].achieve=Math.ceil(dailyMission.detail[i].achieve);
         }
+        dailyMission.detail[i].progress=0;
+        dailyMission.detail[i].max=Math.ceil(dailyMission.detail[i].max);
+        dailyMission.detail[i].achieve=Math.ceil(dailyMission.detail[i].achieve);
     }
 }
 function resetTodayBattleData(){ //その日のバトルデータをリセットする関数
@@ -299,12 +301,12 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
     if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) localAvator = [ //デフォルトアバターのデータ
-    [{name:"SAMPLE1",team:3,star:0,level:5,item:[5,6,0,0,0],style:0,cp:124,typingData:{kpm:124,stroke:17,miss:1},kind:0},//kpmは換算　kpmRは実際のkpm
-    {name:"SAMPLE2",team:0,star:0,level:8,item:[4,3,0,0,0],style:1,cp:200,typingData:{kpm:179,stroke:18,miss:1},kind:0},
-    {name:"SAMPLE3",team:1,star:0,level:13,item:[5,1,0,0,0],style:0,cp:255,typingData:{kpm:225,stroke:20,miss:1},kind:0},
-    {name:"SAMPLE4",team:2,star:0,level:22,item:[5,2,0,0,0],style:1,cp:308,typingData:{kpm:308,stroke:16,miss:1},kind:0},
-    {name:"SAMPLE5",team:2,star:0,level:28,item:[6,4,1,0,0],style:1,cp:500,typingData:{kpm:412,stroke:24,miss:1},kind:0},
-    {name:"SAMPLE6",team:1,star:0,level:32,item:[7,3,2,0,0],style:0,cp:482,typingData:{kpm:482,stroke:26,miss:1},kind:0}],[],[],[],[]];
+    [{name:"SAMPLE1",team:3,star:0,level:5,item:[5,6,0,0,0],style:0,cp:124,typingData:{kpm:124,stroke:17,miss:1},kind:2},//kpmは換算　kpmRは実際のkpm
+    {name:"SAMPLE2",team:0,star:0,level:8,item:[4,3,0,0,0],style:1,cp:200,typingData:{kpm:179,stroke:18,miss:1},kind:2},
+    {name:"SAMPLE3",team:1,star:0,level:13,item:[5,1,0,0,0],style:0,cp:255,typingData:{kpm:225,stroke:20,miss:1},kind:2},
+    {name:"SAMPLE4",team:2,star:0,level:22,item:[5,2,0,0,0],style:1,cp:308,typingData:{kpm:308,stroke:16,miss:1},kind:2},
+    {name:"SAMPLE5",team:2,star:0,level:28,item:[6,4,1,0,0],style:1,cp:500,typingData:{kpm:412,stroke:24,miss:1},kind:2},
+    {name:"SAMPLE6",team:1,star:0,level:32,item:[7,3,2,0,0],style:0,cp:482,typingData:{kpm:482,stroke:26,miss:1},kind:2}],[],[],[],[]];
     if(todayBattleData==null || force) todayBattleData = {battle:0,win:0,esc:0,stroke:0,miss:0,word:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(dailyMission==null || force) dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
 }

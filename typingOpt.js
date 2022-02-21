@@ -221,17 +221,12 @@ function checkOpt(targetStr,typingStr,typistMode){
             }
         }
     }
-    if(targetStr.substr(typingStr.length-1,1) == "y"){ /// sya>sha
-        if(typingStr.substr(typingStr.length-1,1) == "h"){
-            if(targetStr.substr(typingStr.length-2,1) == "s"){
-                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "h" + targetStr.substr(typingStr.length)};
-            }
-        }
-    }
     if(targetStr.substr(typingStr.length-1,1) == "t"){ /// ti>chi
         if(typingStr.substr(typingStr.length-1,1) == "c"){
             if(targetStr.substr(typingStr.length,1) == "i"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "ch" + targetStr.substr(typingStr.length)};
+            } else if(typingStr.substr(typingStr.length-1,1) != "t" && targetStr.substr(typingStr.length,1)  == "t" && targetStr.substr(typingStr.length+1,1)  == "i"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "cch" + targetStr.substr(typingStr.length+2)};
             }
         }
     }
@@ -239,6 +234,25 @@ function checkOpt(targetStr,typingStr,typistMode){
         if(typingStr.substr(typingStr.length-1,1) == "c"){
             if(targetStr.substr(typingStr.length,1) == "y"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "ch" + targetStr.substr(typingStr.length+1)};
+            }else if(typingStr.substr(typingStr.length-1,1) != "t" && targetStr.substr(typingStr.length,1)  == "t" && targetStr.substr(typingStr.length+1,1)  == "y"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "cch" + targetStr.substr(typingStr.length+2)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "z"){ //zya>ja
+        if(typingStr.substr(typingStr.length-1,1) == "j"){
+            if(targetStr.substr(typingStr.length,1) == "y" && (targetStr.substr(typingStr.length+1,1) != "i")){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "j" + targetStr.substr(typingStr.length+1)};
+            } else if(typingStr.substr(typingStr.length-1,1) != "z" && targetStr.substr(typingStr.length,1)  == "z" && targetStr.substr(typingStr.length+1,1)  == "y"&& targetStr.substr(typingStr.length+2,1)  != "i"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "jj" + targetStr.substr(typingStr.length+2)};
+            }
+        }
+    }
+
+    if(targetStr.substr(typingStr.length-1,1) == "y"){ /// sya>sha
+        if(typingStr.substr(typingStr.length-1,1) == "h"){
+            if(targetStr.substr(typingStr.length-2,1) == "s"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "h" + targetStr.substr(typingStr.length)};
             }
         }
     }
@@ -253,16 +267,6 @@ function checkOpt(targetStr,typingStr,typistMode){
         if(typingStr.substr(typingStr.length-1,1) == "f"){
             if(typingStr.substr(typingStr.length,1) != "u"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "f" + targetStr.substr(typingStr.length)};
-            }
-        }
-    }
-
-    if(targetStr.substr(typingStr.length-1,1) == "z"){ //zya>ja
-        if(typingStr.substr(typingStr.length-1,1) == "j"){
-            if(targetStr.substr(typingStr.length,1) == "y" && (targetStr.substr(typingStr.length+1,1) != "i")){
-                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "j" + targetStr.substr(typingStr.length+1)};
-            } else if(targetStr.substr(typingStr.length,1) == "y" && (targetStr.substr(typingStr.length+1,1) == "i")){
-                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "j" + targetStr.substr(typingStr.length)};
             }
         }
     }

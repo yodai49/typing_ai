@@ -726,15 +726,17 @@ function drawMenu(){
     let hours = myDate.getHours();
     let minutes =myDate.getMinutes();
     let seconds= myDate.getSeconds();
-    if(dailyMission.date!= myDate.getDate()) setDailyMission(),saveData();    ;//デイリーミッションの更新処理　セーブもする
+    if(dailyMission.date!= myDate.getDay()) setDailyMission(),saveData();    ;//デイリーミッションの更新処理　セーブもする
     ctx2d.fillText(("00"+(24-hours-1)).slice(-2) + ":"+("00"+(60-minutes-1)).slice(-2)+":"+("00"+Number(60-seconds)%60).slice(-2),721,370);
     //達成度合い等ここから
     for(let i = 0;i < 3;i++){
         ctx2d.font="8pt " + JAPANESE_FONTNAME;
+        ctx2d.fillStyle=getRGBA(0,0,1);
         ctx2d.fillText(getMissionText(dailyMission.detail[i]),573+9.6*i,394 + i * 32);
-        ctx2d.fillText(dailyMission.detail[i].progress,583+9.6*i,408 + i * 32);
-        ctx2d.fillText("/",598+9.6*i,408 + i * 32);
-        ctx2d.fillText(dailyMission.detail[i].max,603+9.6*i,408 + i * 32);
+        ctx2d.font="7pt " + JAPANESE_FONTNAME;
+        ctx2d.fillText(dailyMission.detail[i].progress,600+9.6*i-ctx2d.measureText(dailyMission.detail[i].progress).width,408 + i * 32);
+        ctx2d.fillText("/",601+9.6*i,408 + i * 32);
+        ctx2d.fillText(dailyMission.detail[i].max,605+9.6*i,408 + i * 32);
         ctx2d.fillText(dailyMission.detail[i].achieve,750+9.6*i,408 + i * 32);
         ctx2d.fillText("マイル",773+9.6*i,408 + i * 32);
         for(let j = 0;j < 5;j++){
@@ -753,7 +755,7 @@ function drawMenu(){
 function setBattleResultDefault(){ //ワードもここで選ぶ
     //wordsはどちらが獲得したか(0未　1自分　2相手　3現在) //pointは自分が何ポイント獲得したか　//nowは現在何ワード目か(0からスタート)
     //wordSetは出題ワードを格納 totalTimeは通算打鍵時間
-    battleResult = {words:[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],point:0,now:-1,wordSet:[],totalTime:0,totalStroke:0,totalMiss:0,kpm:0,acc:0,cp:0,startTime:-1,win:-1,bonus:[0,0,0,0,0],baseExp:0,exp:0,wordCP:[],wordEnemyCP:[],maxCP:-9999,minCP:9999};
+    battleResult = {words:[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],point:0,now:-1,wordSet:[],totalTime:0,totalStroke:0,totalMiss:0,kpm:0,acc:0,cp:0,startTime:-1,win:0,kWin:0,pWin:0,bonus:[0,0,0,0,0],itemBonus:[0,0,0,0,0],baseExp:0,exp:0,coin:0,wordCP:[],wordEnemyCP:[],maxCP:-9999,minCP:9999,achieveDailyMission:[0,0,0],pointRank:0,accRank:0,};
     for(let i = 0;i < 25;i++){//出題ワードをセット
         let tempWordNum=Math.floor(Math.random()*word2.length);
         while(word2[tempWordNum].length>41){
@@ -970,7 +972,7 @@ function drawBattle(){ ///バトル画面の描画関数
         ctx2d.fillText(drawText1,350-ctx2d.measureText(drawText1).width/2,350);
         ctx2d.fillText(drawText2,350-ctx2d.measureText(drawText2).width/2,383);
         ctx2d.font="13pt " + TYPING_FONTNAME;
-        if(ctx2d.measureText(battleResult.wordSet[battleResult.now].myText).width>WIDTH*1.2/3){
+        if(playData.settings[0] && ctx2d.measureText(battleResult.wordSet[battleResult.now].myText).width>WIDTH*1.2/3){
             ctx2d.font="10pt " + TYPING_FONTNAME;
         }
         ctx2d.fillStyle="rgba(150,0,0," + Math.min(1,Math.max(0,(1-(t-missAni)/200))) + ")"; //ミスの赤い四角
@@ -982,7 +984,7 @@ function drawBattle(){ ///バトル画面の描画関数
         ctx2d.fillStyle=getRGBA(0,0,1);
         ctx2d.fillText(battleResult.wordSet[battleResult.now].myText,330-ctx2d.measureText(battleResult.wordSet[battleResult.now].myText).width/2,420);
         ctx2d.font="13pt " + TYPING_FONTNAME;
-        if(ctx2d.measureText(battleResult.wordSet[battleResult.now].enemyText).width>WIDTH*1.2/3){
+        if(enemyAvatorData.style && ctx2d.measureText(battleResult.wordSet[battleResult.now].enemyText).width>WIDTH*1.2/3){
             ctx2d.font="10pt " + TYPING_FONTNAME;
         }
         ctx2d.fillStyle="rgba(150,0,0," + Math.min(1,Math.max(0,(1-(t-enemyMissAni)/200))) + ")"; //ミスの赤い四角
@@ -996,12 +998,12 @@ function drawBattle(){ ///バトル画面の描画関数
         ctx2d.fillText(battleResult.wordSet[battleResult.now].enemyText,330-ctx2d.measureText(battleResult.wordSet[battleResult.now].enemyText).width/2,460);
         ctx2d.fillStyle=getRGBA(2,0,1);
         ctx2d.font="13pt " + TYPING_FONTNAME;
-        if(ctx2d.measureText(battleResult.wordSet[battleResult.now].myText).width>WIDTH*1.2/3){
+        if(playData.settings[0] && ctx2d.measureText(battleResult.wordSet[battleResult.now].myText).width>WIDTH*1.2/3){
             ctx2d.font="10pt " + TYPING_FONTNAME;
         }
         ctx2d.fillText(typedText,330-ctx2d.measureText(battleResult.wordSet[battleResult.now].myText).width/2,420);
         ctx2d.font="13pt " + TYPING_FONTNAME;
-        if(ctx2d.measureText(battleResult.wordSet[battleResult.now].enemyText).width>WIDTH*1.2/3){
+        if(enemyAvatorData.style && ctx2d.measureText(battleResult.wordSet[battleResult.now].enemyText).width>WIDTH*1.2/3){
             ctx2d.font="10pt " + TYPING_FONTNAME;
         }
         ctx2d.fillText(enemyTypedText,330-ctx2d.measureText(battleResult.wordSet[battleResult.now].enemyText).width/2,460);
@@ -1061,13 +1063,163 @@ function drawBattle(){ ///バトル画面の描画関数
         }
     }
 }
-function getItemBonus(myAvatorData,myBattleResult){
+function getItemBonus(myAvatorData,isArray,isCoin){
     //アイテムボーナスを計算する関数 %で返却
-    //後で実装
-    return 0;
+    //myAvatorDataは配列で渡す
+    //isArrayが1の場合、配列でボーナスを返却
+    //isCoinが1の場合、獲得コイン数を返却
+    let tempBonus=0;
+    let tempCoin=0;
+    let tempBonusArray=[0,0,0,0,0];
+    //ここからhead
+    if(myAvatorData[0].item[0] == 1){
+        if(myAvatorData[0].team == 0) tempBonus+=5;
+    } else if(myAvatorData[0].item[0] == 2){
+        if(myAvatorData[0].team == 1) tempBonus+=5;
+    }else if(myAvatorData[0].item[0] == 3){
+        if(myAvatorData[0].team == 2) tempBonus+=5;
+    }else if(myAvatorData[0].item[0] == 4){
+        tempBonus+=8;        
+    }else if(myAvatorData[0].item[0] == 8){
+        tempBonus+=12;
+    }else if(myAvatorData[0].item[0] == 9){
+        tempBonus+=16;
+    }
+    tempBonusArray[0]+=tempBonus;
+    //ここからbody1
+    if(myAvatorData[0].item[1] == 1){
+        if(myAvatorData[0].team == 0) tempBonus+=6;
+    } else if(myAvatorData[0].item[1] == 2){
+        if(myAvatorData[0].team == 1) tempBonus+=6;
+    }else if(myAvatorData[0].item[1] == 3){
+        if(myAvatorData[0].team == 2) tempBonus+=6;
+    }else if(myAvatorData[0].item[1] == 4){
+        tempBonus+=10;
+    }else if(myAvatorData[0].item[1] == 8){
+        tempBonus+=15;
+    }else if(myAvatorData[0].item[1] == 9){
+        tempBonus+=20;
+    }
+    tempBonusArray[1]+=tempBonus-tempBonusArray[0];
+    //ここからbody2
+    if(myAvatorData[0].item[2] == 1){
+        if(myAvatorData[0].team == 0) tempBonus+=6;
+    } else if(myAvatorData[0].item[2] == 2){
+        if(myAvatorData[0].team == 1) tempBonus+=6;
+    }else if(myAvatorData[0].item[2] == 3){
+        if(myAvatorData[0].team == 2) tempBonus+=6;
+    }else if(myAvatorData[0].item[2] == 4){
+        if(enemyAvatorData.kind==1 || enemyAvatorData.kind==2) tempBonus+=5;
+    }else if(myAvatorData[0].item[2] == 5){
+        if(enemyAvatorData.kind==1 || enemyAvatorData.kind==2) tempBonus+=15;
+    }else if(myAvatorData[0].item[2] == 6){
+        if(battleResult.acc >= 98) tempBonus+=10;
+    }else if(myAvatorData[0].item[2] == 7){
+        if(dailyMission.detail[0].progress == dailyMission.detail[0].max && dailyMission.detail[1].progress == dailyMission.detail[1].max && dailyMission.detail[2].progress == dailyMission.detail[2].max) tempBonus+=15;
+    }else if(myAvatorData[0].item[2] == 8){
+        if(battleResult.kWin) tempBonus+=15;
+    }else if(myAvatorData[0].item[2] == 9){
+        if(battleResult.pWin) tempBonus+=30;
+    }
+    tempBonusArray[2]+=tempBonus-(tempBonusArray[0]+tempBonusArray[1]);
+    //ここからlimbs
+    if(myAvatorData[0].item[3] == 1){
+        if(dailyMission.date == 6) tempBonus+=12;
+    } else if(myAvatorData[0].item[3] == 2){
+        if(dailyMission.date == 0) tempBonus+=12;
+    }else if(myAvatorData[0].item[3] == 3){
+        if(dailyMission.date > 0 && dailyMission.date < 6) tempBonus+=10;
+    }else if(myAvatorData[0].item[3] == 4){//闇の靴
+        let myDate = new Date();
+        if(myDate.getHours() < 5 || myDate.getHours() >= 19) tempBonus+=8;
+    }else if(myAvatorData[0].item[3] == 8){
+        tempBonus+=10;
+    }else if(myAvatorData[0].item[3] == 9){
+        tempBonus+=15;
+    }
+    tempBonusArray[3]+=tempBonus-(tempBonusArray[0]+tempBonusArray[1]+tempBonusArray[2]);
+    //ここから金銀銅の処理
+    if(myAvatorData[0].item[0] == 5 && myAvatorData[0].item[1] == 5 && myAvatorData[0].item[3] == 5){
+        tempBonus+=12;
+        tempBonusArray[0] = 12;
+        tempBonusArray[1] = 12;
+        tempBonusArray[2] = 12;
+    } else if(myAvatorData[0].item[0] == 6 && myAvatorData[0].item[1] == 6 && myAvatorData[0].item[3] == 6){
+        tempBonus+=16;
+        tempBonusArray[0] = 16;
+        tempBonusArray[1] = 16;
+        tempBonusArray[2] = 16;
+    } else if(myAvatorData[0].item[0] == 7 && myAvatorData[0].item[1] == 7 && myAvatorData[0].item[3] == 7){
+        tempBonus+=24;
+        tempBonusArray[0] = 24;
+        tempBonusArray[1] = 24;
+        tempBonusArray[2] = 24;
+    }
+
+    //ここからothers
+    if(myAvatorData[0].item[4] == 1){
+        tempCoin++;
+    } else if(myAvatorData[0].item[4] == 3){
+        if(battleResult.acc <= 90) tempBonus+=10;
+    }else if(myAvatorData[0].item[4] == 4){
+        if(battleResult.pWin) tempCoin+=3;
+    }else if(myAvatorData[0].item[4] == 5){
+        if(battleResult.cp >= 300 && battleResult.win) tempBonus+=4;
+    }else if(myAvatorData[0].item[4] == 6){
+        if(battleResult.cp >= 450 && battleResult.win) tempBonus+=8;
+    }else if(myAvatorData[0].item[4] == 7){
+        if(battleResult.cp >= 600 && battleResult.win) tempBonus+=12;
+    }else if(myAvatorData[0].item[4] == 8){
+        if(battleResult.cp >= 650 && battleResult.win && battleResult.acc >= 97) tempBonus+=20,tempCoin+=2;
+    }else if(myAvatorData[0].item[4] == 9){
+        if(battleResult.cp >= 700 && battleResult.win && battleResult.acc >= 97) tempBonus+=25,tempCoin+=4;
+    }
+    tempBonusArray[4]+=tempBonus-(tempBonusArray[0]+tempBonusArray[1]+tempBonusArray[2]-tempBonusArray[3]);
+    if(isArray) return tempBonusArray;
+    if(isCoin) return tempCoin;
+    return tempBonus;
 }
 function processDailyMission(){
     //デイリーミッションの進捗を管理する関数
+    for(let i = 0;i < 3;i++){
+        if(dailyMission.detail[i].progress != dailyMission.detail[i].max){//未達成なら達成チェック
+            if(dailyMission.detail[i].type == 0){
+                dailyMission.detail[i].progress+=battleResult.totalStroke-battleResult.totalMiss;
+            } else if(dailyMission.detail[i].type == 1){
+                dailyMission.detail[i].progress+=battleResult.win;
+            }else if(dailyMission.detail[i].type == 2){
+                dailyMission.detail[i].progress+=battleResult.point;
+            }else if(dailyMission.detail[i].type == 3){
+                if(enemyAvatorData.team == dailyMission.detail[i].team -1) dailyMission.detail[i].progress+=battleResult.win;
+            }else if(dailyMission.detail[i].type == 4){
+                if(enemyAvatorData.team == dailyMission.detail[i].team -1) dailyMission.detail[i].progress++;
+            }else if(dailyMission.detail[i].type == 5){
+                if(battleResult.acc >= dailyMission.detail[i].require) dailyMission.detail[i].progress+=battleResult.win;
+            }else if(dailyMission.detail[i].type == 6){
+                if(battleResult.cp >= dailyMission.detail[i].require) dailyMission.detail[i].progress+=battleResult.win;
+            }else if(dailyMission.detail[i].type == 7){
+                if(enemyAvatorData.cp >= dailyMission.detail[i].require) dailyMission.detail[i].progress+=battleResult.win;
+            }else if(dailyMission.detail[i].type == 8){
+                if(battleResult.point >= dailyMission.detail[i].require) dailyMission.detail[i].progress+=battleResult.win;
+            }else if(dailyMission.detail[i].type == 9){
+                if(enemyAvatorData.cp >= dailyMission.detail[i].require && battleResult.kWin) dailyMission.detail[i].progress+=1;
+            }else if(dailyMission.detail[i].type == 10){
+                if(enemyAvatorData.cp >= dailyMission.detail[i].require && battleResult.pWin) dailyMission.detail[i].progress+=1;
+            }else if(dailyMission.detail[i].type == 11){
+                if(enemyAvatorData.team >= dailyMission.detail[i].team-1) dailyMission.detail[i].progress+=battleResult.point;
+            }else if(dailyMission.detail[i].type == 12){
+                if(enemyAvatorData.team >= dailyMission.detail[i].team-1) dailyMission.detail[i].progress+=battleResult.totalStroke-battleResult.totalMiss;
+            }else if(dailyMission.detail[i].type == 13){
+                if(enemyAvatorData.kind ==0) dailyMission.detail[i].progress+=battleResult.win;
+            }
+            if(dailyMission.detail[i].progress >= dailyMission.detail[i].max){
+                //ミッション達成時
+                dailyMission.detail[i].progress = dailyMission.detail[i].max;
+                battleResult.achieveDailyMission[i]=1;
+                battleResult.coin+=dailyMission.detail[i].achieve;
+            }
+        }
+    }
 }
 function processBattleResult(){//バトル結果の処理関数　終了直後（アニメーション直前）に呼び出される　経験値の書き換えなどをここに書く
     let inputStyle=playData.settings[0];//入力方式
@@ -1083,6 +1235,16 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     } else{
         battleResult.win = 0;
     }
+    if(battleResult.point == 25) {
+        battleResult.kWin=1;//完全勝利
+    }else{
+        battleResult.kWin = 0;
+    }
+    if(battleResult.point == 25 && battleResult.acc == 100) {
+        battleResult.pWin=1;//パーフェクト勝利
+    }else{
+        battleResult.pWin = 0;
+    }
     battleResult.kpm = Number((battleResult.totalStroke-battleResult.totalMiss)/(t-battleResult.startTime-totalLossTime)*60000).toFixed(1);
     battleResult.acc = Number((battleResult.totalStroke-battleResult.totalMiss)/battleResult.totalStroke*100).toFixed(1);
     if(isNaN(battleResult.acc)) battleResult.acc=0;
@@ -1090,14 +1252,45 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     battleResult.cp = battleResult.kpm;
     if(inputStyle) battleResult.cp*=COEF_R2K;
     battleResult.cp=Number(battleResult.cp).toFixed(1);
+    //ランクを算出
+    if(battleResult.acc == 100){
+        battleResult.accRank=0;
+    } else if(battleResult.acc >= 98){
+        battleResult.accRank=1;
+    } else if(battleResult.acc >= 95){
+        battleResult.accRank=2;
+    }else if(battleResult.acc >= 93){
+        battleResult.accRank=3;
+    }else if(battleResult.acc >= 0){
+        battleResult.accRank=4;
+    } else{
+        battleResult.accRank=5;
+    }
+    if(battleResult.point == 25){
+        battleResult.pointRank=0;
+    } else if(battleResult.point >= 22){
+        battleResult.pointRank=1;
+    } else if(battleResult.point >= 18){
+        battleResult.pointRank=2;
+    }else if(battleResult.point >= 13){
+        battleResult.pointRank=3;
+    }else if(battleResult.point >= 8){
+        battleResult.pointRank=4;
+    } else{
+        battleResult.pointRank=5;
+    }
     //ボーナス等をセット
     battleResult.bonus[0] = Math.round(Math.max(0,2*battleResult.point-25)/1.5);//ワード補正
     battleResult.bonus[1] = Math.round(Math.pow(Math.max(0,(Number(battleResult.acc)-95)),1.5)*2);//正確性補正
     battleResult.bonus[2] = 0;
     if((3+avatorData[0].team-enemyAvatorData.team)%3 == 2) battleResult.bonus[2] = TEAM_BONUS;
     if((3+avatorData[0].team-enemyAvatorData.team)%3 == 2) battleResult.bonus[2] = -TEAM_BONUS;
-    battleResult.bonus[3] = getItemBonus(avatorData,battleResult);
-    battleResult.bonus[4] = 0;//イベントボーナス　後で実装
+    battleResult.bonus[3] = getItemBonus(avatorData);
+    battleResult.itemBonus=getItemBonus(avatorData,1);
+    battleResult.coin+=getItemBonus(avatorData,0,1);
+    battleResult.bonus[4] = 0;//イベントボーナス　
+    if(dailyMission.event == avatorData[0].team+1) battleResult.bonus[4] = 25;//イベント中なら25%ボーナス
+    if(enemyAvatorData.kind == 0) battleResult.bonus[4] += 20;//ユーザーアバターの場合20%ボーナス
     battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 6/5* (1+Math.atan((avatorData[inputStyle].cp - enemyAvatorData.cp))*2/Math.PI)));
     if(battleResult.win == 0) battleResult.baseExp= Math.floor(battleResult.baseExp/3);
     battleResult.exp = Math.round(battleResult.baseExp * (100+battleResult.bonus[0]+battleResult.bonus[1]+battleResult.bonus[2]+battleResult.bonus[3]+battleResult.bonus[4])/100);
@@ -1132,16 +1325,17 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
             playData.exp+=getNextLvExp(playData);
             playData.level++;
         } else{//レベルアップなし
-            playData.exp+=battleResult.exp;
+            playData.exp+=remainExp;
             remainExp=0;
             break;
         }
     }
-    if(getNextStarStroke(avatorData,battleData)  > battleResult.totalStroke && getNextStarKPM(avatorData,battleAni) >= avatorData[playData.settings[0]].typingData.kpm){
+    if(getNextStarStroke(avatorData,battleData)  <= 0 && getNextStarKPM(avatorData,battleAni).style == playData.settings[0] && getNextStarKPM(avatorData,battleAni).value <= avatorData[playData.settings[0]].typingData.kpm){
         //星アップ
-        myAvatorData[0].star++;
-        myAvatorData[1].star++;
+        avatorData[0].star++;
+        avatorData[1].star++;
     }
+    playData.coin+=battleResult.coin;
     saveData();
 }
 function processBattle(){ //バトルの処理関数　制御系はここへ
@@ -1154,14 +1348,14 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
             ///全部ワードを打ち切っていたら 　　ワード獲得処理
             lastKpm=Number(typedText.length / (t-wordT)*60000).toFixed(1);
             lastKpmE=Number(enemyTypedText.length / (t-wordT)*60000).toFixed(1);
-            if(battleResult.maxCP < Math.max(lastKpm,lastKpmE)) battleResult.maxCP=Math.max(lastKpm,lastKpmE);
-            if(battleResult.minCP > Math.min(lastKpm,lastKpmE)) battleResult.minCP=Math.min(lastKpm,lastKpmE);
             battleResult.point++;
             battleResult.words[battleResult.now]=1;
             battleResult.wordCP[battleResult.now] = Number(lastKpm);
             battleResult.wordEnemyCP[battleResult.now] = Number(lastKpmE);
             if(playData.settings[0]) battleResult.wordCP[battleResult.now]*=COEF_R2K;
             if(enemyAvatorData.style) battleResult.wordEnemyCP[battleResult.now]*=COEF_R2K;
+            if(battleResult.maxCP < Math.max(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now])) battleResult.maxCP=Math.max(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now]);
+            if(battleResult.minCP > Math.min(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now])) battleResult.minCP=Math.min(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now]);
             if(battleResult.now!=24){
                 battleResult.words[battleResult.now+1]=3;
                 lossTimeT=t;
@@ -1177,13 +1371,13 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
             ///相手が全部ワードを打ち切っていたら 　　ワード損失処理
             lastKpm=Number(typedText.length / (t-wordT)*60000).toFixed(1);
             lastKpmE=Number(enemyTypedText.length / (t-wordT)*60000).toFixed(1);
-            if(battleResult.maxCP < Math.max(lastKpm,lastKpmE)) battleResult.maxCP=Math.max(lastKpm,lastKpmE);
-            if(battleResult.minCP > Math.min(lastKpm,lastKpmE)) battleResult.minCP=Math.min(lastKpm,lastKpmE);
             battleResult.words[battleResult.now]=2;
             battleResult.wordCP[battleResult.now] = Number(lastKpm);
             battleResult.wordEnemyCP[battleResult.now] = Number(lastKpmE);
             if(playData.settings[0]) battleResult.wordCP[battleResult.now]*=COEF_R2K;
             if(enemyAvatorData.style) battleResult.wordEnemyCP[battleResult.now]*=COEF_R2K;
+            if(battleResult.maxCP < Math.max(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now])) battleResult.maxCP=Math.max(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now]);
+            if(battleResult.minCP > Math.min(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now])) battleResult.minCP=Math.min(battleResult.wordCP[battleResult.now],battleResult.wordEnemyCP[battleResult.now]);
             if(battleResult.now!=24) {
                 battleResult.words[battleResult.now+1]=3;
                 lossTimeT=t;
@@ -1215,8 +1409,10 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
     }
 }
 function drawResult(){ ///結果画面の描画関数
+    drawLoadingCircle(300,300,250,t*0.4,1000,1);
+    drawLoadingCircle(800,400,120,t*-0.8,1000,1);
     for(let i = 0;i < prls.length;i++){
-        if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
+        if(prls[i].isMsgBox!=1 && prls[i].isTop!=1) drawPrl(prls[i]);
     }
     //左半分
     drawPrl({x1:40,y1:143,x2:590,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
@@ -1273,15 +1469,20 @@ function drawResult(){ ///結果画面の描画関数
     }
     for(let i = 0;i < 3;i++){
         ctx2d.font="8pt " +  JAPANESE_FONTNAME;//ミッション
+        ctx2d.fillStyle=getRGBA(0,0,1);
         ctx2d.fillText(getMissionText(dailyMission.detail[i]),319-173*0.3-7.5*i,430 + i * 25);
-        ctx2d.fillText(dailyMission.detail[i].progress,474-ctx2d.measureText(dailyMission.detail[i].progress).width-173*0.3-7.5*(i+0.4),430 + (i+0.44) * 25);
-        ctx2d.fillText("/",479-173*0.3-7.5*(i+0.44),430 + (i+0.4) * 25);
-        ctx2d.fillText(dailyMission.detail[i].max,489-173*0.3-7.5*(i+0.4),430 + (i+0.44) * 25);
+        if(dailyMission.detail[i].progress != dailyMission.detail[i].max){
+            ctx2d.fillText(dailyMission.detail[i].progress,474-ctx2d.measureText(dailyMission.detail[i].progress).width-173*0.3-7.5*(i+0.4),430 + (i+0.44) * 25);
+            ctx2d.fillText("/",479-173*0.3-7.5*(i+0.44),430 + (i+0.4) * 25);
+            ctx2d.fillText(dailyMission.detail[i].max,489-173*0.3-7.5*(i+0.4),430 + (i+0.44) * 25);    
+        } else{//既にクリアしている場合
+            drawPrl({x1:469-173*0.3-7.5*(i+0.4),y1:412+(i+0.44)*25,x2:542-173*0.3-7.5*(i+0.4),y2:428+(i+0.44)*25,lineWidth:2,shadow:0,colSet:3,trans:0.8,hoverColSet:3,hoverCounter:0,textSize:1.2,text:"CLEAR!"});
+        }
         drawPrl({x1:319-173*0.3-7.5*(i+0.4),y1:422+(i+0.44)*25,x2:439-173*0.3-7.5*(i+0.4),y2:428+(i+0.44)*25,lineWidth:2,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
         if(dailyMission.detail[i].progress) drawPrl({x1:319-173*0.3-7.5*(i+0.4),y1:422+(i+0.44)*25,x2:120* (dailyMission.detail[i].progress/dailyMission.detail[i].max)+ 319-173*0.3-7.5*(i+0.4),y2:428+(i+0.44)*25,lineWidth:2,shadow:0,colSet:5,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
     }
     ctx2d.font="12pt " +  DIGIT_FONTNAME;//数字部分の描画
-
+    ctx2d.fillStyle=getRGBA(0,0,1);
     for(let i = 0;i < 5;i++){
         if(i==0) ctx2d.fillText((dailyMission.win),165-(20+i*20)*0.3,293+i*20);
         if(i==1) ctx2d.fillText(Number(dailyMission.win/dailyMission.battle*100).toFixed(1) + "%",165-(20+i*20)*0.3,293+i*20);
@@ -1308,7 +1509,7 @@ function drawResult(){ ///結果画面の描画関数
     }
     ctx2d.fillText((dailyMission.battle-dailyMission.win),235-(20+0*20)*0.3,293+0*20);
     ctx2d.fillText(processShowData(getNextStarStroke(avatorData,battleData)),198-174*0.3,468);
-    ctx2d.fillText(processShowData(getNextStarKPM(avatorData,battleData)),198-195*0.3,489);
+    ctx2d.fillText(processShowData(getNextStarKPM(avatorData,battleData).value),198-195*0.3,489);
 
     //勝率のグラフ
     for(let i = 0;i < 5;i++){
@@ -1379,37 +1580,89 @@ function drawResult(){ ///結果画面の描画関数
         ctx2d.fill();
     }
     //経験値系の表示
-    ctx2d.fillStyle="rgba(0,0,0,1)";
     ctx2d.font="12pt " + JAPANESE_FONTNAME;
-    for(let i = 0;i < 6;i++){
+    for(let i = 0;i < 7;i++){
+        ctx2d.fillStyle="rgba(0,0,0,1)";
         if(i==0){
-            ctx2d.fillText("獲得ポイント",605-i*6.9,169+i*23);
-            ctx2d.fillText("pt",865-i*6.9,169+i*23);
+            ctx2d.fillText("獲得ポイント",605-i*6.3,169+i*21);
+            ctx2d.fillText("pt",865-i*6.3,169+i*21);
+        } else if(i!=6){
+            ctx2d.font="10pt " + JAPANESE_FONTNAME;
+            ctx2d.fillText(BONUS_NAME[i-1],605-i*6.3,169+i*21);
+            ctx2d.fillText("%",865-i*6.3,169+i*21);
         } else{
-            ctx2d.fillText(BONUS_NAME[i-1],605-i*6.9,169+i*23);
-            ctx2d.fillText("%",865-i*6.9,169+i*23);
+            ctx2d.font="12pt " + DIGIT_FONTNAME + ","+JAPANESE_FONTNAME;            
+            ctx2d.fillText("合計ボーナス",605-i*6.3,169+i*21);
+            ctx2d.fillText("%",865-i*6.3,169+i*21);
         }
     }
-    ctx2d.fillText("Lv " + playData.level,615-7.8*6.9,164+7.8*23);
+    ctx2d.fillText("Lv " + playData.level,615-8.8*6.6,164+8.8*22);
     ctx2d.font="12pt " + DIGIT_FONTNAME + ","+JAPANESE_FONTNAME;
-    for(let i = 0;i < 6;i++){
+    ctx2d.fillStyle=getRGBA(2,0,1);
+    ctx2d.fillText(playData.coin + "マイル",620+2*6.3,174-2*21);
+    ctx2d.drawImage(coinImg,590+2*6.3,154-2*21,30,30);
+    for(let i = 0;i < 7 ;i++){
+        ctx2d.fillStyle=getRGBA(0,0,1);
         if(i==0){
-            ctx2d.fillText(battleResult.baseExp,815-i*6.9,169+i*23);
-        } else{
-            ctx2d.fillText(battleResult.bonus[i-1],815-i*6.9,169+i*23);
+            ctx2d.fillText(battleResult.baseExp,825-i*6.3,169+i*21);
+        } else if(i!=6){
+            ctx2d.font="10pt " + DIGIT_FONTNAME + ","+JAPANESE_FONTNAME;
+            if(battleResult.bonus[i-1] > 0) ctx2d.fillStyle=getRGBA(14,0,1);
+            if(battleResult.bonus[i-1] < 0) ctx2d.fillStyle=getRGBA(13,0,1);
+            ctx2d.fillText(battleResult.bonus[i-1],825-i*6.3,169+i*21);
             if(battleResult.bonus[i-1] >0){
-                ctx2d.drawImage(arrowImg,890-i*6.9,156+i*23 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
+                ctx2d.drawImage(arrowImg,890-i*6.3,156+i*21 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
             }
+        } else{
+            ctx2d.font="12pt " + DIGIT_FONTNAME + ","+JAPANESE_FONTNAME;
+            if(battleResult.bonus[0] + battleResult.bonus[1] + battleResult.bonus[2] + battleResult.bonus[3] + battleResult.bonus[4] >0){
+                ctx2d.drawImage(arrowImg,890-i*6.3,156+i*21 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
+                ctx2d.fillStyle=getRGBA(14,0,1);
+            }
+            ctx2d.fillText(battleResult.bonus[0]+battleResult.bonus[1]+battleResult.bonus[2]+battleResult.bonus[3]+battleResult.bonus[4],825-i*6.3,169+i*21);
+        }
+        if(i == 3){
+            drawPrl({x1:715-2*6.3,y1:176+2*21,x2:715-2*6.3+30,y2:176+2*21+15,lineWidth:1,shadow:0,isTop:1,colSet:avatorData[0].team*2+5,hoverColSet:avatorData[0].team*2+5+1,hoverCounter:0,textSize:1,text:"YOU"});
+            ctx2d.fillText("VS",755-i*6.3,164+i*21);
+            drawPrl({x1:720-2*6.3+45,y1:176+2*21,x2:720-2*6.3+75,y2:176+2*21+15,lineWidth:1,shadow:0,isTop:1,colSet:enemyAvatorData.team*2+5,hoverColSet:enemyAvatorData.team*2+5+1,hoverCounter:0,textSize:1,text:"ENE"});
+        }
+        if(i == 1){
+            let pointRankColSet=13;
+            if(battleResult.pointRank==0){
+                pointRankColSet=3;
+            }else if(battleResult.pointRank==2){
+                pointRankColSet=0;
+            }else if(battleResult.pointRank==1){
+                pointRankColSet=16;
+            }
+            drawPrl({x1:715-0*6.3,y1:176+0*21,x2:715-0*6.3+30,y2:176+0*21+15,lineWidth:1,shadow:0,isTop:1,colSet:pointRankColSet,hoverColSet:pointRankColSet,hoverCounter:0,textSize:1.2,text:RANK_TEXT[battleResult.pointRank]});
+        }
+        if(i == 2){
+            let accRankColSet=13;
+            if(battleResult.accRank==0){
+                accRankColSet=3;
+            }else if(battleResult.accRank==2){
+                accRankColSet=0;
+            }else if(battleResult.accRank==1){
+                accRankColSet=16;
+            }
+            drawPrl({x1:715-1*6.3,y1:176+1*21,x2:715-1*6.3+30,y2:176+1*21+15,lineWidth:1,shadow:0,isTop:1,colSet:accRankColSet,hoverColSet:accRankColSet,hoverCounter:0,textSize:1.2,text:RANK_TEXT[battleResult.accRank]});
         }
     }
-    ctx2d.fillText("次Lvまであと " + getNextLvExp(playData) + " EXP",740-7.8*6.9,164+7.8*23);
+    ctx2d.fillStyle=getRGBA(0,0,1);
+    ctx2d.fillText("次Lvまであと " + getNextLvExp(playData) + " EXP",740-8.8*6.6,164+8.8*22);
     ctx2d.font="16pt " + JAPANESE_FONTNAME;
-    ctx2d.fillText("獲得経験値",605-6.2*6.9,169+6.2*23);
-    ctx2d.fillText("EXP",865-6.2*6.9,169+6.2*23);
+    ctx2d.fillText("獲得経験値",605-7*6.9,169+7*23);
+    ctx2d.fillText("EXP",865-7*6.9,169+7*23);
     ctx2d.font="16pt " + DIGIT_FONTNAME;
-    ctx2d.fillText(battleResult.exp,815-6.2*6.9,169+6.2*23);
-    drawPrl({x1:605-6.6*6.9,y1:169+6.6*23,x2:900-6.6*6.9,y2:173+6.6*23,colSet:13,shadow:0,lineWidth:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
-    drawPrl({x1:605-6.6*6.9,y1:169+6.6*23,x2:605-6.6*6.9+295*(getNextLvExp(playData,1)),y2:173+6.6*23,colSet:3,shadow:0,lineWidth:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
+    ctx2d.fillText(battleResult.exp,815-7*6.9,169+7*23);
+    drawPrl({x1:605-7.3*6.9,y1:169+7.3*23,x2:900-7.3*6.9,y2:173+7.3*23,colSet:13,shadow:0,lineWidth:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
+    drawPrl({x1:605-7.3*6.9,y1:169+7.3*23,x2:605-7.3*6.9+295*(getNextLvExp(playData,1)),y2:173+7.3*23,colSet:3,shadow:0,lineWidth:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
+
+    if(battleResult.coin) drawPrl({x1:765,y1:108,x2:WIDTH-19,y2:133,colSet:3,shadow:0,hoverColSet:3,hoverCounter:0,textSize:1,text:battleResult.coin + "マイルを獲得！"});//コイン
+    for(let i = 0;i < prls.length;i++){
+        if(prls[i].isMsgBox!=1 && prls[i].isTop==1) drawPrl(prls[i]);
+    }
 }
 function drawAvator1(){ ///アバターきせかえ画面の描画関数
     drawLoadingCircle(WIDTH/2+40,HEIGHT/2-200,240,t/3.2,1000);//////////動く丸
@@ -1741,6 +1994,13 @@ function changeScene(prev,next){ //シーン遷移の関数
             nextScene=2;
             sceneAni=t;
         }});
+        prls.push({x1:715-3*6.3,y1:176+3*21,x2:715-3*6.3+40,y2:176+3*21+15,lineWidth:1,shadow:0,isTop:1,colSet:13,hoverColSet:14,hoverCounter:0,textSize:1.4,text:"詳細",onClick:function(){
+            //アイテムボーナスの詳細ウィンドウを表示する処理をここに追加 battleResult.itemBonus
+        }});//アイテムボーナスの詳細ウィンドウ
+        prls.push({x1:WIDTH-65,y1:148,x2:WIDTH-35,y2:165,lineWidth:2,shadow:0,isTop:1,colSet:13,hoverColSet:14,hoverCounter:0,textSize:1.4,text:"？",onClick:function(){
+            //ボーナスのヘルプウィンドウを表示する処理をここにおく
+        }});//ボーナスのヘルプウィンドウ
+
     } else if(next==5){//アバター　きせかえ
         ctx2dImg.drawImage(backImg[5],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:14,textSize:0.8,text:"AVATOR"});
