@@ -39,7 +39,8 @@ function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必�
     }
 }
 function getLvExp(lv){//レベルだけから必要Expを計算する関数
-    let tempExp=8,prevTempExp=0;
+    let tempExp=8;
+    if(lv==0) return 0;
     for(let i = 2;i <= lv;i++){
         prevTempExp=tempExp;
         tempExp=Math.floor(tempExp*1.05+(i+1)*10);
@@ -306,9 +307,32 @@ function saveData(){//データをローカルストレージへ保存する関�
     firstLaunchFlg=0;
 }
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
-    if(avatorData==null || force) avatorData = [
-        {name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:0,typingData:{kpm:0,stroke:0,miss:0},kind:0,cp:0},
-        {name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:1,typingData:{kpm:0,stroke:0,miss:0},kind:0,cp:0}];
+    if(avatorData==null || force) {
+        avatorData = [
+            {name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:0,typingData:{
+                kpm:0,stroke:0,miss:0,play:0,
+                keyData:[],missChain:0,firstSpeed:0,optData:[],kpm:0,acc:0,speedTensor:[],cong:{prob:0,key:0,count:0}},kind:0,cp:0},
+            {name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:1,typingData:{
+                kpm:0,stroke:0,miss:0,play:0,
+                keyData:[],missChain:0,firstSpeed:0,optData:[],kpm:0,acc:0,speedTensor:[],cong:{prob:0,key:0,count:0}},kind:0,cp:0}];
+        for(let ii = 0;ii < 2;ii++){
+            for(let i = 0;i < CLASS_KPM_RATIO.length;i++){
+                avatorData[ii].typingData.speedTensor[i]=[];
+                for(let j = 0;j < CLASS_KPM_RATIO.length;j++){
+                    avatorData[ii].typingData.speedTensor[i][j]=[];
+                    for(let k = 0;k < CLASS_KPM_RATIO.length;k++){
+                        avatorData[ii].typingData.speedTensor[i][j][k] = {kpm:0,totalStroke:0};
+                    }
+                }
+            }
+            for(let i = 0;i < ALL_CHARA_SET.length+1;i++){
+                avatorData[ii].typingData.keyData[i] = {acc:0,kpm:0,stability:0,totalStroke:0};
+            }
+            for(let i = 0;i < OPT_SET.length;i++){
+                avatorData[ii].typingData.optData[i]={total:0,count:0}//最適化データ
+            }    
+        }
+    }
     if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) localAvator = [ //デフォルトアバターのデータ
@@ -347,5 +371,47 @@ function setAvatorData(dir){//アバターデータをセットする dir:0な�
     avatorData[1-dir].star=avatorData[dir].star;
     for(var i = 0;i < avatorData[dir].item.length;i++){
         avatorData[1-dir].item[i]=avatorData[dir].item[i];
+    }
+}
+function updateTypingData(style,myTypingData){//avatorDataのタイピングデータを更新する関数
+    if(!myTypingData.totalStroke) return 0;//一打も打たずに終了していた場合は学習しない
+    avatorData[style].typingData.kpm = Number((avatorData[style].typingData.kpm * avatorData[style].typingData.stroke  + myTypingData.kpm * myTypingData.totalStroke)/(avatorData[style].typingData.stroke+myTypingData.totalStroke)).toFixed(1);
+    avatorData[style].typingData.acc = Number((avatorData[style].typingData.acc * avatorData[style].typingData.stroke  + myTypingData.acc * myTypingData.totalStroke)/(avatorData[style].typingData.stroke+myTypingData.totalStroke)).toFixed(1);
+    avatorData[style].typingData.missChain=(avatorData[style].typingData.missChain* avatorData[style].typingData.play + myTypingData.missChain)/ (avatorData[style].typingData.play+1);
+    avatorData[style].typingData.firstSpeed=(avatorData[style].typingData.firstSpeed* avatorData[style].typingData.play + myTypingData.firstSpeed)/ (avatorData[style].typingData.play+1);
+    avatorData[style].typingData.cong.prob=(avatorData[style].typingData.cong.prob* avatorData[style].typingData.play + myTypingData.cong.prob)/ ( avatorData[style].typingData.play+1);
+    if((avatorData[style].typingData.cong.count+myTypingData.cong.count)) avatorData[style].typingData.cong.key=(avatorData[style].typingData.cong.key* avatorData[style].typingData.cong.count + myTypingData.cong.key*myTypingData.cong.count)/ (avatorData[style].typingData.cong.count+myTypingData.cong.count);
+    avatorData[style].typingData.cong.count+=avatorData[style].typingData.cong.count;
+    avatorData[style].typingData.play++;
+    for(let i = 0;i < avatorData[style].typingData.keyData.length;i++){
+        if(avatorData[style].typingData.keyData[i].totalStroke+myTypingData.keyData[i].totalStroke){
+            avatorData[style].typingData.keyData[i].acc = (avatorData[style].typingData.keyData[i].acc *avatorData[style].typingData.keyData[i].totalStroke +myTypingData.keyData[i].acc *myTypingData.keyData[i].totalStroke)/(avatorData[style].typingData.keyData[i].totalStroke+myTypingData.keyData[i].totalStroke); 
+            avatorData[style].typingData.keyData[i].kpm = (avatorData[style].typingData.keyData[i].kpm *avatorData[style].typingData.keyData[i].totalStroke +myTypingData.keyData[i].kpm *myTypingData.keyData[i].totalStroke)/(avatorData[style].typingData.keyData[i].totalStroke+myTypingData.keyData[i].totalStroke); 
+            avatorData[style].typingData.keyData[i].stability = (avatorData[style].typingData.keyData[i].stability *avatorData[style].typingData.keyData[i].totalStroke +myTypingData.keyData[i].stability *myTypingData.keyData[i].totalStroke)/(avatorData[style].typingData.keyData[i].totalStroke+myTypingData.keyData[i].totalStroke); 
+            avatorData[style].typingData.keyData[i].totalStroke+=myTypingData.keyData[i].totalStroke;    
+        } else {//初回プレイで0打鍵だった場合、平均値を入れておく
+            avatorData[style].typingData.keyData[i].acc = Number(avatorData[style].typingData.acc);
+            avatorData[style].typingData.keyData[i].kpm = Number(avatorData[style].typingData.kpm);
+            avatorData[style].typingData.keyData[i].stability = 0;
+        }
+    }
+    for(let i = 0;i < avatorData[style].typingData.optData.length;i++){
+        avatorData[style].typingData.optData[i].total+=myTypingData.optData[i].total;
+        avatorData[style].typingData.optData[i].count+=myTypingData.optData[i].count;
+    }
+    for(let i = 0;i < CLASS_KPM_RATIO.length;i++){
+        for(let j = 0;j < CLASS_KPM_RATIO.length;j++){
+            for(let k = 0;k < CLASS_KPM_RATIO.length;k++){
+                if(avatorData[style].typingData.speedTensor[i][j][k].totalStroke+myTypingData.speedTensor[i][j][k].totalStroke){
+                    avatorData[style].typingData.speedTensor[i][j][k].kpm=
+                        (avatorData[style].typingData.speedTensor[i][j][k].kpm*avatorData[style].typingData.speedTensor[i][j][k].totalStroke+
+                        myTypingData.speedTensor[i][j][k].kpm*myTypingData.speedTensor[i][j][k].totalStroke)
+                        /(avatorData[style].typingData.speedTensor[i][j][k].totalStroke+myTypingData.speedTensor[i][j][k].totalStroke);
+                    avatorData[style].typingData.speedTensor[i][j][k].totalStroke+=myTypingData.speedTensor[i][j][k].totalStroke;
+                } else{
+                    avatorData[style].typingData.speedTensor[i][j][k].kpm=Number(avatorData[style].typingData.kpm);
+                }
+            } 
+        }
     }
 }

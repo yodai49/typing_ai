@@ -1438,13 +1438,17 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     }else{
         battleResult.pWin = 0;
     }
-    battleResult.kpm = Number((battleResult.totalStroke-battleResult.totalMiss)/(t-battleResult.startTime-totalLossTime)*60000).toFixed(1);
-    battleResult.acc = Number((battleResult.totalStroke-battleResult.totalMiss)/battleResult.totalStroke*100).toFixed(1);
-    if(isNaN(battleResult.acc)) battleResult.acc=0;
-    if(isNaN(battleResult.kpm)) battleResult.kpm=0;
-    battleResult.cp = battleResult.kpm;
-    if(inputStyle) battleResult.cp*=COEF_R2K;
-    battleResult.cp=Number(battleResult.cp).toFixed(1);
+    if(battleResult.totalStroke){ //アバターデータのtypingDataは特例でここで更新
+        let typingAnalysis = analyzeTyping(playData.settings[0],battleResult.myTypeData);//分析結果を取得
+        updateTypingData(playData.settings[0],typingAnalysis); //更新はこの関数
+        battleResult.kpm = typingAnalysis.kpm;
+        battleResult.acc =typingAnalysis.acc;
+        if(isNaN(battleResult.acc)) battleResult.acc=0;
+        if(isNaN(battleResult.kpm)) battleResult.kpm=0;
+        battleResult.cp = battleResult.kpm;
+        if(inputStyle) battleResult.cp*=COEF_R2K;
+        battleResult.cp=Number(battleResult.cp).toFixed(1);
+    }
     //ランクを算出
     if(battleResult.acc == 100){
         battleResult.accRank=0;
@@ -1494,10 +1498,6 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     dailyMission.word+=battleResult.point;
     processDailyMission();
     //avatorDataに関する更新
-    if(battleResult.totalStroke){
-        avatorData[inputStyle].typingData.kpm = Number((avatorData[inputStyle].typingData.kpm * avatorData[inputStyle].typingData.stroke  + battleResult.kpm * battleResult.totalStroke)/(avatorData[inputStyle].typingData.stroke+battleResult.totalStroke)).toFixed(1);
-        avatorData[inputStyle].typingData.acc = Number((avatorData[inputStyle].typingData.acc * avatorData[inputStyle].typingData.acc  + battleResult.acc * battleResult.totalStroke)/(avatorData[inputStyle].typingData.stroke+battleResult.totalStroke)).toFixed(1);    
-    }
     avatorData[inputStyle].typingData.stroke += battleResult.totalStroke;
     avatorData[inputStyle].typingData.miss+=battleResult.totalMiss;
     avatorData[inputStyle].cp = avatorData[inputStyle].typingData.kpm;
