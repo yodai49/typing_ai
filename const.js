@@ -17,6 +17,11 @@ const STROKE_STAR=[0,1000,3000,5000,8000,12000,18000,25000,33000,42000,55000,650
 const PARTS_TEXT=["HEAD","BODY1","BODY2","LIMBS","OTHER"];
 PARTS_TEXT_SHORT=["H","1","2","L","O"];
 const BONUS_NAME=["ワードボーナス","正確性ボーナス","チームボーナス","アイテムボーナス","エネミーボーナス"];
+const BONUS_EXP = ["獲得ワードを　　から　　の6段階で評価。　　以上の場合、獲得ワード数に応じてボーナス。",
+                    "正確性を　　から　　の6段階で評価。　　以上の場合、正確性に応じてボーナス。",
+                    "チームの相性によるボーナス。イベント開催時は該当チームにボーナス20%。",
+                    "装備しているアイテムによるボーナス。",
+                    "敵アバターの種類によるボーナス。ユーザーが作成したアバターの場合、ボーナス20%。"]
 const RANK_TEXT=["S","A","B","C","D","E"];
 const AVATOR_CLASS_TEXT = ["COM","EVENT","USER1","USER2","USER3"];
 const AVATOR_KIND_TEXT=["USER","EVENT","COM"];

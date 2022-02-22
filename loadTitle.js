@@ -12,8 +12,9 @@ window.addEventListener('DOMContentLoaded', function(){ //クリックイベン�
     ctx2dSt2=document.getElementById("myCanvas3_5").getContext("2d");
     ctx2d2=document.getElementById("myCanvas4").getContext("2d");
 });
-function drawLoadingCircle(x,y,size,t,speed,trans){
+function drawLoadingCircle(x,y,size,t,speed,trans,isTopLevel){
     if(trans == undefined) trans=1;
+    if(isTopLevel)ctx2dCr=ctx2d;
     ctx2dCr.lineWidth=size*0.08;
     var ani = [];
     for(var i = 0;i < 5;i++){
@@ -44,6 +45,7 @@ function drawLoadingCircle(x,y,size,t,speed,trans){
     ctx2dCr.strokeStyle=getRGBA(7,0,trans*0.8);
     ctx2dCr.arc(x,y,size*0.84,Math.PI*3.8/5+ani[4],Math.PI*8/5+ani[4]);
     ctx2dCr.stroke();
+    if(isTopLevel)ctx2dCr=document.getElementById("myCanvas2_3").getContext("2d");
 }
 
 
@@ -88,6 +90,9 @@ function init() {
         }
         otherPartsImg[i].onload=()=>{imgLoadedCnt++;};
     }
+    ctx2dImg.fillStyle="rgba(0,0,0,1)";
+    ctx2dImg.fillRect(0,0,WIDTH,HEIGHT);    
+
     tick();
 
     function tick() {
@@ -95,10 +100,6 @@ function init() {
     
         //リセット処理
         ctx2d.clearRect(0,0,WIDTH,HEIGHT);
-    
-        ctx2d.fillStyle=getRGBA(0,0,t);
-        ctx2d.fillStyle="rgba(0,0,0,1)";
-        ctx2d.fillRect(0,0,WIDTH,HEIGHT);
     
         ctx2d.font="24px " + MAIN_FONTNAME;
         if(scene!=0){
@@ -111,7 +112,7 @@ function init() {
             ctx2d.fillStyle=getRGBA(2,1000,t);
             ctx2d.fillText("LOADING",(WIDTH-ctx2d.measureText("LOADING").width)/2,HEIGHT/2);
         }
-        drawLoadingCircle(WIDTH/2,HEIGHT/2,100,t,1000);
+        drawLoadingCircle(WIDTH/2,HEIGHT/2,100,t,1000,1);
         if(DEBUG_MODE) SCENE_ANI=100;
         if(imgLoadedCnt!=IMG_CNT || sceneAni || performance.now() - sceneAni < SCENE_ANI*2.5) requestAnimationFrame(tick);
     }

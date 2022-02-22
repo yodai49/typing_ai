@@ -74,7 +74,7 @@ font-display: swap;
     z-index:23;
 }
 .nameBoxCreate{
-    z-index:3;
+    z-index:100;
     position:absolute;
     left:calc(50% - 186px);
     top:206px;
@@ -88,7 +88,7 @@ font-display: swap;
     transition:all 0.3s;
 }
 .nameBoxChange{
-    z-index:3;
+    z-index:100;
     position:absolute;
     left:calc(50% - 100px);
     top:246px;
