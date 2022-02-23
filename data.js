@@ -22,6 +22,7 @@ var battleData;
 var localAvator;
 var todayBattleData;
 var dailyMission;
+var avatorData;
 
 function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
     let lv=myPlayData.level;
@@ -159,6 +160,8 @@ function getMissionText(myMission){//ミッションのテキストを返す関�
 }
 function setDailyMission(){ //その日のデイリーミッションをセットし、その日のデータをリセットする関数
     let myDate = new Date();
+    myDate.setHours(myDate.getHours() - 5);
+    if(myDate.getSeconds()==0) myDate.setMinutes(myDate.getMinutes() - 1);
     let day = myDate.getDay();//曜日
     let inputStyle=0;
     dailyMission.battle=0;
@@ -177,8 +180,6 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
     } else{
         dailyMission.event=0;
     }
-    myDate.setHours(myDate.getHours() - 5);
-    if(myDate.getSeconds()==0) myDate.setMinutes(myDate.getMinutes() - 1);
     dailyMission.date=day;
     let myRand=[];
     for(let i = 0;i < 3;i++){
@@ -335,21 +336,52 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
     }
     if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
-    if(localAvator==null || force) localAvator = [ //デフォルトアバターのデータ
-    [{name:"SAMPLE1",team:3,star:0,level:5,item:[5,6,0,0,0],style:0,cp:124,
-        typingData:{kpm:124,acc:95,stroke:17,miss:1},kind:2},//kpmは換算　kpmRは実際のkpm
-    {name:"SAMPLE2",team:0,star:0,level:8,item:[4,3,0,0,0],style:1,cp:200,
-        typingData:{kpm:179,acc:96,stroke:18,miss:1},kind:2},
-    {name:"SAMPLE3",team:1,star:0,level:13,item:[5,1,0,0,0],style:0,cp:255,
-        typingData:{kpm:225,acc:88,stroke:20,miss:1},kind:2},
-    {name:"SAMPLE4",team:2,star:0,level:22,item:[5,2,0,0,0],style:1,cp:308,
-        typingData:{kpm:308,acc:92,stroke:16,miss:1},kind:2},
-    {name:"SAMPLE5",team:2,star:0,level:28,item:[6,4,1,0,0],style:1,cp:500,
-        typingData:{kpm:412,acc:96,stroke:24,miss:1},kind:2},
-    {name:"SAMPLE6",team:1,star:0,level:32,item:[7,3,2,0,0],style:0,cp:482,
-        typingData:{kpm:482,acc:97.5,stroke:26,miss:1},kind:2}],[],[],[],[]];
+    if(localAvator==null || force) {
+        localAvator = [ //デフォルトアバターのデータ
+            [{name:"あいうえお",team:0,star:0,level:5,item:[5,6,0,0,0],style:0,cp:124,
+                typingData:{kpm:0,acc:95,stroke:17,miss:1},kind:2},//kpmは換算　kpmRは実際のkpm
+            {name:"かきくけこ",team:1,star:0,level:8,item:[4,3,0,0,0],style:1,cp:200,
+                typingData:{kpm:0,acc:96,stroke:18,miss:1},kind:2},
+            {name:"さしすせそ",team:2,star:0,level:13,item:[5,1,0,0,0],style:0,cp:255,
+                typingData:{kpm:0,acc:88,stroke:20,miss:1},kind:2},
+            {name:"たちつてと",team:1,star:0,level:22,item:[5,2,0,0,0],style:0,cp:308,
+                typingData:{kpm:0,acc:92,stroke:16,miss:1},kind:2},
+            {name:"なにぬねの",team:0,star:0,level:28,item:[6,4,1,0,0],style:1,cp:500,
+                typingData:{kpm:0,acc:96,stroke:24,miss:1},kind:2},
+            {name:"はひふへほ",team:2,star:0,level:32,item:[7,3,2,0,0],style:0,cp:482,
+                typingData:{kpm:0,acc:97.5,stroke:26,miss:1},kind:2}],[],[],[],[]];
+        for(let i = 0;i < 6;i++){ //デフォルトアバターのデータを生成する
+            localAvator[0][i].typingData.kpm = Math.floor(124+i*55+Math.sin(i)*60+50*(i==5));
+            if(localAvator[0][i].style) localAvator[0][i].typingData.kpm/=COEF_R2K;
+            localAvator[0][i].typingData.kpm = Math.floor(localAvator[0][i].typingData.kpm);
+            localAvator[0][i].typingData.firstSpeed=725-i*50;
+            localAvator[0][i].typingData.missChain=2+Math.sin(i*1.1)*2;
+            localAvator[0][i].typingData.cong={prob:0.08-i*0.01,key:4+Math.sin(i*1.2)*2,count:1};
+            localAvator[0][i].typingData.keyData=[];
+            for(let j = 0;j < ALL_CHARA_SET.length+1;j++){
+                localAvator[0][i].typingData.keyData[j]={acc:(95+4*Math.sin(i*1.2+j*1.3)),kpm:localAvator[0][i].typingData.kpm*(1+0.5*Math.sin(i*1.22+j*1.18)),stability:(0.5+0.5*Math.sin(i+j*1.2)),totalStroke:5};
+            }
+            localAvator[0][i].typingData.optData=[];
+            for(let j = 0;j < OPT_SET.length;j++){
+                localAvator[0][i].typingData.optData[j] = {total:100,count:Math.floor(50+50*Math.sin(i*0.5+j*0.2))};
+            }
+            localAvator[0][i].typingData.speedTensor=[];
+            for(let j = 0;j < CLASS_KPM_RATIO.length;j++){
+                localAvator[0][i].typingData.speedTensor[j]=[];
+                for(let k = 0;k < CLASS_KPM_RATIO.length;k++){
+                    localAvator[0][i].typingData.speedTensor[j][k]=[];
+                    for(let l = 0;l < CLASS_KPM_RATIO.length;l++){
+                        localAvator[0][i].typingData.speedTensor[j][k][l] = {kpm:(1+0.5*Math.sin(j*0.7+k*0.8+l*0.9))*localAvator[0][i].typingData.kpm,totalStroke:1};
+                    } 
+                }  
+            }
+        }
+    }
     if(todayBattleData==null || force) todayBattleData = {battle:0,win:0,esc:0,stroke:0,miss:0,word:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
-    if(dailyMission==null || force) dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
+    if(dailyMission==null || force) {
+// dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
+        setDailyMission();
+    }
 }
 function loadData(){//データをローカルストレージから読み込む関数
     avatorData = JSON.parse(localStorage.getItem('avatorData'));

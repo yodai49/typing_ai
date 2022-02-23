@@ -476,6 +476,8 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillText("名前",WIDTH/2-237,HEIGHT/2-40);
             ctx2d.fillText("入力方式",WIDTH/2-253.5,HEIGHT/2+15);
             ctx2d.fillText("所属チーム",WIDTH/2-270,HEIGHT/2+70);
+            ctx2d.font="8pt " + JAPANESE_FONTNAME;
+            ctx2d.fillText("※後から変更可能",WIDTH/2-253.5,HEIGHT/2+35);
             drawPrl({x1:WIDTH/2+13,y1:HEIGHT/2-130,x2:WIDTH/2+300,y2:HEIGHT/2+63,colSet:13,hoverColSet:13,shadow:0,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
             drawAvator(avatorData[0],WIDTH/2+58,HEIGHT/2-128,WIDTH/2+255,HEIGHT/2+55,t,myAni);
         } else if(msgBox[0].levelUpWindow){//レベルアップウィンドウ
@@ -804,7 +806,6 @@ function drawMenuOnce(){
     for(let i = 0;i < 3;i++){
         if(dailyMission.detail[i].progress == dailyMission.detail[i].max){
             drawPrl({x1:567+i*9.6,y1:384+i*32,x2:826+i*9.6,y2:412+i*32,rev:1,lineWidth:1,shadow:0,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.6,text:""});
-            drawPrl({x1:760+i*9.6,y1:380+i*32,x2:826+i*9.6,y2:396+i*32,rev:1,lineWidth:1,shadow:0,colSet:3,hoverColSet:3,hoverCounter:0,textSize:0.9,text:"CLEAR"});
         } else if(dailyMission.detail[i].team!=-1){
             drawPrl({x1:567+i*9.6,y1:384+i*32,x2:826+i*9.6,y2:412+i*32,rev:1,lineWidth:1,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
             drawPrl({x1:558+i*9.6,y1:384+i*32,x2:574+i*9.6,y2:412+i*32,rev:1,lineWidth:0.1,shadow:0,colSet:5+((dailyMission.detail[i].team+1)%3)*2,hoverColSet:3+dailyMission.detail[i].team*2,hoverCounter:0,textSize:0.6,text:""});
@@ -813,6 +814,7 @@ function drawMenuOnce(){
             drawPrl({x1:558+i*9.6,y1:384+i*32,x2:574+i*9.6,y2:412+i*32,rev:1,lineWidth:0.1,shadow:0,colSet:13,hoverColSet:13,hoverCounter:0,textSize:0.6,text:""});
         }
     }
+
     ctx2d.fillStyle=getRGBA(0,0,1); //デイリーミッション系
     ctx2d.font="19pt " + MAIN_FONTNAME;
     ctx2d.fillText("DAILY",560,370);
@@ -838,6 +840,11 @@ function drawMenuOnce(){
         ctx2d.drawImage(coinImg,736+9.6*i,396+i*32,15,15);
     }
 
+    for(let i = 0;i < 3;i++){
+        if(dailyMission.detail[i].progress == dailyMission.detail[i].max){
+            drawPrl({x1:760+i*9.6,y1:380+i*32,x2:826+i*9.6,y2:396+i*32,rev:1,lineWidth:1,shadow:0,colSet:3,hoverColSet:3,hoverCounter:0,textSize:0.9,text:"CLEAR"});
+        }
+    }
     //デイリーミッションここまで
     ctx2d=document.getElementById("myCanvas").getContext("2d");
 }
@@ -920,16 +927,41 @@ function setBattleResultDefault(){ //ワードもここで選ぶ
             battleResult.wordSet[i].enemyText=getKana(word2[tempWordNum].split(",")[1]);
         }
         let enemyTypingChar=0;////ここから敵のタイピングデータの生成
+        let enemyTypingTime=(Math.random()+0.5)*enemyAvatorData.typingData.firstSpeed;
+        let enemyLastMiss=0;//直前の文字がミスかどうか
+        let enemyLastCong=0;//直前文字が詰まっているかどうか
         while(true){
-            battleResult.enemyTypeData[i].push({
-                char:battleResult.wordSet[i].enemyText.substr(enemyTypingChar,1),
-                time:500+100*enemyTypingChar})
-            if(Math.random()<0.2){
+            let thisChar=battleResult.wordSet[i].enemyText.substr(enemyTypingChar,1);//次に打つべき文字
+            let charKpm=(enemyAvatorData.typingData.kpm+2*enemyAvatorData.typingData.keyData[getAllCharaSetNum(thisChar)].kpm)/3;//その文字の打鍵までにかかる時間（ミリ秒）
+            charKpm=charKpm*Math.max(0.3,(1+2*(Math.random()-0.5)*enemyAvatorData.typingData.keyData[getAllCharaSetNum(thisChar)].stability));//キーごとの安定性でぶらす 多少遅めにする
+            let charTime=60000/charKpm;
+            if(enemyTypingChar!=0) enemyTypingTime+=charTime;//1文字目以外のときは所要時間を足す
+            if((!enemyLastMiss && Math.random()*100 > enemyAvatorData.typingData.acc) ||
+                    (enemyLastMiss && Math.random() > 1/enemyAvatorData.typingData.missChain)){ //ミスの時
                 battleResult.enemyTypeData[i].push({
                     char:"_",
-                    time:520+100*enemyTypingChar})    
+                    time:enemyTypingTime});
+                enemyLastMiss=1;
+                enemyLastCong=0;
+            } else{
+                if((!enemyLastCong && Math.random() < enemyAvatorData.typingData.cong.prob) || 
+                        (enemyLastCong && Math.random() > 1/enemyAvatorData.typingData.cong.key)){//詰まっている時
+                    enemyTypingTime+=charTime*2;
+                    enemyLastCong=1;
+                } else{ //詰まっていない時
+                    battleResult.enemyTypeData[i].push({
+                        char:thisChar,
+                        time:enemyTypingTime});
+                    enemyTypingChar++;
+                    enemyLastMiss=0;
+                    enemyLastCong=0;
+                }
             }
-            enemyTypingChar++;
+/*            if(Math.random()<0.2){
+                battleResult.enemyTypeData[i].push({
+                    char:"_",
+                    time:520+100*enemyTypingChar})
+            }*/
             if(enemyTypingChar>battleResult.wordSet[i].enemyText.length) break;
         }
     }
@@ -1394,9 +1426,9 @@ function processDailyMission(){
             }else if(dailyMission.detail[i].type == 10){
                 if(enemyAvatorData.cp >= dailyMission.detail[i].require && battleResult.pWin) dailyMission.detail[i].progress+=1;
             }else if(dailyMission.detail[i].type == 11){
-                if(enemyAvatorData.team >= dailyMission.detail[i].team) dailyMission.detail[i].progress+=battleResult.point;
+                if(enemyAvatorData.team == dailyMission.detail[i].team) dailyMission.detail[i].progress+=battleResult.point;
             }else if(dailyMission.detail[i].type == 12){
-                if(enemyAvatorData.team >= dailyMission.detail[i].team) dailyMission.detail[i].progress+=battleResult.totalStroke-battleResult.totalMiss;
+                if(enemyAvatorData.team == dailyMission.detail[i].team) dailyMission.detail[i].progress+=battleResult.totalStroke-battleResult.totalMiss;
             }else if(dailyMission.detail[i].type == 13){
                 if(enemyAvatorData.kind ==0) dailyMission.detail[i].progress+=battleResult.win;
             }
@@ -1829,10 +1861,10 @@ function drawResult(){ ///結果画面の描画関数
             ctx2d.fillText("%",865-i*6.3,169+i*21);
         }
     }
-    ctx2d.font="12pt " + DIGIT_FONTNAME + ","+JAPANESE_FONTNAME;
+    ctx2d.font="10pt " + DIGIT_FONTNAME + ","+JAPANESE_FONTNAME;
     ctx2d.fillStyle=getRGBA(2,0,1);
     realRatio=(Math.min(1,Math.max(0,((t-resultAni)/200-2.5)/2)));
-    ctx2d.fillText(Math.floor(realRatio*playData.coin) + "ゴールド",620+2*6.3,174-2*21);
+    ctx2d.fillText("所持：" + Math.floor(realRatio*playData.coin) + "ゴールド",620+2*6.3,174-2*21);
     for(let i = 0;i < 7 ;i++){
         ctx2d.fillStyle=getRGBA(0,0,Math.min(1,(t-resultAni)/200-3-i*1.2));
         if(i==0){
