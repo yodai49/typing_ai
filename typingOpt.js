@@ -100,6 +100,7 @@ const optList=["kilya,kya","kili,kyi","kilyu,kyu","kile,kye","kilyo,kyo",
 "bilya,bya","bili,byi","bilyu,byu","bile,bye","bilyo,byo",
 "pilya,pya","pili,pyi","pilyu,pyu","pile,pye","pilyo,pyo",
 "uli,wi","ule,we"]
+const reverseOptList=["ilya,ya","ilyi,yi","ilyu,yu","ile,ye","ilyo,yo"];
 const KEY_KANA_SET=[
     ["あ","3"],["い","e"],["う","4"],["え","5"],["お","6"],
     ["か","tT"],["き","gG"],["く","hH"],["け",":*"],["こ","bB"],
@@ -217,6 +218,13 @@ function checkOpt(targetStr,typingStr,typistMode){
             }
         }
     }
+    if(targetStr.substr(typingStr.length-1,1) == "i" || targetStr.substr(typingStr.length-1,1) == "e"){ //wi,we>whi,whe
+        if(typingStr.substr(typingStr.length-1,1) == "h"){
+            if(targetStr.substr(typingStr.length-2,1) == "w"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "h" + targetStr.substr(typingStr.length-1)};
+            }
+        }
+    }
     if(targetStr.substr(typingStr.length-1,1) == "u"){ //tu>tsu
         if(typingStr.substr(typingStr.length-1,1) == "s"){
             if(targetStr.substr(typingStr.length-2,1) == "t"){
@@ -307,10 +315,20 @@ function checkOpt(targetStr,typingStr,typistMode){
             }
         }
     }
+
     if(typistMode) return {isMiss:1,newTargetStr:targetStr};//タイピストモードで受理するものはここまで
-    //非効率なものの処理 sya→silyaなど　あとで書く
 
-
+    //非効率なものの処理 sya→silyaなど
+    //targetStr typingStr
+    for(let i = 0;i < reverseOptList.length;i++){
+        if(targetStr.substr(typingStr.length-1,reverseOptList[i].split(",")[1].length) == reverseOptList[i].split(",")[1]){
+            if(typingStr.substr(typingStr.length-1,1) == reverseOptList[i].split(",")[0].substr(0,1)){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + reverseOptList[i].split(",")[0] + targetStr.substr(typingStr.length-1 + reverseOptList[i].split(",")[0].length)};
+            }
+        }
+    }
+    //っを単体で打つ処理
+    
     return {isMiss:1,newTargetStr:targetStr};//それ以外なら不受理（最適化未実装)
 }
 function keyToKana(myKey,shift){//押されたキーからひらがなへ変換する関数

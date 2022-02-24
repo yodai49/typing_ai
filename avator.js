@@ -286,7 +286,7 @@ function drawHead(myAvator,x1,y1,x2,y2,t,trans){//頭を描画
     var headGrad = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35),getDrawPos(x1,x2,0.65),getDrawPos(y1,y2,0.1));
     if(myAvator==-1) {
         ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
-        ctx2d.fillRect(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.1),getDrawPos(x1,x2,0.65)-getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35)-getDrawPos(y1,y2,0.1));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.16),getDrawPos(x1,x2,0.65)-getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35)-getDrawPos(y1,y2,0.1));
         return 0;    
     }
     for(var i = 0;i < HEAD_GRAD_COLSET[myAvator.item[0]].length;i++){

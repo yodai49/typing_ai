@@ -100,6 +100,7 @@ function init() {
     
         //リセット処理
         ctx2d.clearRect(0,0,WIDTH,HEIGHT);
+        ctx2d2.clearRect(0,0,WIDTH,HEIGHT);
     
         ctx2d.font="24px " + MAIN_FONTNAME;
         if(scene!=0){

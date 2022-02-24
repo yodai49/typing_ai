@@ -21,7 +21,7 @@ var playData;
 var battleData;
 var localAvator;
 var todayBattleData;
-var dailyMission;
+var dailyMission={};
 var avatorData;
 
 function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
@@ -151,7 +151,7 @@ function getMissionText(myMission){//ミッションのテキストを返す関�
     }else if(myMission.type == 10){
         return "CP" + myMission.require+"以上のアバターにPF勝利しよう";
     }else if(myMission.type == 11){
-        return TEAM_TEXT[myMission.team]+"チームのアバターから" + myMission.max + "ワード奪取しよう";
+        return TEAM_TEXT[myMission.team]+"チームから" + myMission.max + "ワード奪取しよう";
     }else if(myMission.type == 12){
         return TEAM_TEXT[myMission.team]+"チームのアバターに" + myMission.max + "打鍵しよう";
     }else if(myMission.type == 13){
@@ -203,8 +203,8 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
                 dailyMission.detail[i].max=(myRand[i] % 7)*500+1000;
                 dailyMission.detail[i].achieve=dailyMission.detail[i].max*0.01;
             }
-            dailyMission.detail[i].team = (dailyMission.event+1)%3;
-            dailyMission.detail[i].progess=0;
+            dailyMission.detail[i].team = (dailyMission.event)%3;
+            dailyMission.detail[i].progress=0;
         } else{
             dailyMission.detail[i].team=-1;
             dailyMission.detail[i].require=0;
@@ -310,10 +310,10 @@ function saveData(){//データをローカルストレージへ保存する関�
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
     if(avatorData==null || force) {
         avatorData = [
-            {name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:0,typingData:{
+            {name:"NAME",team:0,id:generateUuid(),star:0,item:[0,0,0,0,0],style:0,typingData:{
                 kpm:0,stroke:0,miss:0,play:0,
                 keyData:[],missChain:0,firstSpeed:0,optData:[],kpm:0,acc:0,speedTensor:[],cong:{prob:0,key:0,count:0}},kind:0,cp:0},
-            {name:"NAME",team:0,star:0,item:[0,0,0,0,0],style:1,typingData:{
+            {name:"NAME",team:0,id:generateUuid(),star:0,item:[0,0,0,0,0],style:1,typingData:{
                 kpm:0,stroke:0,miss:0,play:0,
                 keyData:[],missChain:0,firstSpeed:0,optData:[],kpm:0,acc:0,speedTensor:[],cong:{prob:0,key:0,count:0}},kind:0,cp:0}];
         for(let ii = 0;ii < 2;ii++){
@@ -351,9 +351,14 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
             {name:"はひふへほ",team:2,star:0,level:32,item:[7,3,2,0,0],style:0,cp:482,
                 typingData:{kpm:0,acc:97.5,stroke:26,miss:1},kind:2}],[],[],[],[]];
         for(let i = 0;i < 6;i++){ //デフォルトアバターのデータを生成する
-            localAvator[0][i].typingData.kpm = Math.floor(124+i*55+Math.sin(i)*60+50*(i==5));
-            if(localAvator[0][i].style) localAvator[0][i].typingData.kpm/=COEF_R2K;
-            localAvator[0][i].typingData.kpm = Math.floor(localAvator[0][i].typingData.kpm);
+            localAvator[0][i].id=generateUuid();
+            localAvator[0][i].typingData.kpm = Math.floor(124+i*120+Math.sin(i)*60+50*(i==5));
+            localAvator[0][i].cp=localAvator[0][i].typingData.kpm;
+            if(localAvator[0][i].style) {
+                localAvator[0][i].typingData.kpm/=COEF_R2K;
+                localAvator[0][i].typingData.kpm = Math.floor(localAvator[0][i].typingData.kpm);
+            }
+            localAvator[0][i].typingData.cp = localAvator[0][i].typingData.cp;
             localAvator[0][i].typingData.firstSpeed=725-i*50;
             localAvator[0][i].typingData.missChain=2+Math.sin(i*1.1)*2;
             localAvator[0][i].typingData.cong={prob:0.08-i*0.01,key:4+Math.sin(i*1.2)*2,count:1};
@@ -379,7 +384,7 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
     }
     if(todayBattleData==null || force) todayBattleData = {battle:0,win:0,esc:0,stroke:0,miss:0,word:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(dailyMission==null || force) {
-// dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
+        dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
         setDailyMission();
     }
 }
@@ -446,4 +451,18 @@ function updateTypingData(style,myTypingData){//avatorDataのタイピングデ�
             } 
         }
     }
+}
+function generateUuid() {//UUIDを生成する
+    let chars = "aaaaaaaa-aaaa-4aaa-baaa-aaaaaaaaaaaa".split("");
+    for (let i = 0, len = chars.length; i < len; i++) {
+        switch (chars[i]) {
+            case "a":
+                chars[i] = Math.floor(Math.random() * 16).toString(16);
+                break;
+            case "b":
+                chars[i] = (Math.floor(Math.random() * 4) + 8).toString(16);
+                break;
+        }
+    }
+    return chars.join("");
 }
