@@ -23,6 +23,7 @@ var localAvator;
 var todayBattleData;
 var dailyMission={};
 var avatorData;
+var battleDataSave;
 
 function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
     let lv=myPlayData.level;
@@ -399,6 +400,7 @@ function saveData(){//データをローカルストレージへ保存する関�
     localStorage.setItem('localAvator', JSON.stringify(localAvator,undefined,1));
     localStorage.setItem('todayBattleData', JSON.stringify(todayBattleData,undefined,1));
     localStorage.setItem('dailyMission', JSON.stringify(dailyMission,undefined,1));
+    localStorage.setItem('battleDataSave', JSON.stringify(battleDataSave,undefined,1));
     firstLaunchFlg=0;
 }
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
@@ -481,6 +483,7 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
         dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
         setDailyMission();
     }
+    if(battleDataSave==null || force) battleDataSave =[];
 }
 function loadData(){//データをローカルストレージから読み込む関数
     avatorData = JSON.parse(localStorage.getItem('avatorData'));
@@ -489,6 +492,7 @@ function loadData(){//データをローカルストレージから読み込む�
     localAvator = JSON.parse(localStorage.getItem('localAvator'));
     todayBattleData = JSON.parse(localStorage.getItem('todayBattleData'));
     dailyMission = JSON.parse(localStorage.getItem('dailyMission'));
+    battleDataSave=JSON.parse(localStorage.getItem('battleDataSave'));
     setDefault();
 }
 function resetData(){//データをリセットし、変数に既定値をセットする関数
@@ -559,4 +563,25 @@ function generateUuid() {//UUIDを生成する
         }
     }
     return chars.join("");
+}
+function getBattleDataSave(myId){
+    //battleDataSaveから情報を得る
+    for(let i = 0;i < battleDataSave.length;i++){
+        if(battleDataSave[i].id == myId) return battleDataSave[i];
+    }
+}
+function setBattleDataSave(myId,myBattleResult){
+    //battleDataSaveに情報をセットする
+    for(let i = 0;i < battleDataSave.length;i++){
+        if(battleDataSave[i].id == myId){
+            battleDataSave[i].battle++;
+            battleDataSave[i].win+=myBattleResult.win;
+            battleDataSave[i].kWin+=myBattleResult.kWin;
+            battleDataSave[i].pWin+=myBattleResult.pWin;
+            return 0;
+        }
+    }
+    //見つからなかったら
+    battleDataSave.push({id:myId,battle:1,win:myBattleResult.win,kWin:myBattleResult.kWin,pWin:myBattleResult.pWin});
+    return 1;
 }

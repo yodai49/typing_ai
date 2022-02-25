@@ -262,9 +262,13 @@ function drawOthers(myAvator,x1,y1,x2,y2,t,trans){ //その他の装飾品を描
         ctx2d.strokeRect(getDrawPos(x1,x2,0.47),getDrawPos(y1,y2,0.43),getDrawPos(x1,x2,0.53)-getDrawPos(x1,x2,0.43),getDrawPos(y1,y2,0.53)-getDrawPos(y1,y2,0.43));
         ctx2d.strokeRect(getDrawPos(x1,x2,0.43),getDrawPos(y1,y2,0.47),getDrawPos(x1,x2,0.53)-getDrawPos(x1,x2,0.43),getDrawPos(y1,y2,0.53)-getDrawPos(y1,y2,0.43));
     } else if(myAvator.item[4]==3 || myAvator.item[4] == 4){//銀冠、金冠
-        ctx2d.drawImage(otherPartsImg[myAvator.item[4]-3],getDrawPos(x1,x2,0.44),getDrawPos(y1,y2,0.0),getDrawPos(x1,x2,0.56)-getDrawPos(x1,x2,0.44),getDrawPos(y1,y2,0.11)-getDrawPos(y1,y2,0.00))
-    } else if(myAvator.item[4] >= 5 && myAvator.item[4] <= 9){ //冠類
-        ctx2d.drawImage(otherPartsImg[myAvator.item[4]-3],getDrawPos(x1,x2,0.12),getDrawPos(y1,y2,0.4),getDrawPos(x1,x2,0.27)-getDrawPos(x1,x2,0.12),getDrawPos(y1,y2,0.9)-getDrawPos(y1,y2,0.40))        
+        if(trans>0.9){
+            ctx2d.drawImage(otherPartsImg[myAvator.item[4]-3],getDrawPos(x1,x2,0.44),getDrawPos(y1,y2,0.0),getDrawPos(x1,x2,0.56)-getDrawPos(x1,x2,0.44),getDrawPos(y1,y2,0.11)-getDrawPos(y1,y2,0.00));
+        }
+    } else if(myAvator.item[4] >= 5 && myAvator.item[4] <= 9){ //剣類
+        if(trans > 0.9){
+            ctx2d.drawImage(otherPartsImg[myAvator.item[4]-3],getDrawPos(x1,x2,0.12),getDrawPos(y1,y2,0.4),getDrawPos(x1,x2,0.27)-getDrawPos(x1,x2,0.12),getDrawPos(y1,y2,0.9)-getDrawPos(y1,y2,0.40));
+        }
     }
 }
 function drawHead(myAvator,x1,y1,x2,y2,t,trans){//頭を描画
