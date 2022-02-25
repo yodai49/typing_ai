@@ -17,7 +17,7 @@ const OPT_SET=[
     ["ka","ca"],["si","ci"],["ku","cu"],["se","ce"],["ko","co"],
     ["la","xa"],["li","xi"],["lu","xu"],["le","xe"],["lo","xo"],
     ["zya","ja"],["zi","ji"],["zyu","ju"],["zye","je"],["zyo","jo"],
-    ["hu","fu","c"],["ti","chi"],["si","shi"]]
+    ["hu","fu","cs"],["ti","chi"],["si","shi"]]
 
 function getParialKpm(myTypingData,begin,end){//beginからendまでのkpmを計測　初速は省いて処理
     let tempCount=0,tempKpm=-1;

@@ -42,7 +42,9 @@ const EVENT_EXP=[
     ["イベント限定アバター出現中！","REDチームはボーナス25%＋1ゴールド獲得！","全ミッションクリア後に勝利で1コイン獲得！"],
     ["イベント限定アバター出現中！","BLUEチームはボーナス25%＋1ゴールド獲得！","全ミッションクリア後に勝利で1コイン獲得！"],
     ["イベント限定アバター出現中！","YELLOWチームはボーナス25%＋1ゴールド獲得！","全ミッションクリア後に勝利で1コイン獲得！"],
-    ["","全ミッションクリア後に勝利で1コイン獲得！"]]
+    ["EXPアップイベント開催中！","全チーム、勝利でEXPボーナス20%獲得！"],
+    ["ゴールド大放出イベント開催中！","全チーム、一回の勝利で1ゴールド獲得！"]
+]
 const INPUT_STYLE_SHORT=["R","K"];
 const BATTLE_INFO=["","LV","CP","ACC"];
 const SETTING_SELECT=[
@@ -102,9 +104,46 @@ const ITEM_DATA = [
     ["鞍替えの紋章",2500,"チームを変更することができる使い捨ての紋章"],
     ["乱れ打ちの冠",-1,"90%以下で勝利すると経験値ボーナス10%"],
     ["パーフェクトの冠",-1,"パーフェクト勝利すると3コイン獲得できる"],
-    ["修験者の剣",-1,"CP300以上で勝利すると経験値ボーナス4%"],
-    ["速打者の剣",-1,"CP450以上で勝利すると経験値ボーナス8%"],
-    ["師匠の剣",-1,"CP600以上で勝利すると経験値ボーナス12%"],
+    ["修験者の剣",-1,"CP500以上で勝利すると経験値ボーナス5%"],
+    ["速打者の剣",-1,"CP600以上で勝利すると経験値ボーナス10%"],
+    ["師匠の剣",-1,"CP650以上で勝利すると経験値ボーナス15%"],
     ["伝説の剣",-1,"CP650以上＋正確性97%以上で勝利するとボーナス20%＋2コイン"],
     ["神の剣",-1,"CP700以上＋正確性97%以上で勝利するとボーナス25%＋4コイン"]]
 ]
+const EVENT_ENEMY_DATA=[
+    {name:"*の手下",team:-1,star:4,level:9,item:[-1,0,0,0,0],style:0,cp:-1,
+        typingData:{kpm:280,acc:96.0,stroke:17,miss:1},kind:1,prob:43,id:"d2b09c01-d756-4b30-923d-1456f947340c"},
+    {name:"*の使い",team:-1,star:6,level:12,item:[-1,-1,0,0,0],style:1,cp:-1,
+        typingData:{kpm:360/COEF_R2K,acc:93.6,stroke:18,miss:1},kind:1,prob:36,id:"3b0eadf6-4f16-418d-b05d-ecb37e2ed33c"},
+    {name:"*の騎士",team:-1,star:7,level:13,item:[-1,-1,-1,0,0],style:0,cp:-1,
+        typingData:{kpm:440,acc:96.2,stroke:20,miss:1},kind:1,prob:40,id:"5497254e-a4a8-4b20-b8bb-12e3c5a92a21"},
+    {name:"*の子爵",team:-1,star:9,level:15,item:[5,-1,-1,0,0],style:0,cp:-1,
+        typingData:{kpm:500,acc:95.1,stroke:16,miss:1},kind:1,prob:38,id:"86635819-04ad-4bb5-a26e-bdbed45658cf"},
+    {name:"*の伯爵",team:-1,star:12,level:19,item:[6,-1,-1,1,0],style:1,cp:-1,
+        typingData:{kpm:560/COEF_R2K,acc:96.3,stroke:24,miss:1},kind:1,prob:35,id:"4592ef82-7ed5-422e-bf4d-68961218ea96"},
+    {name:"*の公爵",team:-1,star:13,level:22,item:[7,-1,-1,1,0],style:1,cp:-1,
+        typingData:{kpm:600/COEF_R2K,acc:92.5,stroke:26,miss:1},kind:1,prob:30,id:"7be8071c-400e-427f-9324-a7699dd7b62c"},
+    {name:"*の名打鍵手",team:-1,star:16,level:25,item:[4,-1,0,1,0],style:0,cp:-1,
+        typingData:{kpm:640,acc:94.5,stroke:17,miss:1},kind:1,prob:28,id:"2d4f7eb6-6806-410d-b52a-c0dfe8934530"},
+    {name:"*の魔神",team:-1,star:19,level:27,item:[-1,4,-1,1,0],style:1,cp:-1,
+        typingData:{kpm:720/COEF_R2K,acc:87.7,stroke:19,miss:1},kind:1,prob:24,id:"52dcd08f-6d6d-476f-b2cf-f29a22ae522e"},
+    {name:"スケルトン",team:2,star:16,level:19,item:[8,8,8,8,0],style:0,cp:-1,
+        typingData:{kpm:580,acc:100,stroke:20,miss:1},kind:1,prob:18,id:"dd517d27-7ac0-4477-94a3-9431929e4b34"},
+    {name:"炎鬼妖",team:1,star:19,level:33,item:[1,1,1,4,0],style:1,cp:-1,
+        typingData:{kpm:642/COEF_R2K,acc:97.5,stroke:24,miss:1},kind:1,prob:12,event:[1],id:"9299dc21-b462-4660-b9c4-fc11c4d9d091"},
+    {name:"雪剣武",team:0,star:19,level:33,item:[2,2,2,4,0],style:0,cp:-1,
+        typingData:{kpm:630,acc:97.9,stroke:16,miss:1},kind:1,prob:12,event:[2],id:"a3cdc66b-0178-4a00-9ac1-4fd7c18dffab"},
+    {name:"電閃狐",team:2,star:19,level:33,item:[3,3,3,4,0],style:0,cp:-1,
+        typingData:{kpm:623,acc:98.6,stroke:26,miss:1},kind:1,prob:12,event:[3],id:"573e8808-f2a1-47b3-9425-2e5b9dda9344"},
+    {name:"ブロンズヒュドラ",team:1,star:42,level:5,item:[5,5,0,5,5],style:1,cp:-1,
+        typingData:{kpm:600/COEF_R2K,acc:94.2,stroke:17,miss:1},kind:1,prob:18,dropItem:5,dropProb:0.3,id:"ed3cca6e-20ed-41b9-9b3a-ba1acead15e2"},
+    {name:"シルバーキマイラ",team:1,star:45,level:8,item:[6,6,0,6,6],style:0,cp:-1,
+        typingData:{kpm:645,acc:96.4,stroke:18,miss:1},kind:1,prob:15,dropItem:6,dropProb:0.25,id:"60702bf9-bd80-4876-b639-2176637f4239"},
+    {name:"ゴールドゴーレム",team:0,star:52,level:13,item:[7,7,0,7,7],style:1,cp:-1,
+        typingData:{kpm:690/COEF_R2K,acc:97.2,stroke:20,miss:1},kind:1,prob:12,dropItem:7,dropProb:0.15,id:"9659eab0-eff8-43d9-9758-628d47be36f6"},
+    {name:"闇の皇帝",team:1,star:6,level:65,item:[4,4,0,4,4],style:0,cp:-1,
+        typingData:{kpm:660,acc:90.2,stroke:16,miss:1},kind:1,prob:40,event:[4,5],id:"9f75c729-2b04-4231-85d7-820837e49772"},
+    {name:"幻竜",team:2,star:9,level:72,item:[9,9,0,9,8],style:1,cp:-1,
+        typingData:{kpm:720/COEF_R2K,acc:96.9,stroke:26,miss:1},kind:1,prob:25,dropItem:8,dropProb:1,event:[4,5],id:"81dfe6f9-d952-4dd3-bd3b-3ec972d32783"},
+    {name:"改・幻竜",team:0,star:27,level:77,item:[9,9,9,9,9],style:0,cp:-1,
+        typingData:{kpm:760,acc:98.7,stroke:26,miss:1},kind:1,prob:20,event:[4,5],dropItem:9,dropProb:1,id:"c3b61317-d229-4622-ad85-1541101b2c3f"}]

@@ -113,17 +113,22 @@ function getGraphPos(x,y){//KPMグラフの表示座標を取得する関数
 function getPseudoRandom(max,mode){//現在の日付から疑似乱数を返す //maxは最大値　//modeは乱数のモード
     if(max == undefined) max = 10000;
     if(mode == undefined) mode=0;
-    const RANDOM_PRIME=[[7257,7247,7243,7219,7213,7211,8069,8061,8087,7727,7741,7753],
-                        [6121,6131,6133,6353,6359,6361,6367,6581,6983,6991,6977,6799],
-                        [9011,9013,8431,7187,7193,7451,7457,6983,6991,6803,6991,8053]]
+    const RANDOM_PRIME_RAW=[
+        7257,7247,7243,7219,7213,7211,8069,8061,8087,7727,7741,7753,
+        6121,6131,6133,6353,6359,6361,6367,6581,6983,6991,6977,6799,
+        9011,9013,8431,7187,7193,7451,7457,6983,6991,6803,6991,8053]
+    var RANDOM_PRIME=[];
+    for(let i = 0;i < 12;i++){
+        RANDOM_PRIME[i]=RANDOM_PRIME_RAW[(i+mode)%RANDOM_PRIME_RAW.length];
+    }
     var myDate = new Date();
     let y_dash = myDate.getFullYear()-2000;
     let month = myDate.getMonth()+1;
     let day = myDate.getDate();
-    let r1 = Math.floor(((y_dash*RANDOM_PRIME[mode][0]*12*31+month*RANDOM_PRIME[mode][1]*12+day*RANDOM_PRIME[mode][2])%1000)/10)%10;
-    let r2 = Math.floor(((y_dash*RANDOM_PRIME[mode][3]*12*31+month*RANDOM_PRIME[mode][4]*12+day*RANDOM_PRIME[mode][5])%1000)/10)%10;
-    let r3 = Math.floor(((y_dash*RANDOM_PRIME[mode][6]*12*31+month*RANDOM_PRIME[mode][7]*12+day*RANDOM_PRIME[mode][8])%1000)/10)%10;
-    let r4 = Math.floor(((y_dash*RANDOM_PRIME[mode][9]*12*31+month*RANDOM_PRIME[mode][10]*12+day*RANDOM_PRIME[mode][11])%1000)/10)%10;
+    let r1 = Math.floor(((y_dash*RANDOM_PRIME[0]*12*31+month*RANDOM_PRIME[1]*12+day*RANDOM_PRIME[2])%1000)/10)%10;
+    let r2 = Math.floor(((y_dash*RANDOM_PRIME[3]*12*31+month*RANDOM_PRIME[4]*12+day*RANDOM_PRIME[5])%1000)/10)%10;
+    let r3 = Math.floor(((y_dash*RANDOM_PRIME[6]*12*31+month*RANDOM_PRIME[7]*12+day*RANDOM_PRIME[8])%1000)/10)%10;
+    let r4 = Math.floor(((y_dash*RANDOM_PRIME[9]*12*31+month*RANDOM_PRIME[10]*12+day*RANDOM_PRIME[11])%1000)/10)%10;
     let r = r1*1000+r2*100+r3*10+r4;
     return r % max;
 }
@@ -158,6 +163,89 @@ function getMissionText(myMission){//ミッションのテキストを返す関�
         return "ユーザーアバターに" + myMission.max + "勝しよう";
     }
 }
+function generateAvatorData(myAvatorDataRawNum){
+    //イベントアバターのタイピングデータをセットする関数　kpm、accなどの設定値に基づく cpは利用しない
+    //全体的な強さはスターに基づく　スター12で5番目のデフォルトアバター並の強さ
+    let myAvatorData={};
+    myAvatorData.name = EVENT_ENEMY_DATA[myAvatorDataRawNum].name;
+    myAvatorData.team = EVENT_ENEMY_DATA[myAvatorDataRawNum].team;
+    myAvatorData.star = EVENT_ENEMY_DATA[myAvatorDataRawNum].star;
+    myAvatorData.level = EVENT_ENEMY_DATA[myAvatorDataRawNum].level;
+    myAvatorData.item = EVENT_ENEMY_DATA[myAvatorDataRawNum].item;
+    myAvatorData.style = EVENT_ENEMY_DATA[myAvatorDataRawNum].style;
+    myAvatorData.kind = EVENT_ENEMY_DATA[myAvatorDataRawNum].kind;
+    myAvatorData.typingData={stroke:20,miss:0};
+    myAvatorData.typingData.kpm = EVENT_ENEMY_DATA[myAvatorDataRawNum].typingData.kpm;
+    myAvatorData.typingData.acc = EVENT_ENEMY_DATA[myAvatorDataRawNum].typingData.acc;
+    myAvatorData.typingData.kpm = myAvatorData.typingData.kpm * (1+(Math.sin(getPseudoRandom(100,myAvatorData.star)))*0.05);
+    i = myAvatorData.star/2.5;
+    myAvatorData.typingData.kpm=Math.floor(myAvatorData.typingData.kpm)
+    if(myAvatorData.style) {
+        myAvatorData.cp=Math.floor(myAvatorData.typingData.kpm * COEF_R2K);
+    } else{
+        myAvatorData.cp = myAvatorData.typingData.kpm;
+    }
+    myAvatorData.typingData.firstSpeed=Math.max(420,625-(i-3)*20);
+    myAvatorData.typingData.missChain=2+Math.sin(i*1.1)*2;
+    myAvatorData.typingData.cong={prob:Math.max(0.005,0.08-i*0.01),key:4+Math.sin(i*1.2)*2,count:1};
+    myAvatorData.typingData.keyData=[];
+    for(let j = 0;j < ALL_CHARA_SET.length+1;j++){
+        myAvatorData.typingData.keyData[j]={acc:(95+4*Math.sin(i*1.2+j*1.3)),kpm:myAvatorData.typingData.kpm*(1+0.5*Math.sin(i*1.22+j*1.18)),stability:(0.5+0.5*Math.sin(i+j*1.2)),totalStroke:5};
+    }
+    myAvatorData.typingData.optData=[];
+    for(let j = 0;j < OPT_SET.length;j++){
+        myAvatorData.typingData.optData[j] = {total:100,count:Math.floor((i/5)*(i/5)*(50+50*Math.sin(i*0.5+j*0.2*j)))};
+    }
+    myAvatorData.typingData.speedTensor=[];
+    for(let j = 0;j < CLASS_KPM_RATIO.length;j++){
+        myAvatorData.typingData.speedTensor[j]=[];
+        for(let k = 0;k < CLASS_KPM_RATIO.length;k++){
+            myAvatorData.typingData.speedTensor[j][k]=[];
+            for(let l = 0;l < CLASS_KPM_RATIO.length;l++){
+                myAvatorData.typingData.speedTensor[j][k][l] = {kpm:(1+0.5*Math.sin(j*0.7+k*0.8+l*0.9))*myAvatorData.typingData.kpm,totalStroke:1};
+            } 
+        }  
+    }
+    return myAvatorData;
+}
+function setEventAvator(event){
+    //イベントアバターをリセット、セットする関数
+    localAvator[1] = [];
+    for(let i = 0;i < EVENT_ENEMY_DATA.length;i++){//最大6体出現
+        if((getPseudoRandom(100,i)%100) <= EVENT_ENEMY_DATA[i].prob){
+            if(EVENT_ENEMY_DATA[i].event == undefined || EVENT_ENEMY_DATA[i].event.includes(Number(event))){
+                //出現
+                let tempEventAvatorData  = generateAvatorData(i);
+                //チーム設定処理
+                if(tempEventAvatorData.name.indexOf("*") != -1){
+                    tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT[event-1]);
+                    tempEventAvatorData.team = event-1;
+                    for(let j = 0;j < 5;j++){
+                        if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=event;
+                    }
+                }
+                //push
+                localAvator[1].push(tempEventAvatorData);
+                if(tempEventAvatorData.dropItem!=undefined) dailyMission.rare=1;//ドロップするキャラが出現していたらレア
+            }
+        }
+        if(localAvator[1].length >= 6) break;
+    }
+    if(localAvator[1].length == 0 || dailyMission.event){//イベント期間中に出現していなかったら
+        //出現
+        let tempEventAvatorData  = generateAvatorData(3);
+        //チーム設定処理
+        if(tempEventAvatorData.name.indexOf("*") != -1){
+            tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT[event-1]);
+            tempEventAvatorData.team = event-1;
+            for(let j = 0;j < 5;j++){
+                if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=event;
+            }
+        }
+        //push
+        localAvator[1].push(tempEventAvatorData);        
+    }
+}
 function setDailyMission(){ //その日のデイリーミッションをセットし、その日のデータをリセットする関数
     let myDate = new Date();
     myDate.setHours(myDate.getHours() - 5);
@@ -168,6 +256,7 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
     dailyMission.win=0;
     dailyMission.totalStroke=0;
     dailyMission.word=0;
+    dailyMission.rare=0;
     if(avatorData[0].typingData.stroke==0) inputStyle=1;
     let baseKPM=avatorData[inputStyle].typingData.cp;
     if(baseKPM<100 || isNaN(baseKPM)) baseKPM=150;
@@ -177,6 +266,10 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
         dailyMission.event=2;
     } else if(day == 5){ //金
         dailyMission.event=3;
+    } else if(day == 6){//土
+        dailyMission.event=4;
+    } else if(day == 0){//日
+        dailyMission.event=5;
     } else{
         dailyMission.event=0;
     }
@@ -262,14 +355,14 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
                 dailyMission.detail[i].type = 9;
                 dailyMission.detail[i].max=1;
                 dailyMission.detail[i].require=(myRand[i] % 4)*0.1+0.7;
-                dailyMission.detail[i].achieve=10*(1+(dailyMission.detail[i].max-0.7)*2.5);
+                dailyMission.detail[i].achieve=10*(1+(dailyMission.detail[i].require-0.7)*2.5);
                 dailyMission.detail[i].require*=baseKPM;
                 dailyMission.detail[i].require=Math.floor(dailyMission.detail[i].require/5)*5;
             } else if(myRand[i]%42 <= 34){
                 dailyMission.detail[i].type = 10;
                 dailyMission.detail[i].max=1;
-                dailyMission.detail[i].require=(myRand[i] % 4)*0.1+0.7;
-                dailyMission.detail[i].achieve=20*(1+(dailyMission.detail[i].max-0.7)*2.5);
+                dailyMission.detail[i].require=(myRand[i] % 4)*0.1+0.5;
+                dailyMission.detail[i].achieve=20*(1+(dailyMission.detail[i].require-0.5)*2.5);
                 dailyMission.detail[i].require*=baseKPM;
                 dailyMission.detail[i].require=Math.floor(dailyMission.detail[i].require/5)*5;
             } else if(myRand[i]%42 <= 36){
@@ -292,6 +385,7 @@ function setDailyMission(){ //その日のデイリーミッションをセッ�
         dailyMission.detail[i].max=Math.ceil(dailyMission.detail[i].max);
         dailyMission.detail[i].achieve=Math.ceil(dailyMission.detail[i].achieve);
     }
+    setEventAvator(dailyMission.event);
 }
 function resetTodayBattleData(){ //その日のバトルデータをリセットする関数
     todayBattleData=null;
@@ -338,21 +432,21 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) {
         localAvator = [ //デフォルトアバターのデータ
-            [{name:"あいうえお",team:0,star:0,level:5,item:[5,6,0,0,0],style:0,cp:124,
-                typingData:{kpm:0,acc:95,stroke:17,miss:1},kind:2},//kpmは換算　kpmRは実際のkpm
-            {name:"かきくけこ",team:1,star:0,level:8,item:[4,3,0,0,0],style:1,cp:200,
-                typingData:{kpm:0,acc:96,stroke:18,miss:1},kind:2},
-            {name:"さしすせそ",team:2,star:0,level:13,item:[5,1,0,0,0],style:0,cp:255,
-                typingData:{kpm:0,acc:88,stroke:20,miss:1},kind:2},
-            {name:"たちつてと",team:1,star:0,level:22,item:[5,2,0,0,0],style:0,cp:308,
-                typingData:{kpm:0,acc:92,stroke:16,miss:1},kind:2},
-            {name:"なにぬねの",team:0,star:0,level:28,item:[6,4,1,0,0],style:1,cp:500,
-                typingData:{kpm:0,acc:96,stroke:24,miss:1},kind:2},
-            {name:"はひふへほ",team:2,star:0,level:32,item:[7,3,2,0,0],style:0,cp:482,
-                typingData:{kpm:0,acc:97.5,stroke:26,miss:1},kind:2}],[],[],[],[]];
+            [{name:"レッドン",team:0,star:0,level:5,item:[0,1,0,0,0],style:0,cp:124,
+                typingData:{kpm:0,acc:96,stroke:17,miss:1},kind:2,id:"0d2f2971-388c-438f-8110-737229e13b19"},
+            {name:"ミニブルー",team:1,star:1,level:8,item:[0,2,2,0,0],style:1,cp:200,
+                typingData:{kpm:0,acc:94,stroke:18,miss:1},kind:2,id:"21b964e3-e4d6-4022-9838-52d0f3a1160b"},
+            {name:"イエローメイス",team:2,star:3,level:13,item:[3,3,3,0,0],style:0,cp:255,
+                typingData:{kpm:0,acc:94,stroke:20,miss:1},kind:2,id:"fc119399-6762-453d-93cc-7dbb195a60ed"},
+            {name:"ブンブル",team:1,star:6,level:22,item:[4,2,0,3,0],style:0,cp:308,
+                typingData:{kpm:0,acc:88,stroke:16,miss:1},kind:2,id:"1f7d679b-c857-49da-ad65-4d5934f41181"},
+            {name:"RED=VIII",team:0,star:9,level:28,item:[1,1,1,2,0],style:1,cp:500,
+                typingData:{kpm:0,acc:96,stroke:24,miss:1},kind:2,id:"da3fceaf-a72e-4d1f-8ec8-9bee0d01e63e"},
+            {name:"黄影",team:2,star:12,level:32,item:[4,4,3,4,0],style:0,cp:482,
+                typingData:{kpm:0,acc:97.5,stroke:26,miss:1},kind:2,id:"a402e2b7-1575-4e8d-bf8f-85cf2b0d0fd0"}],
+                [],[],[],[]];
         for(let i = 0;i < 6;i++){ //デフォルトアバターのデータを生成する
-            localAvator[0][i].id=generateUuid();
-            localAvator[0][i].typingData.kpm = Math.floor(124+i*120+Math.sin(i)*60+50*(i==5));
+            localAvator[0][i].typingData.kpm = Math.floor(124+i*70+Math.sin(i/1.1)*20);
             localAvator[0][i].cp=localAvator[0][i].typingData.kpm;
             if(localAvator[0][i].style) {
                 localAvator[0][i].typingData.kpm/=COEF_R2K;
@@ -368,7 +462,7 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
             }
             localAvator[0][i].typingData.optData=[];
             for(let j = 0;j < OPT_SET.length;j++){
-                localAvator[0][i].typingData.optData[j] = {total:100,count:Math.floor(50+50*Math.sin(i*0.5+j*0.2))};
+                localAvator[0][i].typingData.optData[j] = {total:100,count:Math.floor((i/5)*(i/5)*(50+50*Math.sin(i*0.5+j*0.2*j)))};
             }
             localAvator[0][i].typingData.speedTensor=[];
             for(let j = 0;j < CLASS_KPM_RATIO.length;j++){

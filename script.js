@@ -655,7 +655,6 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillStyle=getRGBA(9,0,myAni);
             ctx2d.fillText("NAME",WIDTH/2-190+9,HEIGHT/2-65-30);
             ctx2d.fillText("CP",WIDTH/2-70+15,HEIGHT/2-65-30);
-            ctx2d.font="10pt " + JAPANESE_FONTNAME;
             ctx2d.fillStyle=getRGBA(0,0,myAni);
             for (let i = 0;i < 6;i++){
                 if(localAvator[selectBattleAvatorClass].length>i){
@@ -674,6 +673,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                         ctx2d.drawImage(arrowImg,WIDTH/2-213-i*9,HEIGHT/2-78+i*30 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
                     }
                     ctx2d.fillStyle=getRGBA(0,0,myAni);
+                    ctx2d.font="10pt " + JAPANESE_FONTNAME;
                     if(localAvator[selectBattleAvatorClass][i].name.length>=8){
                         ctx2d.font="8pt " + JAPANESE_FONTNAME;
                     }
@@ -682,6 +682,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                         ctx2d.font="8pt " + JAPANESE_FONTNAME;
                     }
                     ctx2d.fillText(INPUT_STYLE_SHORT[localAvator[selectBattleAvatorClass][i].style],WIDTH/2-80-i*9,HEIGHT/2-65+i*30);
+                    ctx2d.font="10pt " + JAPANESE_FONTNAME;
                     if(localAvator[selectBattleAvatorClass][i].cp-avatorData[playData.settings[0]].cp>50){//格上
                         ctx2d.fillStyle=getRGBA(11,0,myAni);
                     } else if(localAvator[selectBattleAvatorClass][i].cp-avatorData[playData.settings[0]].cp<-50){//格下
@@ -697,12 +698,35 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     ctx2d.fillText("---",WIDTH/2-65-i*9,HEIGHT/2-65+i*30);
                 }
             }
+            ctx2d.font="7pt " + JAPANESE_FONTNAME;
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            ctx2d.fillText("※イベントアバターは経験値ボーナス10%、",WIDTH/2-270,HEIGHT/2+143);
+            ctx2d.fillText("ユーザーアバターは経験値ボーナス20%！",WIDTH/2-260,HEIGHT/2+153);
+            
+            ctx2d.font="8pt " + JAPANESE_FONTNAME;
+            ctx2d.fillText("格下",WIDTH/2-240,HEIGHT/2+124);
+            ctx2d.fillText("同格",WIDTH/2-170,HEIGHT/2+124);
+            ctx2d.fillText("格上",WIDTH/2-100,HEIGHT/2+124);
+            ctx2d.fillText("黒色",WIDTH/2-200,HEIGHT/2+124);
+            ctx2d.fillStyle=getRGBA(10,0,myAni);
+            ctx2d.fillText("緑色",WIDTH/2-270,HEIGHT/2+124);
+            ctx2d.fillStyle=getRGBA(11,0,myAni);
+            ctx2d.fillText("赤色",WIDTH/2-130,HEIGHT/2+124);
             drawPrl({isMsgBox:1,x1:WIDTH/2+93,y1:HEIGHT/2-116,x2:WIDTH/2+93+40,y2:HEIGHT/2-101,shadow:0,colSet:3,noDestruct:1,textSize:0.9,hoverColSet:3,hoverCounter:0,lineWidth:0.1,text:"YOU",trans:-1});
             drawPrl({isMsgBox:1,x1:WIDTH/2+93+140,y1:HEIGHT/2-116,x2:WIDTH/2+93+140+40,y2:HEIGHT/2-101,shadow:0,colSet:13,noDestruct:1,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:0.1,text:"ENEMY",trans:-1});
             ctx2d.font="16pt " + JAPANESE_FONTNAME;
             ctx2d.fillStyle=getRGBA(0,0,myAni);
             ctx2d.fillText("VS",WIDTH/2+120,HEIGHT/2-45);
-            drawPrl({isMsgBox:1,x1:WIDTH/2-183+selectBattleAvatorClass*48,y1:HEIGHT/2-141,x2:WIDTH/2-180+selectBattleAvatorClass*48,y2:HEIGHT/2-116,shadow:0,colSet:13,noDestruct:13,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
+            drawPrl({isMsgBox:1,x1:WIDTH/2-183+selectBattleAvatorClass*48,y1:HEIGHT/2-141,x2:WIDTH/2-180+selectBattleAvatorClass*48,y2:HEIGHT/2-116,shadow:0,colSet:13,noDestruct:1,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
+            if(localAvator[1].length){//イベントアバター出現中の文字
+                if(dailyMission.rare){
+                    drawPrl({isMsgBox:0,x1:WIDTH/2-190+43+23,y1:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-190+43+27,y2:HEIGHT/2-165-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:16,noDestruct:1,textSize:1.3,hoverColSet:16,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
+                    drawPrl({isMsgBox:0,x1:WIDTH/2-190+38,y1:HEIGHT/2-186-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-135+50,y2:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:16,noDestruct:1,textSize:1.3,hoverColSet:16,hoverCounter:0,lineWidth:0.1,text:"レア出現中！",trans:-1});    
+                } else{
+                    drawPrl({isMsgBox:0,x1:WIDTH/2-190+43+23,y1:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-190+43+27,y2:HEIGHT/2-165-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:3,noDestruct:1,textSize:1.3,hoverColSet:3,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
+                    drawPrl({isMsgBox:0,x1:WIDTH/2-190+43,y1:HEIGHT/2-186-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-135+45,y2:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:3,noDestruct:1,textSize:1.3,hoverColSet:3,hoverCounter:0,lineWidth:0.1,text:"出現中！",trans:-1});    
+                }
+            }
             if(msgBox[0].flg!=2){
                 drawAvator(avatorData[0],WIDTH/2+5,HEIGHT/2-105,WIDTH/2+125,HEIGHT/2+5,t,1);//自分側データの描画
                 drawStar(avatorData[0],WIDTH/2+10,HEIGHT/2,15);
@@ -744,7 +768,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     if(i==0) drawINFO= localAvator[selectBattleAvatorClass][selectBattleAvator].name;
                     if(i==1) drawINFO= localAvator[selectBattleAvatorClass][selectBattleAvator].level;
                     if(i==2) drawINFO= localAvator[selectBattleAvatorClass][selectBattleAvator].cp;
-                    if(i==3) drawINFO= processShowData(Number((localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.stroke-localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.miss)/localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.stroke*100).toFixed(1))+"%";
+                    if(i==3) drawINFO= processShowData(Number(localAvator[selectBattleAvatorClass][selectBattleAvator].typingData.acc))+"%";
                     if((i==1 && drawINFO<playData.level) || (i==2 && drawINFO<avatorData[playData.settings[0]].cp) || (i==3 && battleData.stroke && drawINFO  < Number((battleData.stroke-battleData.miss)/battleData.stroke*100).toFixed(1))){
                         //アバターに勝っている
                         let infoGrad = ctx2d.createLinearGradient(WIDTH/2+29-i*5.4,HEIGHT/2+33+i*18+3,WIDTH/2+29-i*5.4+40,HEIGHT/2+33+i*18-3);
@@ -816,7 +840,13 @@ function drawMenu(){
         if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
     }
     if(dailyMission.event){//イベント開催時
-        drawPrl({x1:658,y1:324,x2:834,y2:350,rev:1,lineWidth:0.1,shadow:0,colSet:3+dailyMission.event*2,hoverColSet:3+dailyMission.event*2,hoverCounter:0,textSize:1,text:TEAM_TEXT[dailyMission.event-1] + "イベント開催中！"});
+        if(dailyMission.event <= 3){
+            drawPrl({x1:658,y1:324,x2:834,y2:350,rev:1,lineWidth:0.1,shadow:0,colSet:3+dailyMission.event*2,hoverColSet:3+dailyMission.event*2,hoverCounter:0,textSize:1,text:TEAM_TEXT[dailyMission.event-1] + "イベント開催中！"});
+        } else if(dailyMission.event == 4){
+            drawPrl({x1:658,y1:324,x2:834,y2:350,rev:1,lineWidth:0.1,shadow:0,colSet:16,trans:2,hoverColSet:3+dailyMission.event*2,hoverCounter:0,textSize:1,text:"EXPアップイベント開催中！"});
+        } else if(dailyMission.event==5){
+            drawPrl({x1:658,y1:324,x2:834,y2:350,rev:1,lineWidth:0.1,shadow:0,colSet:3,hoverColSet:3+dailyMission.event*2,hoverCounter:0,textSize:1,text:"ゴールドイベント開催中！"});
+        }
     }
     var menuBarGrad = ctx2d.createLinearGradient(0,0,WIDTH,60); ///メニューバー
     menuBarGrad.addColorStop(0,'rgba(75,75,80,0.95)');
@@ -886,9 +916,9 @@ function drawMenu(){
 
     //達成度合い等ここから
     for(let i = 0;i < 3;i++){
-        ctx2d.font="8pt " + JAPANESE_FONTNAME;
+        ctx2d.font="7.5pt " + JAPANESE_FONTNAME;
         ctx2d.fillStyle=getRGBA(0,0,1);
-        ctx2d.fillText(getMissionText(dailyMission.detail[i]),573+9.6*i,391 + i * 32);
+        ctx2d.fillText(getMissionText(dailyMission.detail[i]),573+9.6*i,390 + i * 32);
         ctx2d.font="7pt " + JAPANESE_FONTNAME;
         ctx2d.fillText(dailyMission.detail[i].progress,600+9.6*i-ctx2d.measureText(dailyMission.detail[i].progress).width,403 + i * 32);
         ctx2d.fillText("/",601+9.6*i,403 + i * 32);
@@ -935,7 +965,7 @@ function replaceEnemyOpt(plainText,prob,bf,af,replacement){
     let omit = "";
     if(replacement.length == 2)  omit = replacement[2];
     while(plainText.indexOf(bf) != -1){
-        if(Math.random()<prob && replacement[2] != plainText.substr(plainText.indexOf(bf)-1,1)){//置換する時
+        if(Math.random()<prob && plainText.substr(plainText.indexOf(bf)-1,1).indexOf(omit)==-1){//置換する時
             if(bf.substr(0,1) != af.substr(0,1) && plainText.substr(plainText.indexOf(bf)-1,1) == bf.substr(0,1)){
                 //拗音の場合
                 plainText=plainText.substr(0,plainText.indexOf(bf)-1)+af.substr(0,1) + plainText.substr(plainText.indexOf(bf));
@@ -949,9 +979,6 @@ function replaceEnemyOpt(plainText,prob,bf,af,replacement){
     }
     afterText+=plainText;
     return afterText;
-/*        if(Math.random()<prob){
-        } else{
-        return plainText;*/
 }
 function getEnemyTypeData(i,mode,str){
     let tempTypeData=[];
@@ -1453,11 +1480,11 @@ function getItemBonus(myAvatorData,isArray,isCoin){
     }else if(myAvatorData[0].item[4] == 4){
         if(battleResult.pWin) tempCoin+=3;
     }else if(myAvatorData[0].item[4] == 5){
-        if(battleResult.cp >= 300 && battleResult.win) tempBonus+=4;
+        if(battleResult.cp >= 500 && battleResult.win) tempBonus+=5;
     }else if(myAvatorData[0].item[4] == 6){
-        if(battleResult.cp >= 450 && battleResult.win) tempBonus+=8;
+        if(battleResult.cp >= 600 && battleResult.win) tempBonus+=10;
     }else if(myAvatorData[0].item[4] == 7){
-        if(battleResult.cp >= 600 && battleResult.win) tempBonus+=12;
+        if(battleResult.cp >= 650 && battleResult.win) tempBonus+=15;
     }else if(myAvatorData[0].item[4] == 8){
         if(battleResult.cp >= 650 && battleResult.win && battleResult.acc >= 97) tempBonus+=20,tempCoin+=2;
     }else if(myAvatorData[0].item[4] == 9){
@@ -1590,7 +1617,13 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
         battleResult.coin+=1;//すべてのミッションクリア後に勝利で１コイン獲得
     battleResult.bonus[4] = 0;//イベントボーナス　
     if(dailyMission.event == avatorData[0].team+1) battleResult.bonus[2] = 25,battleResult.coin++;//イベント中なら25%ボーナス、1コイン獲得
+    if(dailyMission.event==4){//経験値イベント
+        battleResult.bonus[4] = 20;
+    } else if(dailyMission.event==5){ //ゴールドイベント
+        battleResult.coin+=battleResult.win;
+    }
     if(enemyAvatorData.kind == 0) battleResult.bonus[4] += 20;//ユーザーアバターの場合20%ボーナス
+    if(enemyAvatorData.kind == 1) battleResult.bonus[4] += 10;//イベントアバターの場合10%ボーナス
     battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 6/5* (1+Math.atan((avatorData[inputStyle].cp - enemyAvatorData.cp))*2/Math.PI)));
     if(battleResult.win == 0) battleResult.baseExp= Math.floor(battleResult.baseExp/3);
     battleResult.exp = Math.round(battleResult.baseExp * (100+battleResult.bonus[0]+battleResult.bonus[1]+battleResult.bonus[2]+battleResult.bonus[3]+battleResult.bonus[4])/100);
@@ -1648,12 +1681,12 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
         if(enemyTypingCharNum<battleResult.enemyTypeData[battleResult.now].length){
             if(battleResult.enemyTypeData[battleResult.now][enemyTypingCharNum].time < (t-wordT)){
                 //敵が文字を打つ処理
-                if(checkOpt(battleResult.wordSet[battleResult.now].enemyText,enemyTypedText+battleResult.enemyTypeData[battleResult.now][enemyTypingCharNum].char).isMiss){
+                if(checkOpt(battleResult.wordSet[battleResult.now].enemyText,enemyTypedText+battleResult.enemyTypeData[battleResult.now][enemyTypingCharNum].char,1).isMiss){
                     enemyMissAni=t;
                 } else{
                     enemyTypedText+=battleResult.enemyTypeData[battleResult.now][enemyTypingCharNum].char;
                     battleResult.wordSet[battleResult.now].enemyText=
-                        checkOpt(battleResult.wordSet[battleResult.now].enemyText,enemyTypedText).newTargetStr;
+                        checkOpt(battleResult.wordSet[battleResult.now].enemyText,enemyTypedText,1).newTargetStr;
                 }
                 enemyTypingCharNum++;
             }
