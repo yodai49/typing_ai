@@ -9,12 +9,15 @@ var backImg= [],imgLoadedCnt=0;//背景イメージ格納用
 var starImg=[];//スターの画像格納用
 var otherPartsImg=[];//冠、剣の画像
 var coinImg,arrowImg;//コインと矢印の画像
-var pWinImg,kWinImg;
+var pWinImg,kWinImg,nWinImg;
 var firstLaunchFlg=0;//初回起動を検知するフラグ
 var selectParts=0,selectPartsAni=0;//着せかえ画面で選択中のパーツを保存
 var battleAni=0,enemyAvatorData,battleResult,battleStatus=0,typedText="",enemyTypedText="",totalLossTime=0,lossTimeT=0,lossTimeSum=0,getWord=0;//バトルデータの保持用 battlestatusは0ならアニメーション中、1ならカウントダウン中、2ならゲーム中、3ならゲームの待機中、4なら終了アニメーション中
 var missAni=0,missChar=0,enemyMissAni=0,enemyMissChar=0,lastKpm=0,wordT=0,lastKpmE=0,resultAni=0,enemyTypingCharNum=0;//missAniはミスをした時のtを格納　missCharはミスした位置
 var selectBattleAvator=0,selectBattleAvatorClass=0,selectBattleAvatorAni=0,winLoseAni=0;//選択中のバトルアバター
+var showEnemyAvator=[];//tempLocalAvatorから加工したアバターデータを格納
+var onlineAvatorCol=[],onlineAvatorOrder=0,onlineAvatorStyle=[1,1],onlineShowPage=0,onlineMyStyle=0;//表示オプション
+var createAvatorStyle=0,dataFetchStatus=0,dataSaveStatus=0;//datafetchstatusは0が待機中、1は読み込み済み、2はエラー
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
 var playData;
@@ -24,6 +27,7 @@ var todayBattleData;
 var dailyMission={};
 var avatorData;
 var battleDataSave;
+var tempLocalAvator;
 
 function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
     let lv=myPlayData.level;
@@ -50,14 +54,14 @@ function getLvExp(lv){//レベルだけから必要Expを計算する関数
     return tempExp;
 }
 function getNextStarKPM(myAvatorData,myBattleData,ratioMode){ //次のスターまでの必要KPMを計算する
-    // 2つの入力方式のうち高い方の数値を採用 ただしその方式における入力数が2000未満なら他を採用
+    // 2つの入力方式のうち高い方の数値を採用 ただしその方式における入力数が500未満なら他を採用
     //返却するのは構造体　{style:入力方式　value:値}　ratioMode==0の時、値は必要なKPMの値をそのまま返す
     //myAvatorDataは配列で渡す！
     let star=myAvatorData[0].star;
     if(star==29) return "MAX_LEVEL";
     let style=1;
     if(KPM_STAR[0][star+1]-myAvatorData[0].typingData.kpm <KPM_STAR[1][star+1]- myAvatorData[1].typingData.kpm || isNaN(myAvatorData[1].typingData.kpm)) style=0;
-    if(myAvatorData[style].typingData.stroke < 2000) style=1-style;
+    if(myAvatorData[style].typingData.stroke < 500) style=1-style;
     if(ratioMode){
         return {value:Math.min(1,myAvatorData[style].typingData.kpm/KPM_STAR[style][star+1]),style:style};
     } else{
@@ -104,7 +108,8 @@ function getRGBA(col,T,t,r,g,b){
         return "rgba("  + r + "," + g + "," + b + ","+t+")";
     }
 }
-function processShowData(data){//データ表示時にNaNなどが表示されないようにする関数
+function processShowData(data,mode){//データ表示時にNaNなどが表示されないようにする関数 modeが1なら、0を---と表示
+    if(mode == 1 && data == 0) return "---";
     if(isNaN(data) || (data == undefined) || (data == null) || (data == -1)) return "---";
     return data;
 }
@@ -122,10 +127,12 @@ function getPseudoRandom(max,mode){//現在の日付から疑似乱数を返す 
     for(let i = 0;i < 12;i++){
         RANDOM_PRIME[i]=RANDOM_PRIME_RAW[(i+mode)%RANDOM_PRIME_RAW.length];
     }
-    var myDate = new Date();
+    let myDate = new Date();
+    myDate.setHours(myDate.getHours() - 5);
+    if(myDate.getSeconds()==0) myDate.setMinutes(myDate.getMinutes() - 1);
+    let day = myDate.getDay();//曜日
     let y_dash = myDate.getFullYear()-2000;
     let month = myDate.getMonth()+1;
-    let day = myDate.getDate();
     let r1 = Math.floor(((y_dash*RANDOM_PRIME[0]*12*31+month*RANDOM_PRIME[1]*12+day*RANDOM_PRIME[2])%1000)/10)%10;
     let r2 = Math.floor(((y_dash*RANDOM_PRIME[3]*12*31+month*RANDOM_PRIME[4]*12+day*RANDOM_PRIME[5])%1000)/10)%10;
     let r3 = Math.floor(((y_dash*RANDOM_PRIME[6]*12*31+month*RANDOM_PRIME[7]*12+day*RANDOM_PRIME[8])%1000)/10)%10;
@@ -175,6 +182,7 @@ function generateAvatorData(myAvatorDataRawNum){
     myAvatorData.item = EVENT_ENEMY_DATA[myAvatorDataRawNum].item;
     myAvatorData.style = EVENT_ENEMY_DATA[myAvatorDataRawNum].style;
     myAvatorData.kind = EVENT_ENEMY_DATA[myAvatorDataRawNum].kind;
+    myAvatorData.id = EVENT_ENEMY_DATA[myAvatorDataRawNum].id;
     myAvatorData.typingData={stroke:20,miss:0};
     myAvatorData.typingData.kpm = EVENT_ENEMY_DATA[myAvatorDataRawNum].typingData.kpm;
     myAvatorData.typingData.acc = EVENT_ENEMY_DATA[myAvatorDataRawNum].typingData.acc;
@@ -209,6 +217,7 @@ function generateAvatorData(myAvatorDataRawNum){
     }
     return myAvatorData;
 }
+
 function setEventAvator(event){
     //イベントアバターをリセット、セットする関数
     localAvator[1] = [];
@@ -219,10 +228,19 @@ function setEventAvator(event){
                 let tempEventAvatorData  = generateAvatorData(i);
                 //チーム設定処理
                 if(tempEventAvatorData.name.indexOf("*") != -1){
-                    tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT[event-1]);
-                    tempEventAvatorData.team = event-1;
-                    for(let j = 0;j < 5;j++){
-                        if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=event;
+                    if(event>=1 && event <= 3){
+                        tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT_JPN[event%3]);
+                        tempEventAvatorData.team = event%3;
+                        for(let j = 0;j < 5;j++){
+                            if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=event;
+                        }    
+                    } else{
+                        let eventEnemyTeam = getPseudoRandom(120,5+i)%3;
+                        tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT_JPN[eventEnemyTeam]);
+                        tempEventAvatorData.team = eventEnemyTeam;
+                        for(let j = 0;j < 5;j++){
+                            if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=eventEnemyTeam+1;
+                        }    
                     }
                 }
                 //push
@@ -232,13 +250,13 @@ function setEventAvator(event){
         }
         if(localAvator[1].length >= 6) break;
     }
-    if(localAvator[1].length == 0 || dailyMission.event){//イベント期間中に出現していなかったら
+    if(localAvator[1].length == 0 && dailyMission.event){//イベント期間中に出現していなかったら
         //出現
         let tempEventAvatorData  = generateAvatorData(3);
         //チーム設定処理
         if(tempEventAvatorData.name.indexOf("*") != -1){
-            tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT[event-1]);
-            tempEventAvatorData.team = event-1;
+            tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT_JPN[event%3]);
+            tempEventAvatorData.team = event%3;
             for(let j = 0;j < 5;j++){
                 if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=event;
             }
@@ -401,6 +419,7 @@ function saveData(){//データをローカルストレージへ保存する関�
     localStorage.setItem('todayBattleData', JSON.stringify(todayBattleData,undefined,1));
     localStorage.setItem('dailyMission', JSON.stringify(dailyMission,undefined,1));
     localStorage.setItem('battleDataSave', JSON.stringify(battleDataSave,undefined,1));
+    localStorage.setItem('tempLocalAvator', JSON.stringify(tempLocalAvator,undefined,1));
     firstLaunchFlg=0;
 }
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
@@ -493,6 +512,7 @@ function loadData(){//データをローカルストレージから読み込む�
     todayBattleData = JSON.parse(localStorage.getItem('todayBattleData'));
     dailyMission = JSON.parse(localStorage.getItem('dailyMission'));
     battleDataSave=JSON.parse(localStorage.getItem('battleDataSave'));
+    tempLocalAvator=JSON.parse(localStorage.getItem('tempLocalAvator'));
     setDefault();
 }
 function resetData(){//データをリセットし、変数に既定値をセットする関数
@@ -564,11 +584,22 @@ function generateUuid() {//UUIDを生成する
     }
     return chars.join("");
 }
+function setLADBattleSaveData(){
+    for(let i = 0;i < 5;i++){///getBattleDataSaveから戦績を取得する
+        for(let j = 0;j < localAvator[i].length;j++){
+            localAvator[i][j].win=getBattleDataSave(localAvator[i][j].id).win;
+            localAvator[i][j].battle=getBattleDataSave(localAvator[i][j].id).battle;
+            localAvator[i][j].pWin=getBattleDataSave(localAvator[i][j].id).pWin;
+            localAvator[i][j].kWin=getBattleDataSave(localAvator[i][j].id).kWin;
+        }
+    }
+}
 function getBattleDataSave(myId){
     //battleDataSaveから情報を得る
     for(let i = 0;i < battleDataSave.length;i++){
         if(battleDataSave[i].id == myId) return battleDataSave[i];
     }
+    return {win:0,battle:0,pWin:0,kWin:0,isUnknown:1};
 }
 function setBattleDataSave(myId,myBattleResult){
     //battleDataSaveに情報をセットする
@@ -584,4 +615,133 @@ function setBattleDataSave(myId,myBattleResult){
     //見つからなかったら
     battleDataSave.push({id:myId,battle:1,win:myBattleResult.win,kWin:myBattleResult.kWin,pWin:myBattleResult.pWin});
     return 1;
+}
+function setNCMBEnemyAvator(){
+    let ncmb = new NCMB(
+        "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
+        "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
+    //オンラインのアバターデータをセットする関数
+    let myDate = new Date();
+    if(playData.hour == myDate.getHours() && !DEBUG_MODE) return 0;//一時間以内の更新は行わない
+    playData.hour=myDate.getHours();
+    tempLocalAvator=[];
+    dataFetchStatus=0;
+    //ここからNCMBとの通信を行うデータの書き込み処理
+    let avators = ncmb.DataStore("Avators");
+    avators.fetchAll().then(function(avators){
+        tempLocalAvator=avators;
+        for(let i = 0;i < tempLocalAvator.length;i++){
+            tempLocalAvator[i] = JSON.parse(tempLocalAvator[i].AvatorData);
+        }
+        dataFetchStatus=1;
+        setShowLocalAvator();//表示を既定値でセットする
+        setOrderButton();
+    })
+    .catch(function(error){//取得失敗
+        dataFetchStatus=2;
+    });
+}
+function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
+    let ncmb = new NCMB(
+        "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
+        "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
+    let Item = ncmb.DataStore("Avators");
+    let item = new Item();
+    myAvatorData.style=createAvatorStyle;//スタイルを修正
+    myAvatorData.level = playData.level;
+    dataSaveStatus=0;
+    item.set("AvatorData",JSON.stringify(myAvatorData,undefined,1))
+    .save()
+    .then(function(item){
+        dataSaveStatus=1;
+    })
+    .catch(function(error){
+        dataSaveStatus=2;
+    });
+}
+function setShowLocalAvator(order,col,style){
+    if(col == undefined) col = [1,1,1];
+    if(order ==undefined) order=0;
+    if(style==undefined) style=[1,1];
+    showEnemyAvator=[];//リセット
+    for(let i  = 0;i < tempLocalAvator.length;i++){
+        //条件に合致するならセット
+        if(col[tempLocalAvator[i].team] && style[tempLocalAvator[i].style]){
+            showEnemyAvator.push(tempLocalAvator[i]);
+        }
+    }
+    //並び替えの処理をここに追加
+    if(order==0){//おすすめ順
+
+    } else if(order==1){//cp順
+
+    } else if(order==2){//レベル順
+
+    }
+    onlineShowPage=0;
+}
+function setOrderButton(){
+    for(let i = 0;i < prls.length;i++){
+        if(prls[i].id >=0 && prls[i].id <= 2){//順番のボタンなら
+            if(prls[i].id == onlineAvatorOrder){
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
+            } else{
+                prls[i].colSet=0;
+                prls[i].hoverColSet=1;
+            }
+        }else if(prls[i].id == 9){//アバター作成ボタンなら
+            if(avatorData[createAvatorStyle].typingData.stroke >= 10000 || DEBUG_MODE){
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
+            } else{
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+            }
+        }else if(prls[i].id>=10 && prls[i].id<=11){//入力方式のボタンなら
+            if(onlineAvatorStyle[prls[i].id-10]){
+                prls[i].colSet=prls[i].id+7;
+                prls[i].hoverColSet=prls[i].id+7;
+            } else{
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+            }
+        } else if(prls[i].id>=20 && prls[i].id<=22){//入力方式のボタンなら
+            if(onlineAvatorCol[prls[i].id-20]){
+                prls[i].colSet=5+(prls[i].id-20)*2;
+                prls[i].hoverColSet=5+(prls[i].id-20)*2+1;
+            } else{
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+            }
+        }else if(prls[i].id>=30 && prls[i].id<=33){//ダウンロードボタンなら
+            if(showEnemyAvator.length > prls[i].id-30-4*onlineShowPage){
+                if(!getBattleDataSave(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id).isUnknown){
+                    prls[i].colSet=16;
+                    prls[i].hoverColSet=16;
+                    pris[i].text="追加済み";
+                } else{
+                    prls[i].colSet=3;
+                    prls[i].hoverColSet=4;    
+                    prls[i].text="アバターを追加";
+                }
+            } else{
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+                prls[i].text="アバターを追加";
+            }
+        }
+    }
+}
+function getAvailableCreateAvator(){
+    for(let i = 0;i < prls.length;i++){
+        if(prls[i].id==9){
+            if(prls[i].colSet == 3){
+                return 1;
+            } else{
+                return 0;
+            }
+        }
+    }
+    return -1;
 }

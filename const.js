@@ -4,14 +4,15 @@ const MAIN_FONTNAME = "Orbitron";
 const DIGIT_FONTNAME = "Quantico";
 const JAPANESE_FONTNAME = "Stick";
 const TYPING_FONTNAME="sans-serif";
-const DEBUG_MODE=0;//数字の番号のシーンからスタート
-const IMG_CNT = 24;//読みこむイメージの総数
+const DEBUG_MODE=6;//数字の番号のシーンからスタート
+const IMG_CNT = 25;//読みこむイメージの総数
 const COEF_R2K=1.5;//ローマ字からカナへのkpm変換の係数
 const TEAM_BONUS = 25;//チームのボーナス値　%で指定
 var SCENE_ANI=400; //ロード終了後のアニメーション時間(DEBUGMODEによって変更するためvarで宣言)
 const WAIT_TIME=300;
 const BATTLE_ANI=2500;//バトル開始時のアニメーションの持続時間
 const TEAM_TEXT=["RED","BLUE","YELLOW"];
+const TEAM_TEXT_JPN=["赤","青","黄"];
 const KPM_STAR=[[0,0,0,0,0,150,0,0,0,0,250,0,0,0,0,400,0,0,0,0,550,0,0,0,0,700,0,0,0,0],[0,0,0,0,0,100,0,0,0,0,180,0,0,0,0,280,0,0,0,0,380,0,0,0,0,500,0,0,0,0]];//スターごとの必要KPM
 const STROKE_STAR=[0,1000,3000,5000,8000,12000,18000,25000,33000,42000,55000,65000,77000,88500,100000,120000,150000,185000,240000,300000,320000,350000,390000,440000,500000,580000,670000,780000,890000,1000000];
 const PARTS_TEXT=["HEAD","BODY1","BODY2","LIMBS","OTHER"];
@@ -46,6 +47,7 @@ const EVENT_EXP=[
     ["ゴールド大放出イベント開催中！","全チーム、一回の勝利で1ゴールド獲得！"]
 ]
 const INPUT_STYLE_SHORT=["R","K"];
+const INPUT_STLYE=["ローマ字","カナ"];
 const BATTLE_INFO=["","LV","CP","ACC"];
 const SETTING_SELECT=[
     ["ローマ字","カナ"],
@@ -58,6 +60,7 @@ const SETTING_SELECT=[
     ["ON","OFF"],
     ["リセットする",""],
 ]
+const ENEMY_ORDER=["おすすめ","CP順","レベル順"];
 const ITEM_DATA = [
     [["ノーマルな仮面",0,"普通の仮面。特に効果はない。"],//HEAD
     ["赤の仮面",15,"所属チームがREDの場合、経験値ボーナス5%"],

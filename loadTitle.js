@@ -76,6 +76,9 @@ function init() {
     kWinImg=new Image();
     kWinImg.src="./img/kwin.png";
     kWinImg.onload=()=>{imgLoadedCnt++};
+    nWinImg=new Image();
+    nWinImg.src="./img/nwin.png";
+    nWinImg.onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < 7;i++) starImg[i] = new Image(),starImg[i].src="./img/star_" + i + ".png";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < starImg.length;i++) starImg[i].onload=()=>{imgLoadedCnt++};

@@ -118,12 +118,14 @@ function drawPrl(drawPrl){//平行四辺形を描画する関数
             [[40,40,40,1.2],[2,3,8,1.2],[40,40,40,1.2]],//濃い灰色（キャンセル系） 13
             [[200,200,220,1.2],[60,60,80,1.3],[230,230,240,1]],//画面のタイトル用 14
             [[255,255,255,0.9],[255,255,255,1],[223,223,223,0.9]],//battleCircleの背景　15
-            [[100,120,80,1],[120,130,140,1],[120,180,150,1]]//青緑 16
+            [[100,120,80,1],[120,130,140,1],[120,180,150,1]],//青緑 16
+            [[180,220,220,1],[130,170,170,1],[80,120,120,1]],//ローマ字　17
+            [[220,180,220,1],[170,130,170,1],[120,80,120,1]],//カナ　18
         ];
     const FRAME_COLSET=[[20,20,20,0.8],[0,0,0,0.8],[20,23,20,0.8],[40,20,5,0.8],[40,20,5,0.8],
-                        [20,23,20,0],[20,23,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[100,0,0,1],[0,0,0,1]];
+                        [20,23,20,0],[20,23,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[20,20,20,0.8],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[100,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1]];
     const TEXT_COLSET=[[0,0,0],[0,0,0],[0,0,0],[255,255,255],[255,255,255],
-                        [255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[0,0,0],[255,255,255],[255,255,255],[255,255,255],[255,255,255]];
+                        [255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[0,0,0],[255,255,255],[255,255,255],[255,255,255],[255,255,255],[0,0,0],[0,0,0]];
     for(var i = 0;i < 3;i++){
         drawGrad.addColorStop(i/2+0.1*(i==1),'rgba(' + 
          (PRL_COLSET[drawPrl.hoverColSet][i][0]*drawPrl.hoverCounter+PRL_COLSET[drawPrl.colSet][i][0]*(10-drawPrl.hoverCounter))/10 + ',' +  
@@ -360,7 +362,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                         //敵を選択していないのにバトルを押した時　効果音などをここに入れる
                     }
                 }});
-                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+132,x2:WIDTH/2+45,y2:HEIGHT/2+162,shadow:0,colSet:14,textSize:0.9,hoverColSet:13,hoverCounter:0,lineWidth:2,text:"CANCEL",trans:-1,onClick:function(){}});
+                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+132,x2:WIDTH/2+45,y2:HEIGHT/2+162,shadow:0,colSet:13,textSize:0.9,hoverColSet:14,hoverCounter:0,lineWidth:2,text:"CANCEL",trans:-1,onClick:function(){}});
                 for(let i = 0;i < 5;i++){
                     prls.push({isMsgBox:1,x1:WIDTH/2-197+i*48,y1:HEIGHT/2-162,x2:WIDTH/2-152+i*48,y2:HEIGHT/2-142,id:i,shadow:0,colSet:0+(i == selectBattleAvatorClass),noDestruct:1,textSize:0.9,hoverColSet:1,hoverCounter:0,lineWidth:3,text:AVATOR_CLASS_TEXT[i],trans:-1,onClick:function(){
                         for(let j = 0;j < prls.length;j++){
@@ -377,11 +379,11 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     }});
                 }
                 setAvatorSelectButton(localAvator);
-                prls.push({isMsgBox:1,x1:WIDTH/2+130,y1:HEIGHT/2-162,x2:WIDTH/2+288,y2:HEIGHT/2-130,shadow:0,colSet:14,textSize:0.9,hoverColSet:13,lineWidth:4,hoverCounter:0,text:"アバターの管理",trans:-1,onClick:function(){
+                prls.push({isMsgBox:1,x1:WIDTH/2+130,y1:HEIGHT/2-162,x2:WIDTH/2+288,y2:HEIGHT/2-130,shadow:0,colSet:0,textSize:0.9,hoverColSet:1,lineWidth:4,hoverCounter:0,text:"アバターの管理",trans:-1,onClick:function(){
                     sceneAni=t;
                     nextScene=6;
                 }});
-                prls.push({isMsgBox:1,x1:WIDTH/2-269,y1:HEIGHT/2-117,x2:WIDTH/2+28,y2:HEIGHT/2+100,shadow:0,colSet:14,textSize:0.9,hoverColSet:14,lineWidth:2,noDestruct:1,hoverCounter:0,text:"",trans:-1});
+                prls.push({isMsgBox:1,x1:WIDTH/2-274,y1:HEIGHT/2-117,x2:WIDTH/2+28,y2:HEIGHT/2+100,shadow:0,colSet:14,textSize:0.9,hoverColSet:14,lineWidth:2,noDestruct:1,hoverCounter:0,text:"",trans:-1});
                 prls.push({isMsgBox:1,x1:WIDTH/2-28,y1:HEIGHT/2-117,x2:WIDTH/2+275,y2:HEIGHT/2+100,shadow:0,colSet:0,textSize:0.9,hoverColSet:0,lineWidth:4,noDestruct:1,hoverCounter:0,text:"",trans:-1});
                 for(let i = 0;i < 6;i++){
                     prls.push({isMsgBox:1,x1:WIDTH/2-25-i*9,y1:HEIGHT/2-78+i*30,x2:WIDTH/2+10-i*9,y2:HEIGHT/2-58+i*30,id:i+10,shadow:0,colSet:0+3*(i == selectBattleAvator),noDestruct:1,textSize:0.9,hoverColSet:1+3*(i == selectBattleAvator),hoverCounter:0,lineWidth:3,text:"選択",trans:-1,onClick:function(){
@@ -392,6 +394,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     ctx2d.fillText("- - -",WIDTH/2-190-i*9,HEIGHT/2-65+i*30);
                 }
                 setAvatorSelectButton(localAvator);
+                setLADBattleSaveData();
                 msgBox[0].flg=1;
             }
             drawPrl({x1:WIDTH/2-300,y1:HEIGHT/2-170,x2:WIDTH/2+300,y2:HEIGHT/2+170,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
@@ -512,12 +515,12 @@ function drawMsgbox(){//メッセージボックスの描画関数
             drawPrl({x1:WIDTH/2-280,y1:HEIGHT/2-80,x2:WIDTH/2+280,y2:HEIGHT/2+80,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni*1.1})
             drawPrl({x1:WIDTH/2-267,y1:HEIGHT/2-70,x2:WIDTH/2-60,y2:HEIGHT/2+70,shadow:0,colSet:13,hoverColSet:13,hoverCounter:0,text:"",trans:myAni*1.1})
             ctx2d.fillStyle=getRGBA(0,0,myAni);
-            ctx2d.font="14pt "+JAPANESE_FONTNAME;
+            ctx2d.font="13pt "+JAPANESE_FONTNAME;
             let starUpMsgText=avatorData[0].name + "のスターランクがアップした！";
             if(starUpMsgText.length > Math.floor((t-resultAni)/50)) starUpMsgText=starUpMsgText.substr(0,Math.floor((t-resultAni)/50)-1) + CHARA_SET[Math.floor(Math.random()*CHARA_SET.length)];
             levelUpMsgText=starUpMsgText.substr(0,Math.min(starUpMsgText.length,Math.floor((t-resultAni)/50)))
-            ctx2d.fillText(starUpMsgText.substr(0,16),50+(WIDTH-ctx2d.measureText(starUpMsgText.substr(0,13)).width)/2,HEIGHT/2+10);
-            ctx2d.fillText(starUpMsgText.substr(16,16),50+(WIDTH-ctx2d.measureText(starUpMsgText.substr(0,13)).width)/2,HEIGHT/2+35);
+            ctx2d.fillText(starUpMsgText.substr(0,16),40+(WIDTH-ctx2d.measureText(starUpMsgText.substr(0,13)).width)/2,HEIGHT/2+10);
+            ctx2d.fillText(starUpMsgText.substr(16,16),40+(WIDTH-ctx2d.measureText(starUpMsgText.substr(0,13)).width)/2,HEIGHT/2+35);
             drawAvator(avatorData[0],WIDTH/2-250,HEIGHT/2-75,WIDTH/2-90,HEIGHT/2+75,1,myAni*1.1);
             drawPrl({x1:WIDTH/2-65,y1:HEIGHT/2-70,x2:WIDTH/2+263,y2:HEIGHT/2-15,colSet:13,hoverColSet:16,shadow:0,hoverCounter:0,text:"",trans:myAni*1.1})
             let starUpSize = Math.max(45,60-(t-resultAni)/20);
@@ -690,7 +693,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
         } else if(msgBox[0].selectBattleAvatorWindow){//バトル相手選択ウィンドウ
             ctx2d.font="8pt " + JAPANESE_FONTNAME;
             ctx2d.fillStyle=getRGBA(9,0,myAni);
-            ctx2d.fillText("NAME",WIDTH/2-190+9,HEIGHT/2-65-30);
+            ctx2d.fillText("NAME",WIDTH/2-180+9,HEIGHT/2-65-30);
             ctx2d.fillText("CP",WIDTH/2-70+15,HEIGHT/2-65-30);
             ctx2d.fillStyle=getRGBA(0,0,myAni);
             for (let i = 0;i < 6;i++){
@@ -704,29 +707,33 @@ function drawMsgbox(){//メッセージボックスの描画関数
                         styleGrad.addColorStop(1,"rgba(120,80,120," + myAni*0.8 + ")");
                     }
                     ctx2d.fillStyle=styleGrad;
-                    ctx2d.fillRect(WIDTH/2-83-i*9,HEIGHT/2-67+i*30,15,4);
-                    //有利なチームなら矢印を表示
-                    if(msgBox[0].flg!=2 && localAvator[selectBattleAvatorClass][i].team != 3 && (3+avatorData[0].team-localAvator[selectBattleAvatorClass][i].team)%3 == 2){
-                        ctx2d.drawImage(arrowImg,WIDTH/2-213-i*9,HEIGHT/2-78+i*30 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
+                    ctx2d.fillRect(WIDTH/2-81-i*9,HEIGHT/2-67+i*30,15,4);
+                    if(msgBox[0].flg!=2){
+                        //有利なチームなら矢印を表示
+                        if(localAvator[selectBattleAvatorClass][i].team != 3 && (3+avatorData[0].team-localAvator[selectBattleAvatorClass][i].team)%3 == 2){
+                            ctx2d.drawImage(arrowImg,WIDTH/2-181-i*9,HEIGHT/2-78+i*30 - (5)*Math.max(0,Math.sin(t/150)*3-2.7),13,13);
+                        }
+                        //勝ったことがあれば勲章を表示
+                        if(localAvator[selectBattleAvatorClass][i].pWin){
+                            ctx2d.drawImage(pWinImg,WIDTH/2-206-i*9-10,HEIGHT/2-65+i*30-15,23,23);
+                        } else if(localAvator[selectBattleAvatorClass][i].kWin){
+                            ctx2d.drawImage(kWinImg,WIDTH/2-206-i*9-10,HEIGHT/2-65+i*30-15,23,23);
+                        } else if(localAvator[selectBattleAvatorClass][i].win){
+                            ctx2d.drawImage(nWinImg,WIDTH/2-206-i*9-10,HEIGHT/2-65+i*30-15,23,23);
+                        }        
                     }
                     ctx2d.fillStyle=getRGBA(0,0,myAni);
                     ctx2d.font="10pt " + JAPANESE_FONTNAME;
-                    if(localAvator[selectBattleAvatorClass][i].name.length>=8){
-                        ctx2d.font="8pt " + JAPANESE_FONTNAME;
-                    }
-                    ctx2d.fillText(localAvator[selectBattleAvatorClass][i].name,WIDTH/2-174-i*9,HEIGHT/2-65+i*30);
-                    if(localAvator[selectBattleAvatorClass][i].name.length>=8){
-                        ctx2d.font="8pt " + JAPANESE_FONTNAME;
-                    }
-                    ctx2d.fillText(INPUT_STYLE_SHORT[localAvator[selectBattleAvatorClass][i].style],WIDTH/2-80-i*9,HEIGHT/2-65+i*30);
+                    ctx2d.fillText(localAvator[selectBattleAvatorClass][i].name,WIDTH/2-166-i*9,HEIGHT/2-65+i*30,80);
                     ctx2d.font="10pt " + JAPANESE_FONTNAME;
+                    ctx2d.fillText(INPUT_STYLE_SHORT[localAvator[selectBattleAvatorClass][i].style],WIDTH/2-78-i*9,HEIGHT/2-65+i*30);
                     if(localAvator[selectBattleAvatorClass][i].cp-avatorData[playData.settings[0]].cp>50){//格上
                         ctx2d.fillStyle=getRGBA(11,0,myAni);
                     } else if(localAvator[selectBattleAvatorClass][i].cp-avatorData[playData.settings[0]].cp<-50){//格下
                         ctx2d.fillStyle=getRGBA(10,0,myAni);
                     }
                     if(avatorData[playData.settings[0]].cp == 0)ctx2d.fillStyle=getRGBA(0,0,myAni);
-                    ctx2d.fillText(processShowData(localAvator[selectBattleAvatorClass][i].cp),WIDTH/2-59-i*9,HEIGHT/2-65+i*30);
+                    ctx2d.fillText(processShowData(localAvator[selectBattleAvatorClass][i].cp),WIDTH/2-59-i*9,HEIGHT/2-65+i*30,25);
                     if(msgBox[0].flg!=2) drawTeamCircle(WIDTH/2-188-i*9,HEIGHT/2-70+i*30,5,localAvator[selectBattleAvatorClass][i].team);
                 } else {
                     ctx2d.fillStyle=getRGBA(0,0,myAni);
@@ -923,7 +930,9 @@ function drawMenu(){
     let hours = myDate.getHours();
     let minutes =myDate.getMinutes();
     let seconds= myDate.getSeconds();
-    if(dailyMission.date!= myDate.getDay()) setDailyMission(),saveData();    ;//デイリーミッションの更新処理　セーブもする
+    if(dailyMission.date!= myDate.getDay()) {
+        setDailyMission(),saveData();//デイリーミッションの更新処理　セーブもする
+    }
 
     for(let i = 0;i < 3;i++){
         if(dailyMission.detail[i].progress == dailyMission.detail[i].max){
@@ -1213,7 +1222,7 @@ function drawBattle(){ ///バトル画面の描画関数
     ctx2d.font="12pt " + MAIN_FONTNAME + ","+ JAPANESE_FONTNAME;
     ctx2d.fillStyle=getRGBA(2,0,1);
     ctx2d.fillText("CP " + avatorData[playData.settings[0]].cp,ctx2d.measureText(avatorData[0].name).width+220,HEIGHT*1.3/3+15);
-    ctx2d.fillText("CP " + enemyAvatorData.typingData.kpm,WIDTH-140,HEIGHT*1.3/3-60);
+    ctx2d.fillText("CP " + enemyAvatorData.cp,WIDTH-140,HEIGHT*1.3/3-60);
     ctx2d.fillStyle=getRGBA(0,0,1);
     ctx2d.fillText("/ 25",270,HEIGHT*1.5/3+20);
     ctx2d.fillText("/ 25", WIDTH*2/3+15,60);
@@ -1717,6 +1726,26 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     }
     playData.coin+=battleResult.coin;
     //アイテムの獲得処理はここへ
+    if(battleResult.win && battleResult.acc <= 90 && playData.item[4][3]==0){//乱れ打ちの冠
+        playData.item[4][3]=1;
+        battleResult.notice.push({
+            ani:t,
+            itemGetWindow:1,
+            itemNum:3,
+            itemClass:4,
+            flg:0});
+        avatorData[1].item[4] = 3;
+    }
+    if(battleResult.pWin && playData.item[4][4]==0){//パーフェクトの冠
+        playData.item[4][4]=1;
+        battleResult.notice.push({
+            ani:t,
+            itemGetWindow:1,
+            itemNum:4,
+            itemClass:4,
+            flg:0});
+        avatorData[1].item[4] = 4;
+    }
     if(enemyAvatorData.dropItem!=undefined && battleResult.win){
         if(Math.random()<enemyAvatorData.dropProb){
             //アイテム獲得
@@ -1928,7 +1957,11 @@ function drawResult(){ ///結果画面の描画関数
             let realRatio=(Math.min(1,Math.max(0,((t-resultAni)/200-2-(i+j))/2)));
             if(i==0 && j == 0) drawData=Math.floor(battleResult.kpm*realRatio*10)/10;
             if(i==0 && j ==1) drawData=Math.floor(battleResult.acc*realRatio*10)/10;
-            if(i==0 && j == 2) drawData=Math.floor(avatorData[0].cp*realRatio*10)/10;
+            if(i==0 && j == 2) {
+                drawData=Number(avatorData[0].cp*realRatio).toFixed(1);
+                let drawDataRaw=Number(avatorData[0].cp).toFixed(1);
+                if(drawDataRaw< battleResult.cp) ctx2d.drawImage(arrowImg,200+ctx2d.measureText(drawDataRaw).width-22*0.3*(j+1)+60,185+j*22 - (8)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
+            }
             if(i==1 && j == 0) drawData=Math.floor(battleResult.point*realRatio);
             if(i==1 && j == 1) drawData=Math.floor((25-battleResult.point)*realRatio);
             if(i==1 && j == 2) drawData=Math.floor(battleResult.totalStroke*realRatio);
@@ -2111,7 +2144,7 @@ function drawResult(){ ///結果画面の描画関数
         ctx2d.fillText("LV. " + (playData.level-1),615-8.8*6.6,164+8.8*22);
         drawPrl({x1:605-7.3*6.9,y1:169+7.3*23,x2:900-7.3*6.9,y2:173+7.3*23,colSet:13,shadow:0,lineWidth:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
         drawPrl({x1:605-7.3*6.9,y1:169+7.3*23,x2:605-7.3*6.9+295*(((playData.exp-(1-realRatio)*battleResult.exp-getLvExp(playData.level-2))/(getLvExp(playData.level-1)-getLvExp(playData.level-2)))),y2:173+7.3*23,colSet:3,shadow:0,lineWidth:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
-        if(playData.exp-(1-realRatio)*battleResult.exp>getLvExp(playData.level-1)){
+        if(playData.exp-(1-realRatio)*battleResult.exp>=getLvExp(playData.level-1)){
             battleResult.levelUp=0;//レベルアップアニメーション終了
             battleResult.notice.push({
                 level:playData.level,
@@ -2284,8 +2317,70 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.stroke();
 }
 function drawAvator2(){ ///アバター管理画面の描画関数
+    drawLoadingCircle(WIDTH-130,230,160,-t/2.3,1000);//////////動く丸
+    drawLoadingCircle(280,HEIGHT-140,220,t/3.3,1000);
     for(let i = 0;i < prls.length;i++){
-        if(prls[i].isMsgBox!=1) drawPrl(prls[i]);
+        if(prls[i].isMsgBox!=1 && prls[i].isTop!=1) drawPrl(prls[i]);
+    }
+    ctx2d.font="8pt " + JAPANESE_FONTNAME;
+    ctx2d.fillStyle=getRGBA(0,0,1);
+    ctx2d.fillText("並び替え",168,187);
+    ctx2d.fillText("入力方式",480,187);
+    ctx2d.fillText("所属チーム",580,187);
+    for(let i = 0;i < 4;i++){
+        let showNum = i-4*onlineShowPage;
+        let drawLv="--",drawName="---",drawCP="---",drawAcc="---";
+        let baseX=118+i*130,baseY = 335;
+        drawPrl({x1:87+i*130,y1:196,x2:87+i*130+190,y2:431,shadow:0,colSet:14,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:""});
+        drawPrl({x1:87+i*130,y1:330,x2:87+i*130+150,y2:431,shadow:0,colSet:1,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:0.8,text:""});
+        drawPrl({x1:baseX+100,y1:baseY-140,x2:baseX+160,y2:baseY-117,shadow:0,colSet:13,hoverColSet:1,lineWidth:0.1,hoverCounter:0,textSize:1,text:""});
+        if(showEnemyAvator.length > showNum){//表示対象なら
+           // draw
+            drawAvator(showEnemyAvator[showNum],118+i*130,204,103+i*130+160,328,t,1);
+            drawStar(showEnemyAvator[showNum],baseX-6,baseY+20,19);
+            drawTeamCircle(baseX+4,baseY+8,4,showEnemyAvator[showNum].team,1)
+            drawPrl({x1:baseX,y1:baseY-26,x2:baseX+30,y2:baseY-6,shadow:0,colSet:17+showEnemyAvator[showNum].style,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:INPUT_STYLE_SHORT[showEnemyAvator[showNum].style]});
+            drawLv=showEnemyAvator[showNum].level;
+            drawName=showEnemyAvator[showNum].name;
+            drawCP=showEnemyAvator[showNum].cp;
+            drawAcc=showEnemyAvator[showNum].typingData.acc;
+        }else{
+            drawGhost(118+i*130,204,103+i*130+160,328,t,1);
+            drawPrl({x1:baseX,y1:baseY-26,x2:baseX+30,y2:baseY-6,shadow:0,colSet:13,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:""});
+        }   
+        
+        ctx2d.fillStyle=getRGBA(0,0,1);
+        ctx2d.font="10pt " + JAPANESE_FONTNAME;
+        ctx2d.fillText(drawName,baseX+13,baseY+13,100);
+        ctx2d.font="10pt " + MAIN_FONTNAME;
+        ctx2d.fillText("CP ",baseX-10,baseY+56);
+        ctx2d.fillText(processShowData(drawCP,1),baseX+20,baseY+56);
+        ctx2d.font="8pt " + MAIN_FONTNAME;
+        ctx2d.fillText("ACC",baseX-13.6,baseY+72);
+        ctx2d.fillText(processShowData(drawAcc,1),baseX+16.6,baseY+72);
+        ctx2d.font="9pt " + MAIN_FONTNAME;
+        ctx2d.fillStyle=getRGBA(2,0,1);
+        ctx2d.fillText("LV " + drawLv,baseX+150-ctx2d.measureText("LV " + drawLv).width,baseY-124);
+    }
+    //画面右側　自分のアバター
+    drawPrl({x1:732,y1:192,x2:916,y2:330,shadow:0,colSet:14,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:""});
+    drawPrl({x1:850,y1:192,x2:916,y2:217,shadow:0,colSet:13,hoverColSet:1,lineWidth:0.1,hoverCounter:0,textSize:0.8,text:""});
+    drawAvator(avatorData[0],744,199,894,333,t,1);
+    ctx2d.font="9pt " + MAIN_FONTNAME;
+    ctx2d.fillStyle=getRGBA(2,0,1);
+    ctx2d.fillText("LV " + playData.level,905-ctx2d.measureText("LV " + playData.level).width,209);
+    drawPrl({x1:840,y1:333,x2:875,y2:353,shadow:0,colSet:17+createAvatorStyle,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1.2,text:INPUT_STYLE_SHORT[createAvatorStyle]});
+    ctx2d.font="12pt " + JAPANESE_FONTNAME;
+    ctx2d.fillStyle=getRGBA(0,0,1);
+    ctx2d.fillText(avatorData[createAvatorStyle].name,745,351,96);
+    ctx2d.font="10pt " + MAIN_FONTNAME;
+    ctx2d.fillText("CP " + processShowData(avatorData[createAvatorStyle].cp,1),714,400);
+    ctx2d.font="8pt " + MAIN_FONTNAME;
+    ctx2d.fillText("ACC " + processShowData(avatorData[createAvatorStyle].typingData.acc,1),796,400);
+    drawTeamCircle(735,347,5,avatorData[createAvatorStyle].team,1);
+    drawStar(avatorData[0],720,359,20);
+    for(let i = 0;i < prls.length;i++){
+        if(prls[i].isMsgBox!=1 && prls[i].isTop==1) drawPrl(prls[i]);
     }
 }
 function drawSetting(){ ///設定画面の描画関数
@@ -2571,6 +2666,76 @@ function changeScene(prev,next){ //シーン遷移の関数
     } else if(next==6){//アバター管理
         ctx2dImg.drawImage(backImg[4],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.8,text:"AVATOR"});
+        prls.push({x1:65,y1:145,x2:690,y2:HEIGHT-60,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
+        prls.push({x1:51,y1:280,x2:116,y2:340,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"＜",onClick:function(){
+            onlineShowPage++;
+            if(onlineShowPage && Math.floor((showEnemyAvator.length-1)/4)<onlineShowPage)onlineShowPage= 0;
+        }});
+        prls.push({x1:641,y1:280,x2:706,y2:340,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"＞",onClick:function(){
+            onlineShowPage--;
+            if(onlineShowPage<0) onlineShowPage=Math.max(0,Math.floor((showEnemyAvator.length-1)/4)-1);
+        }});
+        prls.push({x1:700,y1:145,x2:940,y2:HEIGHT-130,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
+        prls.push({x1:680,y1:HEIGHT-120,x2:858,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"BACK",subText:"戻る",onClick:function(){
+            saveData();
+            nextScene=2;
+            sceneAni=t;}});
+        setNCMBEnemyAvator();//NCMBからデータを取ってくる
+        onlineAvatorCol=[1,1,1];
+        onlineAvatorOrder=0;
+        onlineAvatorStyle=[1,1];
+        onlineShowPage=0;
+        createAvatorStyle=playData.settings[0];
+        for(let i = 0;i < 3;i++){
+            prls.push({x1:165+i*83,y1:151,x2:165+i*83+80,y2:171,id:i,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:1.2,text:ENEMY_ORDER[i],onClick:function(){
+                onlineAvatorOrder=i;
+                setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
+                setOrderButton();
+            }});
+        }
+        for(let i = 0;i < 2;i++){//入力方式
+            prls.push({x1:485+i*33,y1:151,x2:485+i*33+30,y2:171,id:i+10,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:1.2,text:INPUT_STYLE_SHORT[i],onClick:function(){
+                onlineAvatorStyle[i]=1-onlineAvatorStyle[i];
+                setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
+                setOrderButton();
+            }});
+        }
+        for(let i = 0;i < 3;i++){//チーム
+            prls.push({x1:585+i*33,y1:151,x2:585+i*33+30,y2:171,id:i+20,shadow:0,colSet:i*2+5,hoverColSet:i*2+5+1,lineWidth:3,hoverCounter:0,textSize:1.2,text:TEAM_TEXT[i].substr(0,1),onClick:function(){
+                onlineAvatorCol[i]=1-onlineAvatorCol[i];
+                setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
+                setOrderButton();
+            }});
+        }
+        for(let i = 0;i < 4;i++){//ダウンロードボタン
+            prls.push({x1:90+i*130,y1:441,x2:90+i*130+100,y2:471,id:i+30,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバターを追加",onClick:function(){
+                setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
+                setOrderButton();
+            }});
+        }
+        prls.push({x1:732,y1:310,x2:780,y2:330,shadow:0,colSet:0,hoverColSet:1,isTop:1,lineWidth:3,hoverCounter:0,textSize:1.1,text:"入力切替",onClick:function(){
+            createAvatorStyle=1-createAvatorStyle;
+            setOrderButton();
+        }});
+        prls.push({x1:776,y1:152,x2:930,y2:182,id:9,shadow:0,colSet:3,hoverColSet:4,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバター作成！",onClick:function(){
+            if(getAvailableCreateAvator()){
+                msgBox.push({
+                    text:"アバターを作成すると、誰でもあなたのアバターと対戦出来るようになります。アバターを作成しますか？",
+                    ani:t,
+                    btns1:{text:"YES",onClick:function(){
+                        //自分のアバターを作成する処理をここに追加
+                        uploadNCMBAvatorData(avatorData[createAvatorStyle]);
+                    }},
+                    btns2:{text:"NO",onClick:function(){return 0;}}})    
+            } else{
+                msgBox.push({
+                    text:"アバターを作成を作成するために必要な打鍵数が足りません。",
+                    ani:t,
+                    btns1:{text:"OK",onClick:function(){}}});
+            }
+        }});
+        setShowLocalAvator();//表示を既定値でセットする
+        setOrderButton();
     } else if(next==7){ //設定
         ctx2dImg.drawImage(backImg[2],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.8,text:"SETTING"});
