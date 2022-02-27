@@ -562,7 +562,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
         }else if(msgBox[0].itemGetWindow){//アイテムゲットウィンドウ
             if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//ボタンをprlsへプッシュする
                 prls.push({isMsgBox:1,x1:WIDTH/2-204,y1:HEIGHT/2+50,x2:WIDTH/2-128,y2:HEIGHT/2+70,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:2,text:"はい",trans:-1,onClick:function(){
-                    avatorData[0] = avatorData[1];
+                    avatorData[0].item = avatorData[1].item;
                     msgBox.push({
                         text:ITEM_DATA[msgBox[0].itemClass][msgBox[0].itemNum][0]+"を装備しました！",
                         ani:t,
@@ -570,7 +570,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     saveData();
                 }});
                 prls.push({isMsgBox:1,x1:WIDTH/2+68-160,y1:HEIGHT/2+50,x2:WIDTH/2-6,y2:HEIGHT/2+70,shadow:0,colSet:13,textSize:0.9,hoverColSet:14,hoverCounter:0,lineWidth:2,text:"いいえ",trans:-1,onClick:function(){
-                    avatorData[1] = avatorData[0];
+                    avatorData[1].item = avatorData[0].item;
                     msgBox.push({
                         text:"アバター画面からいつでも装備することができます。",
                         ani:t,
@@ -1254,8 +1254,8 @@ function drawBattle(){ ///バトル画面の描画関数
         ctx2d.font="28pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
         ctx2d.fillText(avatorData[0].name,battleOpeningOffset+70,170);
         ctx2d.fillText(enemyAvatorData.name,-battleOpeningOffset+WIDTH-300,HEIGHT-80);
-        ctx2d.fillText(Math.floor(avatorData[playData.settings[0]].cp),70,HEIGHT-40);
-        ctx2d.fillText(Math.floor(enemyAvatorData.cp),WIDTH-130,HEIGHT-180);
+        ctx2d.fillText(processShowData(Math.floor(avatorData[playData.settings[0]].cp),1),70,HEIGHT-40);
+        ctx2d.fillText(processShowData(Math.floor(enemyAvatorData.cp),1),WIDTH-130,HEIGHT-180);
         ctx2d.fillStyle="rgba(200,0,0,"+Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))/200)))+")";
         ctx2d.fillText("VS",(WIDTH-ctx2d.measureText("VS").width)/2,HEIGHT/2);
         drawTeamCircle(37+battleOpeningOffset,157,16,avatorData[0].team,Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))/200))));
@@ -2234,9 +2234,9 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText(playData.level,160,360);
     ctx2d.fillText(playData.exp,270,360);
     ctx2d.font="12pt " + DIGIT_FONTNAME;
-    ctx2d.fillText(processShowData(avatorData[playData.settings[0]].cp),412,242);
-    ctx2d.fillText(processShowData(Number(avatorData[0].typingData.kpm).toFixed(1)),403,272);
-    ctx2d.fillText(processShowData(Number(avatorData[1].typingData.kpm).toFixed(1)),394,302);
+    ctx2d.fillText(processShowData(avatorData[playData.settings[0]].cp,1),412,242);
+    ctx2d.fillText(processShowData(Number(avatorData[0].typingData.kpm).toFixed(1),1),403,272);
+    ctx2d.fillText(processShowData(Number(avatorData[1].typingData.kpm).toFixed(1),1),394,302);
 
     ctx2d.fillText(processShowData(battleData.win),525,242);
     ctx2d.fillText(processShowData(battleData.battle-battleData.win),516,272);
@@ -2245,7 +2245,7 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText(processShowData(Number(battleData.detail[1].win/battleData.detail[1].battle*100).toFixed(1))+"%",486,387);
     ctx2d.fillText(processShowData(Number(battleData.detail[2].win/battleData.detail[2].battle*100).toFixed(1))+"%",479.5,412);
     ctx2d.fillText(processShowData(battleData.stroke),472,437,100);
-    ctx2d.fillText(processShowData(battleData.win + battleData.loes),464.5,462);
+    ctx2d.fillText(processShowData(battleData.battle),464.5,462);
     ctx2d.fillText(processShowData(battleData.esc),457,487);
     ctx2d.fillText(playData.coin,765-ctx2d.measureText(playData.coin).width,430);
     ctx2d.fillText(processShowData(getNextLvExp(playData)),160-ctx2d.measureText(processShowData(getNextLvExp(playData))).width/2,457);
@@ -2327,9 +2327,11 @@ function drawAvator2(){ ///アバター管理画面の描画関数
     ctx2d.fillText("並び替え",168,187);
     ctx2d.fillText("入力方式",480,187);
     ctx2d.fillText("所属チーム",580,187);
+    ctx2d.fillStyle=getRGBA(2,0,1);
+    ctx2d.fillText("最終更新 " + playData.lastFetchDate,538,137);
     for(let i = 0;i < 4;i++){
-        let showNum = i-4*onlineShowPage;
-        let drawLv="--",drawName="---",drawCP="---",drawAcc="---";
+        let showNum = i+4*onlineShowPage;
+        let drawLv="--",drawName="---",drawCP="---",drawAcc="---",drawDate="----/--/--";
         let baseX=118+i*130,baseY = 335;
         drawPrl({x1:87+i*130,y1:196,x2:87+i*130+190,y2:431,shadow:0,colSet:14,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:""});
         drawPrl({x1:87+i*130,y1:330,x2:87+i*130+150,y2:431,shadow:0,colSet:1,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:0.8,text:""});
@@ -2344,6 +2346,9 @@ function drawAvator2(){ ///アバター管理画面の描画関数
             drawName=showEnemyAvator[showNum].name;
             drawCP=showEnemyAvator[showNum].cp;
             drawAcc=showEnemyAvator[showNum].typingData.acc;
+            let myMonth=showEnemyAvator[showNum].date.substr(4,2);
+            let showMonth = Number(myMonth)+1
+            drawDate = showEnemyAvator[showNum].date.substr(0,4) + "/" + ('00'+showMonth).slice(-2) + "/" + showEnemyAvator[showNum].date.substr(6,2);
         }else{
             drawGhost(118+i*130,204,103+i*130+160,328,t,1);
             drawPrl({x1:baseX,y1:baseY-26,x2:baseX+30,y2:baseY-6,shadow:0,colSet:13,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:""});
@@ -2358,10 +2363,13 @@ function drawAvator2(){ ///アバター管理画面の描画関数
         ctx2d.font="8pt " + MAIN_FONTNAME;
         ctx2d.fillText("ACC",baseX-13.6,baseY+72);
         ctx2d.fillText(processShowData(drawAcc,1),baseX+16.6,baseY+72);
-        ctx2d.font="9pt " + MAIN_FONTNAME;
+        ctx2d.font="8pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
+        ctx2d.fillText("更新 " + drawDate,baseX-19.8,baseY+90);
         ctx2d.fillStyle=getRGBA(2,0,1);
+        ctx2d.font="9pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
         ctx2d.fillText("LV " + drawLv,baseX+150-ctx2d.measureText("LV " + drawLv).width,baseY-124);
     }
+
     //画面右側　自分のアバター
     drawPrl({x1:732,y1:192,x2:916,y2:330,shadow:0,colSet:14,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:""});
     drawPrl({x1:850,y1:192,x2:916,y2:217,shadow:0,colSet:13,hoverColSet:1,lineWidth:0.1,hoverCounter:0,textSize:0.8,text:""});
@@ -2381,6 +2389,22 @@ function drawAvator2(){ ///アバター管理画面の描画関数
     drawStar(avatorData[0],720,359,20);
     for(let i = 0;i < prls.length;i++){
         if(prls[i].isMsgBox!=1 && prls[i].isTop==1) drawPrl(prls[i]);
+    }
+
+    //ローディング中の表示
+    if(dataFetchStatus==0){
+        drawLoadingCircle(370,310,80,t,1000,1,1);//////////動く丸
+        ctx2d.fillStyle=getRGBA(2,500,t);
+        ctx2d.fillText("LOADING...",340,310);
+    } else if(dataFetchStatus==2){
+        drawPrl({x1:200,y1:285,x2:570,y2:320,shadow:0,colSet:13,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:"データの取得に失敗しました。"});
+    } else if(dataFetchStatus==1 && showEnemyAvator.length==0){
+        drawPrl({x1:180,y1:285,x2:590,y2:320,shadow:0,colSet:13,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:"該当するアバターデータがありません。"});
+    }
+    if(dataSaveStatus==0){//アップロード中の表示
+        drawLoadingCircle(800,310,50,t,1000,1,1);//////////動く丸
+        ctx2d.fillStyle=getRGBA(2,500,t);
+        ctx2d.fillText("LOADING...",770,310);
     }
 }
 function drawSetting(){ ///設定画面の描画関数
@@ -2668,26 +2692,27 @@ function changeScene(prev,next){ //シーン遷移の関数
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.8,text:"AVATOR"});
         prls.push({x1:65,y1:145,x2:690,y2:HEIGHT-60,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
         prls.push({x1:51,y1:280,x2:116,y2:340,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"＜",onClick:function(){
-            onlineShowPage++;
-            if(onlineShowPage && Math.floor((showEnemyAvator.length-1)/4)<onlineShowPage)onlineShowPage= 0;
+            onlineShowPage--;
+            if(onlineShowPage<0) onlineShowPage=Math.max(0,Math.floor((showEnemyAvator.length-1)/4));
         }});
         prls.push({x1:641,y1:280,x2:706,y2:340,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"＞",onClick:function(){
-            onlineShowPage--;
-            if(onlineShowPage<0) onlineShowPage=Math.max(0,Math.floor((showEnemyAvator.length-1)/4)-1);
+            onlineShowPage++;
+            if(onlineShowPage && Math.floor((showEnemyAvator.length-1)/4)<onlineShowPage) onlineShowPage= 0;
+
         }});
         prls.push({x1:700,y1:145,x2:940,y2:HEIGHT-130,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
         prls.push({x1:680,y1:HEIGHT-120,x2:858,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"BACK",subText:"戻る",onClick:function(){
             saveData();
             nextScene=2;
             sceneAni=t;}});
-        setNCMBEnemyAvator();//NCMBからデータを取ってくる
         onlineAvatorCol=[1,1,1];
         onlineAvatorOrder=0;
         onlineAvatorStyle=[1,1];
         onlineShowPage=0;
+        dataSaveStatus=1;
         createAvatorStyle=playData.settings[0];
-        for(let i = 0;i < 3;i++){
-            prls.push({x1:165+i*83,y1:151,x2:165+i*83+80,y2:171,id:i,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:1.2,text:ENEMY_ORDER[i],onClick:function(){
+        for(let i = 0;i < 4;i++){
+            prls.push({x1:165+i*63,y1:151,x2:165+i*63+60,y2:171,id:i,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:1.2,text:ENEMY_ORDER[i],onClick:function(){
                 onlineAvatorOrder=i;
                 setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
                 setOrderButton();
@@ -2709,6 +2734,16 @@ function changeScene(prev,next){ //シーン遷移の関数
         }
         for(let i = 0;i < 4;i++){//ダウンロードボタン
             prls.push({x1:90+i*130,y1:441,x2:90+i*130+100,y2:471,id:i+30,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバターを追加",onClick:function(){
+                let myText=getPrlsText(i+30);
+                if(myText==ONLINE_AVATOR_STATUS[0]){//更新
+
+                } else if(myText == ONLINE_AVATOR_STATUS[1]){//削除
+                    deleteNCMBAvator(tempLocalAvator[i+4*onlineShowPage].id);
+                } else if(myText==ONLINE_AVATOR_STATUS[2]){//追加
+                    
+                } else if(myText==ONLINE_AVATOR_STATUS[3]){//作成不能
+                    //スルー
+                }
                 setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
                 setOrderButton();
             }});
@@ -2718,7 +2753,7 @@ function changeScene(prev,next){ //シーン遷移の関数
             setOrderButton();
         }});
         prls.push({x1:776,y1:152,x2:930,y2:182,id:9,shadow:0,colSet:3,hoverColSet:4,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバター作成！",onClick:function(){
-            if(getAvailableCreateAvator()){
+            if(getAvailableCreateAvator()==1){//新規作成
                 msgBox.push({
                     text:"アバターを作成すると、誰でもあなたのアバターと対戦出来るようになります。アバターを作成しますか？",
                     ani:t,
@@ -2727,13 +2762,28 @@ function changeScene(prev,next){ //シーン遷移の関数
                         uploadNCMBAvatorData(avatorData[createAvatorStyle]);
                     }},
                     btns2:{text:"NO",onClick:function(){return 0;}}})    
-            } else{
+            } else if(getAvailableCreateAvator() == 2){//更新
                 msgBox.push({
-                    text:"アバターを作成を作成するために必要な打鍵数が足りません。",
+                    text:"作成済みのアバターデータを更新しますか？",
+                    ani:t,
+                    btns1:{text:"YES",onClick:function(){
+                        //自分のアバターを更新する処理
+                        updateNCMBAvatorData(avatorData[createAvatorStyle].id,avatorData[createAvatorStyle]);
+                    }},
+                    btns2:{text:"NO",onClick:function(){return 0;}}})    
+            } else if(getAvailableCreateAvator() == 3){
+                msgBox.push({
+                    text:"アバターの更新は1時間に1回までです。時間が経ってからもう一度お試しください。",
+                    ani:t,
+                    btns1:{text:"OK",onClick:function(){}}});
+            } else if(getAvailableCreateAvator() == 4){
+                msgBox.push({
+                    text:"アバターを作成するために必要な打鍵数が足りません。",
                     ani:t,
                     btns1:{text:"OK",onClick:function(){}}});
             }
         }});
+        setNCMBEnemyAvator();//NCMBからデータを取ってくる
         setShowLocalAvator();//表示を既定値でセットする
         setOrderButton();
     } else if(next==7){ //設定

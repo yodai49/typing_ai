@@ -599,7 +599,7 @@ function getBattleDataSave(myId){
     for(let i = 0;i < battleDataSave.length;i++){
         if(battleDataSave[i].id == myId) return battleDataSave[i];
     }
-    return {win:0,battle:0,pWin:0,kWin:0,isUnknown:1};
+    return {win:0,battle:0,pWin:0,kWin:0,isUnknown:1,date:"0000000000"};
 }
 function setBattleDataSave(myId,myBattleResult){
     //battleDataSaveに情報をセットする
@@ -622,23 +622,36 @@ function setNCMBEnemyAvator(){
         "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
     //オンラインのアバターデータをセットする関数
     let myDate = new Date();
-    if(playData.hour == myDate.getHours() && !DEBUG_MODE) return 0;//一時間以内の更新は行わない
-    playData.hour=myDate.getHours();
-    tempLocalAvator=[];
+    let lastFetchDate = 
+        myDate.getFullYear() + "/" +
+        ('00' + myDate.getMonth()).slice(-2) +  "/" + 
+        ('00'  + myDate.getDate()).slice(-2) + " "  + 
+        ('00' + myDate.getHours()).slice(-2) +  ":" + 
+        ('00' + myDate.getMinutes()).slice(-2);
     dataFetchStatus=0;
+    if(playData.hour == lastFetchDate && !DEBUG_MODE){
+        dataFetchStatus=1;
+        return 0;//一時間以内の更新は行わない
+    }     
+    playData.lastFetchDate=lastFetchDate;
+    tempLocalAvator=[];
     //ここからNCMBとの通信を行うデータの書き込み処理
     let avators = ncmb.DataStore("Avators");
     avators.fetchAll().then(function(avators){
         tempLocalAvator=avators;
         for(let i = 0;i < tempLocalAvator.length;i++){
-            tempLocalAvator[i] = JSON.parse(tempLocalAvator[i].AvatorData);
+            tempLocalAvator[i] = JSON.parse(tempLocalAvator[i].avatorData);
+            tempLocalAvator[i].recommendation = 0;//ここにおすすめ度をセットする処理を追加
         }
         dataFetchStatus=1;
-        setShowLocalAvator();//表示を既定値でセットする
+        setShowLocalAvator(0);//表示を既定値でセットする
         setOrderButton();
+        saveData();//取得後にセーブする
     })
     .catch(function(error){//取得失敗
         dataFetchStatus=2;
+        setShowLocalAvator(0);//表示を既定値でセットする
+        setOrderButton();
     });
 }
 function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
@@ -649,20 +662,118 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
     let item = new Item();
     myAvatorData.style=createAvatorStyle;//スタイルを修正
     myAvatorData.level = playData.level;
+    let myDate = new Date();
+    let myY = ('0000' +  myDate.getFullYear()).slice(-4);
+    let myM = ('00' + myDate.getMonth()).slice(-2);
+    let myD = ('00' + myDate.getDate()).slice(-2);
+    let myH = ('00' +  myDate.getHours()).slice(-2);
+    myAvatorData.date = myY+ myM + myD +myH;
     dataSaveStatus=0;
-    item.set("AvatorData",JSON.stringify(myAvatorData,undefined,1))
+    item.set("avatorData",JSON.stringify(myAvatorData,undefined,1))
+    .set("avatorID",myAvatorData.id)
     .save()
     .then(function(item){
         dataSaveStatus=1;
+        msgBox.push({
+            text:"アバターのアップロードに成功しました！",
+            ani:t,
+            btns1:{text:"OK",onClick:function(){
+                dataFetchStatus=0;
+                setNCMBEnemyAvator();
+            }}});
     })
-    .catch(function(error){
+    .catch(function(error){//アップロード失敗
         dataSaveStatus=2;
+        msgBox.push({
+            text:"アバターのアップロードに失敗しました。インターネット接続を確認してください。",
+            ani:t,
+            btns1:{text:"OK",onClick:function(){}}});
     });
 }
+function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロード
+    let ncmb = new NCMB(
+        "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
+        "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
+    let Item = ncmb.DataStore("Avators");
+    
+    let item = new Item();
+    myAvatorData.style=createAvatorStyle;//スタイルを修正
+    myAvatorData.level = playData.level;
+    let myDate = new Date();
+    let myY = ('0000' +  myDate.getFullYear()).slice(-4);
+    let myM = ('00' + myDate.getMonth()).slice(-2);
+    let myD = ('00' + myDate.getDate()).slice(-2);
+    let myH = ('00' +  myDate.getHours()).slice(-2);
+    myAvatorData.date = myY+ myM + myD +myH;
+    dataSaveStatus=0;
+    Item.equalTo("avatorID",oldID).fetchAll()
+    .then(function(result){
+        var promises = [result[0].delete()];
+        return Promise.all(promises);
+    })
+    .then(function(result){
+        item.set("avatorData",JSON.stringify(myAvatorData,undefined,1))
+        .set("avatorID",myAvatorData.id)
+        .save()
+        .then(function(item){
+            dataSaveStatus=1;
+            msgBox.push({
+                text:"アバターの更新に成功しました！",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){
+                    dataFetchStatus=0;
+                    setNCMBEnemyAvator();
+                }}});
+        })
+    })
+    .catch(function(error){
+        dataSaveStatus=1;
+        msgBox.push({
+            text:"アバターの更新に失敗しました。インターネット接続を確認してください。",
+            ani:t,
+            btns1:{text:"OK",onClick:function(){}}});
+    })
+
+}function deleteNCMBAvator(deleteId){
+    //deleteIDのNCMBデータを削除する
+    let ncmb = new NCMB(
+        "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
+        "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
+    let Item = ncmb.DataStore("Avators");
+    msgBox.push({
+        text:"アップロード済みのアバターデータを削除しますか？　既に保存したユーザーにはアバターデータが残り続けます。",
+        ani:t,
+        btns1:{text:"YES",onClick:function(){
+            dataFetchStatus=0;
+            Item.equalTo("avatorID",deleteId).fetchAll()
+            .then(function(result){
+                var promises = [result[0].delete()];
+                return Promise.all(promises);
+            })
+            .then(function(result){
+                dataFetchStatus=0;
+                setNCMBEnemyAvator();
+                msgBox.push({
+                    text:"アバターの削除に成功しました。アバターデータはいつでも再アップロード可能です。",
+                    ani:t,
+                    btns1:{text:"OK",onClick:function(){}}});
+            })
+            .catch(function(error){
+                dataFetchStatus=1;
+                msgBox.push({
+                    text:"アバターの削除に失敗しました。インターネット接続を確認してください。",
+                    ani:t,
+                    btns1:{text:"OK",onClick:function(){}}});
+            });
+        }},
+        btns2:{text:"NO",onClick:function(){}}
+    });
+
+}
 function setShowLocalAvator(order,col,style){
-    if(col == undefined) col = [1,1,1];
-    if(order ==undefined) order=0;
-    if(style==undefined) style=[1,1];
+    if(order==undefined) order=onlineAvatorOrder;
+    if(col== undefined) col = onlineAvatorCol;
+    if(style==undefined) style=onlineAvatorStyle;
     showEnemyAvator=[];//リセット
     for(let i  = 0;i < tempLocalAvator.length;i++){
         //条件に合致するならセット
@@ -672,17 +783,19 @@ function setShowLocalAvator(order,col,style){
     }
     //並び替えの処理をここに追加
     if(order==0){//おすすめ順
-
-    } else if(order==1){//cp順
-
-    } else if(order==2){//レベル順
-
+        showEnemyAvator.sort((a,b)=>-a.recommendation+b.recommendation);
+    } else if(order==1){//新着順
+        showEnemyAvator.sort((a,b)=>-Number(a.date)+Number(b.date));
+    } else if(order==2){//cp順
+        showEnemyAvator.sort((a,b)=>-a.cp+b.cp);
+    } else if(order == 3){//レベル順
+        showEnemyAvator.sort((a,b)=>-a.level+b.level);
     }
     onlineShowPage=0;
 }
 function setOrderButton(){
     for(let i = 0;i < prls.length;i++){
-        if(prls[i].id >=0 && prls[i].id <= 2){//順番のボタンなら
+        if(prls[i].id >=0 && prls[i].id <= 3){//順番のボタンなら
             if(prls[i].id == onlineAvatorOrder){
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
@@ -691,12 +804,22 @@ function setOrderButton(){
                 prls[i].hoverColSet=1;
             }
         }else if(prls[i].id == 9){//アバター作成ボタンなら
-            if(avatorData[createAvatorStyle].typingData.stroke >= 10000 || DEBUG_MODE){
+            if(getAvailableCreateAvator()==1){//新規作成可能時
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
-            } else{
+                prls[i].text="アバターを作成！";
+            } else if(getAvailableCreateAvator()==2){//更新可能時
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
+                prls[i].text="アバターを更新！";
+            } else if(getAvailableCreateAvator()==3){//更新不可能時
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
+                prls[i].text="アバターを更新！";
+            } else {//作成不可能時
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+                prls[i].text="アバターを作成！";
             }
         }else if(prls[i].id>=10 && prls[i].id<=11){//入力方式のボタンなら
             if(onlineAvatorStyle[prls[i].id-10]){
@@ -716,32 +839,59 @@ function setOrderButton(){
             }
         }else if(prls[i].id>=30 && prls[i].id<=33){//ダウンロードボタンなら
             if(showEnemyAvator.length > prls[i].id-30-4*onlineShowPage){
-                if(!getBattleDataSave(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id).isUnknown){
-                    prls[i].colSet=16;
-                    prls[i].hoverColSet=16;
-                    pris[i].text="追加済み";
-                } else{
+                if(!getBattleDataSave(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id).isUnknown && getBattleDataSave(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id).date != showEnemyAvator[prls[i].id-30-4*onlineShowPage].date){
                     prls[i].colSet=3;
-                    prls[i].hoverColSet=4;    
-                    prls[i].text="アバターを追加";
+                    prls[i].hoverColSet=4;
+                    prls[i].text=ONLINE_AVATOR_STATUS[0];
+                } else if(isMyId(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id)){
+                    prls[i].colSet=1;
+                    prls[i].hoverColSet=2;
+                    prls[i].text=ONLINE_AVATOR_STATUS[1];
+                }else{
+                    prls[i].colSet=3;
+                    prls[i].hoverColSet=4;
+                    prls[i].text=ONLINE_AVATOR_STATUS[2];
                 }
             } else{
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
-                prls[i].text="アバターを追加";
+                prls[i].text=ONLINE_AVATOR_STATUS[3];
             }
         }
     }
 }
 function getAvailableCreateAvator(){
-    for(let i = 0;i < prls.length;i++){
-        if(prls[i].id==9){
-            if(prls[i].colSet == 3){
-                return 1;
+//アバター作成ステータスを返す　作成可能なら１，更新可能なら２，更新不可能なら３，作成不可能なら４ 読込中なら5
+    if(dataFetchStatus == 0 || dataSaveStatus==0) return 5;
+    for(let i = 0;i < tempLocalAvator.length;i++){
+        if(tempLocalAvator[i].id == avatorData[createAvatorStyle].id){
+            //作成済みだったら
+            let myDate = new Date();//日付をチェック
+            let myY = ('0000' +  myDate.getFullYear()).slice(-4);
+            let myM = ('00' + myDate.getMonth()).slice(-2);
+            let myD = ('00' + myDate.getDate()).slice(-2);
+            let myH = ('00' +  myDate.getHours()).slice(-2);
+            let nowDate = myY+ myM + myD +myH;
+            if(nowDate != tempLocalAvator[i].date){
+                return 2;
             } else{
-                return 0;
+                return 3;
             }
         }
     }
-    return -1;
+    if(avatorData[createAvatorStyle].typingData.stroke >= 10000){
+        return 1;
+    } else{
+        return 4;
+    }
+}
+function isMyId(idChecked){
+    if(idChecked == avatorData[0].id) return 1;
+    if(idChecked==avatorData[1].id) return 2;
+    return 0;
+}
+function getPrlsText(id){
+    for(let i = 0;i < prls.length;i++){
+        if(prls[i].id == id) return prls[i].text;
+    }
 }

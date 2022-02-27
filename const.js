@@ -49,6 +49,7 @@ const EVENT_EXP=[
 const INPUT_STYLE_SHORT=["R","K"];
 const INPUT_STLYE=["ローマ字","カナ"];
 const BATTLE_INFO=["","LV","CP","ACC"];
+const ONLINE_AVATOR_STATUS=["アバター更新","アバター削除","アバター保存！","アバター保存"];
 const SETTING_SELECT=[
     ["ローマ字","カナ"],
     ["有効","無効"],
@@ -60,7 +61,7 @@ const SETTING_SELECT=[
     ["ON","OFF"],
     ["リセットする",""],
 ]
-const ENEMY_ORDER=["おすすめ","CP順","レベル順"];
+const ENEMY_ORDER=["おすすめ","新着順","CP順","レベル順"];
 const ITEM_DATA = [
     [["ノーマルな仮面",0,"普通の仮面。特に効果はない。"],//HEAD
     ["赤の仮面",15,"所属チームがREDの場合、経験値ボーナス5%"],
