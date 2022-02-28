@@ -18,6 +18,7 @@ var selectBattleAvator=0,selectBattleAvatorClass=0,selectBattleAvatorAni=0,winLo
 var showEnemyAvator=[];//tempLocalAvatorから加工したアバターデータを格納
 var onlineAvatorCol=[],onlineAvatorOrder=0,onlineAvatorStyle=[1,1],onlineShowPage=0,onlineMyStyle=0;//表示オプション
 var createAvatorStyle=0,dataFetchStatus=0,dataSaveStatus=0;//datafetchstatusは0が待機中、1は読み込み済み、2はエラー
+var deleteClass=0;
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
 var playData;
@@ -601,6 +602,15 @@ function getBattleDataSave(myId){
     }
     return {win:0,battle:0,pWin:0,kWin:0,isUnknown:1,date:"0000000000"};
 }
+function getLocalAvator(myId){
+    //localAvatorDataから情報を得る
+    for(let i = 0;i <5;i++){
+        for(let j = 0;j < localAvator[i].length;j++){
+            if(localAvator[i][j].id == myId) return localAvator[i][j];
+        }
+    }
+    return {isUnknown:1};
+}
 function setBattleDataSave(myId,myBattleResult){
     //battleDataSaveに情報をセットする
     for(let i = 0;i < battleDataSave.length;i++){
@@ -624,34 +634,44 @@ function setNCMBEnemyAvator(){
     let myDate = new Date();
     let lastFetchDate = 
         myDate.getFullYear() + "/" +
-        ('00' + myDate.getMonth()).slice(-2) +  "/" + 
+        ('00' + (Number(myDate.getMonth())+1)).slice(-2) +  "/" + 
         ('00'  + myDate.getDate()).slice(-2) + " "  + 
         ('00' + myDate.getHours()).slice(-2) +  ":" + 
         ('00' + myDate.getMinutes()).slice(-2);
     dataFetchStatus=0;
-    if(playData.hour == lastFetchDate && !DEBUG_MODE){
+    if(playData.lastFetchDate == lastFetchDate && !DEBUG_MODE){
         dataFetchStatus=1;
         return 0;//一時間以内の更新は行わない
     }     
-    playData.lastFetchDate=lastFetchDate;
     tempLocalAvator=[];
     //ここからNCMBとの通信を行うデータの書き込み処理
     let avators = ncmb.DataStore("Avators");
-    avators.fetchAll().then(function(avators){
+    avators.limit(FETCH_NUM).fetchAll().then(function(avators){
         tempLocalAvator=avators;
         for(let i = 0;i < tempLocalAvator.length;i++){
             tempLocalAvator[i] = JSON.parse(tempLocalAvator[i].avatorData);
-            tempLocalAvator[i].recommendation = 0;//ここにおすすめ度をセットする処理を追加
+            let tempClass = 1;
+            if(tempLocalAvator[i].cp-avatorData[playData.settings[0]].cp > 50) tempClass=0;//格上
+            if(tempLocalAvator[i].cp-avatorData[playData.settings[0]].cp < -50) tempClass=2;//格下
+            let tempTeamCoef = 1;
+            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=1.4;
+            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=0.6;
+            tempLocalAvator[i].recommendation = (0.5 + 1/(Math.abs(avatorData[playData.settings[0]].cp - tempLocalAvator[i].cp)+1));//ここからおすすめ度をセットする処理を追加
+            tempLocalAvator[i].recommendation*=(10 + battleData.detail[tempClass].battle) / (10+battleData.detail[0].battle+battleData.detail[1].battle+battleData.detail[2].battle);
+            tempLocalAvator[i].recommendation*=tempTeamCoef;
+            if(isMyId(tempLocalAvator[i].id)) tempLocalAvator[i].recommendation*=0.6;
         }
         dataFetchStatus=1;
         setShowLocalAvator(0);//表示を既定値でセットする
         setOrderButton();
         saveData();//取得後にセーブする
+        playData.lastFetchDate=lastFetchDate;//最終データ取得時間を更新
     })
     .catch(function(error){//取得失敗
         dataFetchStatus=2;
         setShowLocalAvator(0);//表示を既定値でセットする
         setOrderButton();
+        console.log(error);
     });
 }
 function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
@@ -706,7 +726,7 @@ function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロ�
     let myH = ('00' +  myDate.getHours()).slice(-2);
     myAvatorData.date = myY+ myM + myD +myH;
     dataSaveStatus=0;
-    Item.equalTo("avatorID",oldID).fetchAll()
+    Item.equalTo("avatorID",oldID).limit(FETCH_NUM).fetchAll()
     .then(function(result){
         var promises = [result[0].delete()];
         return Promise.all(promises);
@@ -745,7 +765,7 @@ function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロ�
         ani:t,
         btns1:{text:"YES",onClick:function(){
             dataFetchStatus=0;
-            Item.equalTo("avatorID",deleteId).fetchAll()
+            Item.equalTo("avatorID",deleteId).limit(FETCH_NUM).fetchAll()
             .then(function(result){
                 var promises = [result[0].delete()];
                 return Promise.all(promises);
@@ -838,21 +858,27 @@ function setOrderButton(){
                 prls[i].hoverColSet=13;
             }
         }else if(prls[i].id>=30 && prls[i].id<=33){//ダウンロードボタンなら
-            if(showEnemyAvator.length > prls[i].id-30-4*onlineShowPage){
-                if(!getBattleDataSave(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id).isUnknown && getBattleDataSave(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id).date != showEnemyAvator[prls[i].id-30-4*onlineShowPage].date){
-                    prls[i].colSet=3;
+            if(showEnemyAvator.length > prls[i].id-30+4*onlineShowPage){
+                if(!getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).isUnknown && 
+                    getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).date != showEnemyAvator[prls[i].id-30+4*onlineShowPage].date){
+                    prls[i].colSet=3;//未保存で保存可能
                     prls[i].hoverColSet=4;
                     prls[i].text=ONLINE_AVATOR_STATUS[0];
-                } else if(isMyId(showEnemyAvator[prls[i].id-30-4*onlineShowPage].id)){
-                    prls[i].colSet=1;
+                } else if(isMyId(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id)){
+                    prls[i].colSet=1;//自分のアバター
                     prls[i].hoverColSet=2;
                     prls[i].text=ONLINE_AVATOR_STATUS[1];
-                }else{
+                } else if(!getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).isUnknown && 
+                    getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).date == showEnemyAvator[prls[i].id-30+4*onlineShowPage].date) {//更新
+                    prls[i].colSet=13;//保存済みだが更新なし
+                    prls[i].hoverColSet=13;
+                    prls[i].text=ONLINE_AVATOR_STATUS[3];
+                } else {//保存済みで更新可能
                     prls[i].colSet=3;
                     prls[i].hoverColSet=4;
-                    prls[i].text=ONLINE_AVATOR_STATUS[2];
+                    prls[i].text=ONLINE_AVATOR_STATUS[2];    
                 }
-            } else{
+            } else{//保存できないとき
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
                 prls[i].text=ONLINE_AVATOR_STATUS[3];

@@ -6,6 +6,7 @@ const JAPANESE_FONTNAME = "Stick";
 const TYPING_FONTNAME="sans-serif";
 const DEBUG_MODE=6;//数字の番号のシーンからスタート
 const IMG_CNT = 25;//読みこむイメージの総数
+const FETCH_NUM=500;//一度にアバター一覧から取ってくる個数
 const COEF_R2K=1.5;//ローマ字からカナへのkpm変換の係数
 const TEAM_BONUS = 25;//チームのボーナス値　%で指定
 var SCENE_ANI=400; //ロード終了後のアニメーション時間(DEBUGMODEによって変更するためvarで宣言)
