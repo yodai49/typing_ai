@@ -654,7 +654,32 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillText(itemGetExp.substr(0,24),-239+(WIDTH)/2,HEIGHT/2+5);
             ctx2d.fillText(itemGetExp.substr(24,24),-239+(WIDTH)/2,HEIGHT/2+22);
             
-        } else if(msgBox[0].bonusHelpWindow){//ヘルプウィンドウ
+        } else if(msgBox[0].firstWinWindow){//初回勝利ウィンドウ
+            if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//ボタンをprlsへプッシュする
+                prls.push({isMsgBox:1,x1:WIDTH/2+100,y1:HEIGHT/2+40,x2:WIDTH/2+232,y2:HEIGHT/2+70,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,lineWidth:8,text:"OK!",trans:-1,onClick:function(){}});
+                msgBox[0].flg=1;
+            }
+            drawPrl({x1:WIDTH/2-230,y1:HEIGHT/2-120,x2:WIDTH/2-10,y2:HEIGHT/2-85,colSet:3,hoverColSet:3,hoverCounter:0,text:"初勝利！",trans:myAni*1.1})
+            drawPrl({x1:WIDTH/2-280,y1:HEIGHT/2-80,x2:WIDTH/2+280,y2:HEIGHT/2+80,colSet:2,hoverColSet:2,hoverCounter:0,text:"",trans:myAni*1.1})
+            drawPrl({x1:WIDTH/2-267,y1:HEIGHT/2-70,x2:WIDTH/2-60,y2:HEIGHT/2+70,shadow:0,colSet:13,hoverColSet:13,hoverCounter:0,text:"",trans:myAni*1.1})
+            ctx2d.fillStyle=getRGBA(0,0,myAni);
+            ctx2d.font="13pt "+JAPANESE_FONTNAME;
+            let firstWinTxt=enemyAvatorData.name + "に初勝利した！　４コインを獲得！";
+            if(firstWinTxt.length > Math.floor((t-resultAni)/50)) firstWinTxt=firstWinTxt.substr(0,Math.floor((t-resultAni)/50)-1) + CHARA_SET[Math.floor(Math.random()*CHARA_SET.length)];
+            levelUpMsgText=firstWinTxt.substr(0,Math.min(firstWinTxt.length,Math.floor((t-resultAni)/50)))
+            ctx2d.fillText(firstWinTxt.substr(0,14),WIDTH/2-40,HEIGHT/2-40);
+            ctx2d.fillText(firstWinTxt.substr(14,14),WIDTH/2-47.5,HEIGHT/2-15);
+            ctx2d.fillText("所持コイン " + playData.coin + "ゴールド",WIDTH/2-35,HEIGHT/2+20);
+            ctx2d.drawImage(coinImg,WIDTH/2-65,HEIGHT/2+0,30,30);
+            if(msgBox[0].pknWin==0){
+                ctx2d.drawImage(nWinImg,WIDTH/2+195,HEIGHT/2-60,60,60);
+            } else if(msgBox[0].pknWin==1){
+                ctx2d.drawImage(kWinImg,WIDTH/2+200,HEIGHT/2-60,60,60);
+            } else if(msgBox[0].pknWin==2){
+                ctx2d.drawImage(pWinImg,WIDTH/2+200,HEIGHT/2-60,60,60);
+            }
+            drawAvator(avatorData[0],WIDTH/2-250,HEIGHT/2-70,WIDTH/2-90,HEIGHT/2+80,1,myAni*1.1);
+        }else if(msgBox[0].bonusHelpWindow){//ヘルプウィンドウ
             if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//ボタンをprlsへプッシュする
                 prls.push({isMsgBox:1,x1:WIDTH/2+230,y1:HEIGHT/2-160,x2:WIDTH/2+281,y2:HEIGHT/2-135,shadow:0,colSet:13,textSize:0.9,hoverColSet:11,hoverCounter:0,lineWidth:2,text:"✕",trans:-1,onClick:function(){}});
                 msgBox[0].flg=1;
@@ -912,7 +937,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
             if(localAvator[1].length){//イベントアバター出現中の文字
                 if(dailyMission.rare){
                     drawPrl({isMsgBox:0,x1:WIDTH/2-190+43+23,y1:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-190+43+27,y2:HEIGHT/2-165-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:16,noDestruct:1,textSize:1.3,hoverColSet:16,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
-                    drawPrl({isMsgBox:0,x1:WIDTH/2-190+38,y1:HEIGHT/2-186-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-135+50,y2:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:16,noDestruct:1,textSize:1.3,hoverColSet:16,hoverCounter:0,lineWidth:0.1,text:"レア出現中！",trans:-1});    
+                    drawPrl({isMsgBox:0,x1:WIDTH/2-190+38,y1:HEIGHT/2-190-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-135+50,y2:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:16,noDestruct:1,textSize:1,hoverColSet:16,hoverCounter:0,lineWidth:0.1,text:"レア出現中！",trans:-1});    
                 } else{
                     drawPrl({isMsgBox:0,x1:WIDTH/2-190+43+23,y1:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-190+43+27,y2:HEIGHT/2-165-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:3,noDestruct:1,textSize:1.3,hoverColSet:3,hoverCounter:0,lineWidth:0.1,text:"",trans:-1});
                     drawPrl({isMsgBox:0,x1:WIDTH/2-190+43,y1:HEIGHT/2-186-(5)*Math.max(0,Math.sin(t/210)*3-2.7),x2:WIDTH/2-135+45,y2:HEIGHT/2-171-(5)*Math.max(0,Math.sin(t/210)*3-2.7),shadow:0,colSet:3,noDestruct:1,textSize:1.3,hoverColSet:3,hoverCounter:0,lineWidth:0.1,text:"出現中！",trans:-1});    
@@ -1815,7 +1840,7 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     if(dailyMission.detail[0].progress == dailyMission.detail[0].max && dailyMission.detail[1].progress == dailyMission.detail[1].max && dailyMission.detail[2].progress == dailyMission.detail[2].max && battleResult.win) 
         battleResult.coin+=1;//すべてのミッションクリア後に勝利で１コイン獲得
     battleResult.bonus[4] = 0;//イベントボーナス
-    if(dailyMission.event == avatorData[0].team+1) battleResult.bonus[2] = 25,battleResult.coin++;//イベント中なら25%ボーナス、1コイン獲得
+    if(dailyMission.event == avatorData[0].team+1) battleResult.bonus[2] = 25,battleResult.coin+=battleResult.win;//イベント中なら25%ボーナス、1コイン獲得
     if(dailyMission.event==4){//経験値イベント
         battleResult.bonus[4] = 20;
     } else if(dailyMission.event==5){ //ゴールドイベント
@@ -1826,6 +1851,18 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 6/5* (1+Math.atan((avatorData[inputStyle].cp - enemyAvatorData.cp))*2/Math.PI)));
     if(battleResult.win == 0) battleResult.baseExp= Math.floor(battleResult.baseExp/2);
     battleResult.exp = Math.round(battleResult.baseExp * (100+battleResult.bonus[0]+battleResult.bonus[1]+battleResult.bonus[2]+battleResult.bonus[3]+battleResult.bonus[4])/100);
+    if(battleResult.win==1 && getBattleDataSave(enemyAvatorData.id).win == 0){
+        //初勝利ボーナス
+        battleResult.coin+=4;//4コイン獲得
+        let tempPKN=0;
+        if(battleResult.kWin) tempPKN=1;
+        if (battleResult.pWin) tempPKN=2;
+        battleResult.notice.push({
+            ani:t,
+            firstWinWindow:1,
+            pknWin:tempPKN,
+            flg:0});
+    }
     //dailyMissionに関する更新
     dailyMission.battle++;
     dailyMission.win+=battleResult.win;
@@ -1895,7 +1932,8 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
         avatorData[1].item[4] = 4;
     }
     if(enemyAvatorData.dropItem!=undefined && battleResult.win){
-        if(Math.random()<enemyAvatorData.dropProb){
+        let tempDice=Math.random();
+        if(tempDice<enemyAvatorData.dropProb){
             //アイテム獲得
             let itemClass = Math.floor(enemyAvatorData.dropItem/10);
             let itemNum = enemyAvatorData.dropItem - itemClass*10;
@@ -2483,6 +2521,9 @@ function drawAvator2(){ ///アバター管理画面の描画関数
     } else{
         ctx2d.fillText("最終更新 " + playData.lastFetchDate,438,137);
     }
+    if(avatorData[createAvatorStyle].typingData.stroke<10000){
+        ctx2d.fillText("アバター作成まであと" + (10000-avatorData[createAvatorStyle].typingData.stroke) + "打鍵",782,137);
+    }
     for(let i = 0;i < 4;i++){
         let showNum = i+4*onlineShowPage;
         let drawLv="--",drawName="---",drawCP="---",drawAcc="---",drawDate="----/--/--";
@@ -2496,7 +2537,6 @@ function drawAvator2(){ ///アバター管理画面の描画関数
             drawStar(showEnemyAvator[showNum],baseX-6,baseY+20,19);
             drawTeamCircle(baseX+4,baseY+8,4,showEnemyAvator[showNum].team,1)
             drawPrl({x1:baseX,y1:baseY-26,x2:baseX+30,y2:baseY-6,shadow:0,colSet:17+showEnemyAvator[showNum].style,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:INPUT_STYLE_SHORT[showEnemyAvator[showNum].style]});
-//            console.log(getBattleDataSave(showEnemyAvator[showNum].id).win);
             if(getBattleDataSave(showEnemyAvator[showNum].id).pWin){
                 ctx2d.drawImage(pWinImg,baseX+94,baseY-37,32,32);
             } else if(getBattleDataSave(showEnemyAvator[showNum].id).kWin){
@@ -2906,14 +2946,14 @@ function changeScene(prev,next){ //シーン遷移の関数
                 if(myText==ONLINE_AVATOR_STATUS[0]){//更新
                     for(let j = 0;j < 3;j++){
                         for(let k = 0;k< localAvator[j+2].length;k++){
-                            if(localAvator[j+2][k].id == tempLocalAvator[i+onlineShowPage*4].id){
+                            if(localAvator[j+2][k].id == showEnemyAvator[i+onlineShowPage*4].id){
                                 localAvator[j+2][k] = JSON.parse(JSON.stringify(showEnemyAvator[i+onlineShowPage*4],undefined,1))//ディープコピー
                             }
                         }
                     }
                     for(let j = 0;j < battleDataSave.length;j++){
-                        if(battleDataSave[j].id == tempLocalAvator[i+onlineShowPage*4].id){
-                            battleDataSave[j].date= tempLocalAvator[i+onlineShowPage*4].date;
+                        if(battleDataSave[j].id == showEnemyAvator[i+onlineShowPage*4].id){
+                            battleDataSave[j].date= showEnemyAvator[i+onlineShowPage*4].date;
                         }
                     }
                     setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
@@ -2924,7 +2964,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                         btns1:{text:"OK",onClick:function(){}}});
                     saveData();
                 } else if(myText == ONLINE_AVATOR_STATUS[1]){//削除
-                    deleteNCMBAvator(tempLocalAvator[i+4*onlineShowPage].id);
+                    deleteNCMBAvator(showEnemyAvator[i+4*onlineShowPage].id);
                 } else if(myText==ONLINE_AVATOR_STATUS[2]){//追加
                     let addFlg=0;
                     for(let j = 0;j < 3;j++){
@@ -2940,12 +2980,12 @@ function changeScene(prev,next){ //シーン遷移の関数
                             btns1:{text:"OK",onClick:function(){}}});
                     } else{
                         battleDataSave.push({
-                            id:tempLocalAvator[i+onlineShowPage*4].id,
+                            id:showEnemyAvator[i+onlineShowPage*4].id,
                             battle:0,
                             win:0,
                             kWin:0,
                             pWin:0,
-                            date:tempLocalAvator[i+onlineShowPage*4].date
+                            date:showEnemyAvator[i+onlineShowPage*4].date
                         });
                         setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
                         setOrderButton(); 

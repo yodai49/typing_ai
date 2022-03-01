@@ -81,7 +81,9 @@ function analyzeTyping(style,typingData){
         }
         if(!typingData[i].isMiss){//ミスではない時
             if(!typingData[i].isFirst){//1文字目ではなかったら、データの分析に加算
-                let charKpm= 60000/(typingData[i].time-tempCorrectTime);//その文字のkpm
+                let charKpm= Math.min(
+                    60000/(typingData[i].time-tempCorrectTime),
+                    baseKpm/5);//その文字のkpm 全体の5分の1以下は外れ値として処理
                 let charStab=Math.min(Math.pow(baseKpm,2),Math.pow(charKpm-baseKpm,2))/Math.pow(baseKpm,2);//乱れ度合い　baseKpmの2倍の二乗まで
                 keyData[getAllCharaSetNum(typingData[i].key)].kpm=(keyData[getAllCharaSetNum(typingData[i].key)].kpm*keyData[getAllCharaSetNum(typingData[i].key)].totalStroke+charKpm)/(keyData[getAllCharaSetNum(typingData[i].key)].totalStroke+1);
                 keyData[getAllCharaSetNum(typingData[i].key)].stability=(keyData[getAllCharaSetNum(typingData[i].key)].stability*keyData[getAllCharaSetNum(typingData[i].key)].totalStroke+charStab)/(keyData[getAllCharaSetNum(typingData[i].key)].totalStroke+1);

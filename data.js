@@ -184,6 +184,8 @@ function generateAvatorData(myAvatorDataRawNum){
     myAvatorData.style = EVENT_ENEMY_DATA[myAvatorDataRawNum].style;
     myAvatorData.kind = EVENT_ENEMY_DATA[myAvatorDataRawNum].kind;
     myAvatorData.id = EVENT_ENEMY_DATA[myAvatorDataRawNum].id;
+    myAvatorData.dropItem = EVENT_ENEMY_DATA[myAvatorDataRawNum].dropItem;
+    myAvatorData.dropProb = EVENT_ENEMY_DATA[myAvatorDataRawNum].dropProb;
     myAvatorData.typingData={stroke:20,miss:0};
     myAvatorData.typingData.kpm = EVENT_ENEMY_DATA[myAvatorDataRawNum].typingData.kpm;
     myAvatorData.typingData.acc = EVENT_ENEMY_DATA[myAvatorDataRawNum].typingData.acc;
@@ -197,7 +199,7 @@ function generateAvatorData(myAvatorDataRawNum){
     }
     myAvatorData.typingData.firstSpeed=Math.max(420,625-(i-3)*20);
     myAvatorData.typingData.missChain=2+Math.sin(i*1.1)*2;
-    myAvatorData.typingData.cong={prob:Math.max(0.005,0.08-i*0.01),key:4+Math.sin(i*1.2)*2,count:1};
+    myAvatorData.typingData.cong={prob:Math.max(0.005,0.08-i*0.01),key:1.1+Math.sin(i*1.23),count:1};
     myAvatorData.typingData.keyData=[];
     for(let j = 0;j < ALL_CHARA_SET.length+1;j++){
         myAvatorData.typingData.keyData[j]={acc:(95+4*Math.sin(i*1.2+j*1.3)),kpm:myAvatorData.typingData.kpm*(1+0.5*Math.sin(i*1.22+j*1.18)),stability:(0.5+0.5*Math.sin(i+j*1.2)),totalStroke:5};
@@ -623,7 +625,7 @@ function setBattleDataSave(myId,myBattleResult){
         }
     }
     //見つからなかったら
-    battleDataSave.push({id:myId,battle:1,win:myBattleResult.win,kWin:myBattleResult.kWin,pWin:myBattleResult.pWin});
+    battleDataSave.push({id:myId,battle:1,win:myBattleResult.win,kWin:myBattleResult.kWin,pWin:myBattleResult.pWin,date:"00000000"});
     return 1;
 }
 function setNCMBEnemyAvator(force){
