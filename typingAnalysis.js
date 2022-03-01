@@ -122,6 +122,7 @@ function analyzeTyping(style,typingData){
                 } else{
                     myFirstSpeed=(typingData[i].time-typingData[i-1].time);
                 }
+                myFirstSpeed=Math.min(800,myFirstSpeed);//800を超える場合は外れ値として扱う
                 firstSpeed=(firstSpeed*wordCount+myFirstSpeed)/(wordCount+1);
                 wordCount++;
             }

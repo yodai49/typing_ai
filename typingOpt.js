@@ -323,11 +323,11 @@ function checkOpt(targetStr,typingStr,typistMode){
     for(let i = 0;i < reverseOptList.length;i++){
         if(targetStr.substr(typingStr.length-1,reverseOptList[i].split(",")[1].length) == reverseOptList[i].split(",")[1]){
             if(typingStr.substr(typingStr.length-1,1) == reverseOptList[i].split(",")[0].substr(0,1)){
-                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + reverseOptList[i].split(",")[0] + targetStr.substr(typingStr.length-1 + reverseOptList[i].split(",")[0].length)};
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + reverseOptList[i].split(",")[0] + targetStr.substr(typingStr.length-1 + reverseOptList[i].split(",")[1].length)};
             }
         }
     }
-    //っを単体で打つ処理
+    //っを単体で打つ処理　未実装
     
     return {isMiss:1,newTargetStr:targetStr};//それ以外なら不受理（最適化未実装)
 }

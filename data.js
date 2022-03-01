@@ -626,7 +626,7 @@ function setBattleDataSave(myId,myBattleResult){
     battleDataSave.push({id:myId,battle:1,win:myBattleResult.win,kWin:myBattleResult.kWin,pWin:myBattleResult.pWin});
     return 1;
 }
-function setNCMBEnemyAvator(){
+function setNCMBEnemyAvator(force){
     let ncmb = new NCMB(
         "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
         "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
@@ -639,7 +639,11 @@ function setNCMBEnemyAvator(){
         ('00' + myDate.getHours()).slice(-2) +  ":" + 
         ('00' + myDate.getMinutes()).slice(-2);
     dataFetchStatus=0;
-    if(playData.lastFetchDate == lastFetchDate && !DEBUG_MODE){
+    let lastFetchDateRaw=myDate.getFullYear() +
+        ('00' + (Number(myDate.getMonth())+1)).slice(-2) +
+        ('00'  + myDate.getDate()).slice(-2) + 
+        ('00' + myDate.getHours()).slice(-2);
+    if(playData.lastFetchDateRaw == lastFetchDateRaw && !DEBUG_MODE && force!=1){
         dataFetchStatus=1;
         return 0;//一時間以内の更新は行わない
     }     
@@ -666,6 +670,7 @@ function setNCMBEnemyAvator(){
         setOrderButton();
         saveData();//取得後にセーブする
         playData.lastFetchDate=lastFetchDate;//最終データ取得時間を更新
+        playData.lastFetchDateRaw=lastFetchDateRaw;
     })
     .catch(function(error){//取得失敗
         dataFetchStatus=2;
@@ -699,7 +704,7 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
             ani:t,
             btns1:{text:"OK",onClick:function(){
                 dataFetchStatus=0;
-                setNCMBEnemyAvator();
+                setNCMBEnemyAvator(1);
             }}});
     })
     .catch(function(error){//アップロード失敗
@@ -742,7 +747,7 @@ function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロ�
                 ani:t,
                 btns1:{text:"OK",onClick:function(){
                     dataFetchStatus=0;
-                    setNCMBEnemyAvator();
+                    setNCMBEnemyAvator(1);
                 }}});
         })
     })
@@ -772,7 +777,7 @@ function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロ�
             })
             .then(function(result){
                 dataFetchStatus=0;
-                setNCMBEnemyAvator();
+                setNCMBEnemyAvator(1);
                 msgBox.push({
                     text:"アバターの削除に成功しました。アバターデータはいつでも再アップロード可能です。",
                     ani:t,
@@ -803,13 +808,13 @@ function setShowLocalAvator(order,col,style){
     }
     //並び替えの処理をここに追加
     if(order==0){//おすすめ順
-        showEnemyAvator.sort((a,b)=>-a.recommendation+b.recommendation);
+        showEnemyAvator.sort((a,b)=>-Number(a.recommendation)+Number(b.recommendation));
     } else if(order==1){//新着順
         showEnemyAvator.sort((a,b)=>-Number(a.date)+Number(b.date));
     } else if(order==2){//cp順
-        showEnemyAvator.sort((a,b)=>-a.cp+b.cp);
+        showEnemyAvator.sort((a,b)=>-Number(a.cp)+Number(b.cp));
     } else if(order == 3){//レベル順
-        showEnemyAvator.sort((a,b)=>-a.level+b.level);
+        showEnemyAvator.sort((a,b)=>-Number(a.level)+Number(b.level));
     }
     onlineShowPage=0;
 }
@@ -920,4 +925,36 @@ function getPrlsText(id){
     for(let i = 0;i < prls.length;i++){
         if(prls[i].id == id) return prls[i].text;
     }
+}
+function getlocalStorageString(){
+    //ローカルストレージのデータを保存する文字列を返す
+    let playDataS=JSON.stringify(playData,undefined,1);
+    let battleDataS=JSON.stringify(battleData,undefined,1);
+    let localAvatorS=JSON.stringify(localAvator,undefined,1);
+    let todayBattleDataS=JSON.stringify(todayBattleData,undefined,1);
+    let dailyMissionS=JSON.stringify(dailyMission,undefined,1);
+    let avatorDataS=JSON.stringify(avatorData,undefined,1);
+    let battleDataSaveS=JSON.stringify(battleDataSave,undefined,1);
+    let tempLocalAvatorS=JSON.stringify(tempLocalAvator,undefined,1);
+    return (
+        playDataS+"$"+battleDataS+"$"+
+        localAvatorS+"$"+todayBattleDataS+"$"+
+        dailyMissionS+"$"+avatorDataS+"$"+
+        battleDataSaveS+"$"+tempLocalAvatorS);
+}
+function setlocalStorageString(txt){
+    let txtLine=txt.split("$");
+    try {
+        playData = JSON.parse(txtLine[0])
+        battleData = JSON.parse(txtLine[1])
+        localAvator = JSON.parse(txtLine[2])
+        todayBattleData = JSON.parse(txtLine[3])
+        dailyMission = JSON.parse(txtLine[4])
+        avatorData = JSON.parse(txtLine[5])
+        battleDataSave = JSON.parse(txtLine[6])
+        tempLocalAvator = JSON.parse(txtLine[7])
+    } catch(err){
+        return -1;
+    }
+    return 0;
 }

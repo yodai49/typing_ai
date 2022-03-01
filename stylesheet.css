@@ -10,13 +10,7 @@ src: url("./font/Stick.woff") format("woff");
 font-family: "Stick";
 font-style: normal;
 font-display: swap;
-}/*
-@font-face {
-src: url("./font/BungeeHairline.woff") format("woff");
-font-family: "BungeeHairline";
-font-style: normal;
-font-display: swap;
-}*/
+}
 
 @font-face {
     src: url("./font/Orbitron-VariableFont_wght.ttf");
@@ -24,13 +18,7 @@ font-display: swap;
     font-style: normal;
     font-display: swap;
 }
-/*
-@font-face {
-    src: url("./font/PoiretOne-Regular.ttf");
-    font-family: "PoiretOne";
-    font-style: normal;
-    font-display: swap;
-}*/
+
 @font-face {
     src: url("./font/Quantico-Regular.ttf");
     font-family: "Quantico";
@@ -100,4 +88,29 @@ font-display: swap;
     padding:1px;
     font-family:"Stick",sans-serif;
     transition:all 0.3s;
+}
+.dataButton{
+    height:40px;
+    width:300px;
+    font-family:"Stick";
+    color:white;
+    background-color:black;
+    transition: all 0.3s;
+    padding:10px;
+    margin:20px;
+    border-bottom-style:solid;
+    border-bottom-width:1px;
+    border-bottom-color:gray;
+    border-right-style:solid;
+    border-right-width:1px;
+    border-right-color:gray;
+}
+.dataButton:hover{
+    background-color:rgba(60,60,60,1);
+}
+.dataButton-bt{
+    display:none;
+}
+.pad20{
+    height:20px;
 }

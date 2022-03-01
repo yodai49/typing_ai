@@ -13,10 +13,10 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
             if(battleStatus==2){//入力受理中なら
                 //ローマ字なら最適化を実施する
                 battleResult.totalStroke++;
-                if((playData.settings[0]==0 && checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey).isMiss==0) ||(playData.settings[0]==1 && checkKana(battleResult.wordSet[battleResult.now].myText,typedText + keyToKana(myKey,e.shiftKey)).isMiss==0)){
+                if((playData.settings[0]==0 && checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey,playData.settings[1]).isMiss==0) ||(playData.settings[0]==1 && checkKana(battleResult.wordSet[battleResult.now].myText,typedText + keyToKana(myKey,e.shiftKey)).isMiss==0)){
                     battleResult.myTypeData.push({time:Math.floor(t-battleResult.startTime-totalLossTime),key:myKey,shiftKey:e.shiftKey,isMiss:0,isFirst:(typedText.length==0)});
                     //受理可能な時の処理
-                    battleResult.wordSet[battleResult.now].myText = checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey).newTargetStr;
+                    battleResult.wordSet[battleResult.now].myText = checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey,playData.settings[1]).newTargetStr;
                     if(playData.settings[0] == 0){
                         typedText+=myKey;
                     } else{
@@ -47,6 +47,40 @@ window.addEventListener('DOMContentLoaded', function(){ ///キー入力イベン
     window.addEventListener("keydown", function(e){
         processKeypress(e.key,e.keyCode,e);
     });
+    document.getElementById("uploadFile").addEventListener("change",function(e){
+        if(window.confirm("データをアップロードすると、現在の全てのデータが上書きされます。\n現在のデータを残したい場合は先にバックアップを取ることをおすすめします。\n本当にデータを読み込みますか？")){
+            var file = e.target.files;
+            var reader = new FileReader();
+            reader.readAsText(file[0]);
+            reader.onload=function(e2){
+                let readtxt=reader.result;
+                readtxt=decodeURIComponent(escape(atob(readtxt)));
+                //チェック処理
+                let readResult = setlocalStorageString(readtxt);
+                if(readResult==0){
+                    window.alert("正常に上書きが完了しました。");
+                } else{
+                    window.alert("形式にエラーがあります。正常に上書き出来ませんでした。");
+                }
+            } 
+        }else{
+            window.alert("データの読み込みをキャンセルしました。");
+        }
+    })
+    document.getElementById("downloadFile").addEventListener("click",function(e){
+        loadData();
+        var plaintxt=getlocalStorageString();
+        plaintxt=btoa(unescape(encodeURIComponent(plaintxt)));
+        var blob = new Blob([plaintxt],{"type":"text/plain"});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.download='AVATYPE_DATA.ava';
+        a.href=url;
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    })
 });
 function drawMouseCursor(){ //マウスカーソルを描画する関数
     ctx2d2.strokeStyle=getRGBA(1,600,t);
@@ -504,6 +538,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillText("所属チーム",WIDTH/2-270,HEIGHT/2+70);
             ctx2d.font="8pt " + JAPANESE_FONTNAME;
             ctx2d.fillText("※後から変更可能",WIDTH/2-253.5,HEIGHT/2+35);
+            ctx2d.fillText("好きな色を選ぼう！",WIDTH/2-268.5,HEIGHT/2+90);
             drawPrl({x1:WIDTH/2+13,y1:HEIGHT/2-130,x2:WIDTH/2+300,y2:HEIGHT/2+63,colSet:13,hoverColSet:13,shadow:0,hoverCounter:0,text:"",trans:myAni*1.1,onClick:function(){return 0}})
             drawAvator(avatorData[0],WIDTH/2+58,HEIGHT/2-128,WIDTH/2+255,HEIGHT/2+55,t,myAni);
         } else if(msgBox[0].levelUpWindow){//レベルアップウィンドウ
@@ -685,7 +720,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                                         //ここに削除処理を追加
                                         localAvator[deleteClass+2].splice(i-1,1);
                                         setShowLocalAvator(onlineAvatorOrder,onlineAvatorCol,onlineAvatorStyle);
-                                        setOrderButton();                        
+                                        setOrderButton();
                                         msgBox.push({
                                             text:"アバターを削除しました。",
                                             ani:t,
@@ -696,6 +731,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                                                     flg:0});    
                                     
                                             }}});
+                                        saveData();
                                     }},
                                     btns2:{text:"NO",onClick:function(){
                                         //スルー
@@ -1092,7 +1128,7 @@ function drawMenu(){
 
     for(let i = 0;i < 3;i++){
         if(dailyMission.detail[i].progress == dailyMission.detail[i].max){
-            drawPrl({x1:760+i*9.6,y1:380+i*32,x2:826+i*9.6,y2:396+i*32,rev:1,lineWidth:1,shadow:0,colSet:3,hoverColSet:3,hoverCounter:0,textSize:0.9,text:"CLEAR"});
+            drawPrl({x1:760+i*9.6,y1:374+i*32,x2:826+i*9.6,y2:390+i*32,rev:1,lineWidth:1,shadow:0,colSet:3,hoverColSet:3,hoverCounter:0,textSize:0.9,text:"CLEAR"});
         }
     }
     //デイリーミッションここまで
@@ -1138,9 +1174,11 @@ function replaceEnemyOpt(plainText,prob,bf,af,replacement){
     return afterText;
 }
 function getEnemyTypeData(i,mode,str){
+    ////敵のタイピングデータの生成を行う関数
+
     let tempTypeData=[];
-    let enemyTypingChar=0;////ここから敵のタイピングデータの生成
-    let enemyTypingTime=(Math.random()*0.8+0.45)*enemyAvatorData.typingData.firstSpeed/2;
+    let enemyTypingChar=0;
+    let enemyTypingTime=(Math.random()*0.8+0.45)*enemyAvatorData.typingData.firstSpeed;
     let myFirstSpeed = enemyTypingTime;
     let enemyLastMiss=0;//直前の文字がミスかどうか
     let enemyLastCong=0;//直前文字が詰まっているかどうか
@@ -1159,7 +1197,7 @@ function getEnemyTypeData(i,mode,str){
             let lastClass3 = getLastEnemyKpmClass(battleResult.enemyTypeData[i],3,enemyAvatorData.typingData.kpm);//これまでのタイピングクラスを格納
             let lastClass6 = getLastEnemyKpmClass(battleResult.enemyTypeData[i],6,enemyAvatorData.typingData.kpm);
             let lastClass9 = getLastEnemyKpmClass(battleResult.enemyTypeData[i],9,enemyAvatorData.typingData.kpm);
-            charKpm = charKpm * 0.5 + enemyAvatorData.typingData.speedTensor[lastClass3][lastClass6][lastClass9].kpm*0.7; 
+            charKpm = charKpm * 0.35 + enemyAvatorData.typingData.speedTensor[lastClass3][lastClass6][lastClass9].kpm*0.7; 
         }
         charKpm = charKpm * (1 + Math.max(0.5,myStab*2)*(0.7*(Math.random()-0.5)));//ランダム性をもたせる
         let charTime=60000/charKpm;
@@ -1776,7 +1814,7 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     battleResult.coin+=getItemBonus(avatorData,0,1);
     if(dailyMission.detail[0].progress == dailyMission.detail[0].max && dailyMission.detail[1].progress == dailyMission.detail[1].max && dailyMission.detail[2].progress == dailyMission.detail[2].max && battleResult.win) 
         battleResult.coin+=1;//すべてのミッションクリア後に勝利で１コイン獲得
-    battleResult.bonus[4] = 0;//イベントボーナス　
+    battleResult.bonus[4] = 0;//イベントボーナス
     if(dailyMission.event == avatorData[0].team+1) battleResult.bonus[2] = 25,battleResult.coin++;//イベント中なら25%ボーナス、1コイン獲得
     if(dailyMission.event==4){//経験値イベント
         battleResult.bonus[4] = 20;
@@ -1786,7 +1824,7 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     if(enemyAvatorData.kind == 0) battleResult.bonus[4] += 20;//ユーザーアバターの場合20%ボーナス
     if(enemyAvatorData.kind == 1) battleResult.bonus[4] += 10;//イベントアバターの場合10%ボーナス
     battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 6/5* (1+Math.atan((avatorData[inputStyle].cp - enemyAvatorData.cp))*2/Math.PI)));
-    if(battleResult.win == 0) battleResult.baseExp= Math.floor(battleResult.baseExp/3);
+    if(battleResult.win == 0) battleResult.baseExp= Math.floor(battleResult.baseExp/2);
     battleResult.exp = Math.round(battleResult.baseExp * (100+battleResult.bonus[0]+battleResult.bonus[1]+battleResult.bonus[2]+battleResult.bonus[3]+battleResult.bonus[4])/100);
     //dailyMissionに関する更新
     dailyMission.battle++;
@@ -2440,7 +2478,11 @@ function drawAvator2(){ ///アバター管理画面の描画関数
     ctx2d.fillText("入力方式",480,187);
     ctx2d.fillText("所属チーム",580,187);
     ctx2d.fillStyle=getRGBA(2,0,1);
-    ctx2d.fillText("最終更新 " + playData.lastFetchDate,438,137);
+    if(playData.lastFetchDate==undefined){
+        ctx2d.fillText("最終更新 ----/--/--",438,137);
+    } else{
+        ctx2d.fillText("最終更新 " + playData.lastFetchDate,438,137);
+    }
     for(let i = 0;i < 4;i++){
         let showNum = i+4*onlineShowPage;
         let drawLv="--",drawName="---",drawCP="---",drawAcc="---",drawDate="----/--/--";
@@ -2454,6 +2496,14 @@ function drawAvator2(){ ///アバター管理画面の描画関数
             drawStar(showEnemyAvator[showNum],baseX-6,baseY+20,19);
             drawTeamCircle(baseX+4,baseY+8,4,showEnemyAvator[showNum].team,1)
             drawPrl({x1:baseX,y1:baseY-26,x2:baseX+30,y2:baseY-6,shadow:0,colSet:17+showEnemyAvator[showNum].style,hoverColSet:1,lineWidth:1,hoverCounter:0,textSize:1,text:INPUT_STYLE_SHORT[showEnemyAvator[showNum].style]});
+//            console.log(getBattleDataSave(showEnemyAvator[showNum].id).win);
+            if(getBattleDataSave(showEnemyAvator[showNum].id).pWin){
+                ctx2d.drawImage(pWinImg,baseX+94,baseY-37,32,32);
+            } else if(getBattleDataSave(showEnemyAvator[showNum].id).kWin){
+                ctx2d.drawImage(kWinImg,baseX+94,baseY-37,32,32);
+            } else if(getBattleDataSave(showEnemyAvator[showNum].id).win){
+                ctx2d.drawImage(nWinImg,baseX+94,baseY-37,32,32);
+            }
             drawLv=showEnemyAvator[showNum].level;
             drawName=showEnemyAvator[showNum].name;
             drawCP=showEnemyAvator[showNum].cp;
@@ -2872,6 +2922,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                         text:"アバターの情報を更新しました！",
                         ani:t,
                         btns1:{text:"OK",onClick:function(){}}});
+                    saveData();
                 } else if(myText == ONLINE_AVATOR_STATUS[1]){//削除
                     deleteNCMBAvator(tempLocalAvator[i+4*onlineShowPage].id);
                 } else if(myText==ONLINE_AVATOR_STATUS[2]){//追加
@@ -2901,7 +2952,8 @@ function changeScene(prev,next){ //シーン遷移の関数
                         msgBox.push({
                             text:"アバターを追加しました！",
                             ani:t,
-                            btns1:{text:"OK",onClick:function(){}}});                        
+                            btns1:{text:"OK",onClick:function(){}}});
+                        saveData();
                     }
                 } else if(myText==ONLINE_AVATOR_STATUS[3]){//作成不能
                     //スルー
