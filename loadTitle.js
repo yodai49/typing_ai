@@ -6,7 +6,7 @@ var bgm;
 
 function setSounds(){//サウンドのセットを行う
     bgm = [ //BGM
-        new Howl({src:['./sound/Battle_maniacs.mp3'],
+        new Howl({src:['./sound/Battle_Maniacs.mp3'],
                 loop:true,
                 volue:0.5,
                 onload:(e)=>{imgLoadedCnt++}}),
