@@ -2739,7 +2739,14 @@ function processClick(){
         }
     }
 }
+function processBGM(prev,next){
+    //BGMの再生とストップを管理する関数
+    for(let i = 0;i < bgm.length;i++) bgm[i].stop;
+    if(next==2) bgm[3].play();
+    if(next==3)for(let i = 0;i < bgm.length;i++) bgm[i].stop;
+}
 function changeScene(prev,next){ //シーン遷移の関数
+    processBGM(prev,next);
     prls=[];
     msgBox=[];
     ctx2dImg.clearRect(0,0,WIDTH,HEIGHT);
@@ -2766,7 +2773,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                 nextScene=2;sceneAni=t;
             }
         }})
-    } else if(next == 2){
+    } else if(next == 2){//メニュー
         ctx2dImg.drawImage(backImg[0],0,0,WIDTH,HEIGHT);
         prls.push({x1:570,y1:110,x2:873,y2:205,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,text:"TITLE",subText:"タイトル",onClick:function(){
             msgBox.push({

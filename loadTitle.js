@@ -2,6 +2,44 @@ var loadPfnw=performance.now();//ページが開かれた時間を記録して�
 var loadedPfnw=-1,loadingCount=0;
 
 // ページの読み込みを待つ
+var bgm;
+
+function setSounds(){//サウンドのセットを行う
+    bgm = [ //BGM
+        new Howl({src:['./sound/Battle_maniacs.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Cyber_Story.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Daily_News.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/DETROIT_BEAT.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Equal_Heavy_Status.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Fissure.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Impulse_Crush.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Rime_on_Trees.mp3'],
+                loop:true,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+    ]
+}
 
 window.addEventListener('load', init); //ロードイベント登録
 window.addEventListener('DOMContentLoaded', function(){ //クリックイベント登録
@@ -11,6 +49,7 @@ window.addEventListener('DOMContentLoaded', function(){ //クリックイベン�
     ctx2dCr=document.getElementById("myCanvas2_3").getContext("2d");
     ctx2dSt2=document.getElementById("myCanvas3_5").getContext("2d");
     ctx2d2=document.getElementById("myCanvas4").getContext("2d");
+    setSounds();
 });
 function drawLoadingCircle(x,y,size,t,speed,trans,isTopLevel){
     if(trans == undefined) trans=1;

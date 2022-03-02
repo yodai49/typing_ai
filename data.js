@@ -21,7 +21,7 @@ var createAvatorStyle=0,dataFetchStatus=0,dataSaveStatus=0;//datafetchstatusは0
 var deleteClass=0;
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
-var playData;
+var playData; //システムデータ系
 var battleData;
 var localAvator;
 var todayBattleData;
