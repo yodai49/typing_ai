@@ -2732,6 +2732,7 @@ function processClick(){
             if(clickY>prls[i].y1 && clickY<prls[i].y2 && clickX>prls[i].x1+(prls[i].y2-prls[i].y1)*0.3 && clickX<prls[i].x2-(prls[i].y2-prls[i].y1)*0.3){
                 if(!(msgBox.length && prls[i].isMsgBox!=1) && prls[i].onClick!=undefined){ //メッセージボックス表示中なら、メッセージボックス以外スルー　onclickが定義されていない場合もスルー
                     prls[i].onClick();
+                    playSE("cursor");
                     clickX=0,clickY=0;
                     if(prls[i].isMsgBox&& prls[i].noDestruct!=1)  msgBox[0].ani=t,msgBox[0].flg=2;
                 } 
@@ -2739,14 +2740,60 @@ function processClick(){
         }
     }
 }
+function playSE(str){
+    if(str=="type"){//タイピングの効果音
+
+    } else if(str == "miss"){//ミス時の効果音
+
+    } else if(str == "enter"){//決定時の効果音
+        se[2].play();
+    } else if(str == "enterS"){//重要な決定時の効果音
+
+    } else if(str == "cancel"){//キャンセル時の効果音
+
+    } else if(str == "count"){//カウントダウン時の効果音
+
+    }else if(str == "cursor"){//カーソルをあわせた時の効果音
+        se[6].play();
+    }else if(str == "buy"){//購入した時の効果音
+        se[7].play();
+    }
+}
 function processBGM(prev,next){
     //BGMの再生とストップを管理する関数
-    for(let i = 0;i < bgm.length;i++) bgm[i].stop;
-    if(next==2) bgm[3].play();
-    if(next==3)for(let i = 0;i < bgm.length;i++) bgm[i].stop;
+    bgm[0].stop();
+    bgm[1].stop();
+    bgm[2].stop();
+    bgm[3].stop();
+    bgm[4].stop();
+    bgm[5].stop();
+    bgm[6].stop();
+    bgm[7].stop();
+    let bgmNum=0;
+    if(next==2) bgmNum=2;//1,2から選ぶ
+    if(next==3) {
+        bgmNum=0;//0,4,5,6からランダム
+        if(enemyAvatorData.cp - avatorData[playData.settings[0]].cp > 50){
+            bgmNum = 5;
+        } else if(enemyAvatorData.cp - avatorData[playData.settings[0]].cp > 10){
+            bgmNum = 0;
+        } else if (enemyAvatorData.cp - avatorData[playData.settings[0]].cp > -10){
+            bgmNum = 4;
+        } else{
+            bgmNum = 6;
+        }
+    }
+    if(next==4 || next==5) bgmNum=3;
+    if(next==6 || next==7) bgmNum=7;
+    if(next!=1) {
+        if(next==3){
+            setTimeout(function(){bgm[bgmNum].play();},4500)
+        } else{
+            bgm[bgmNum].play(),bgm[bgmNum].fade(0,1,1000);
+        }
+    }
 }
 function changeScene(prev,next){ //シーン遷移の関数
-    processBGM(prev,next);
     prls=[];
     msgBox=[];
     ctx2dImg.clearRect(0,0,WIDTH,HEIGHT);
@@ -3080,6 +3127,7 @@ function changeScene(prev,next){ //シーン遷移の関数
             }
         }
     }
+    processBGM(prev,next);//BGM
 }
 function checkLoaded(){
     if(imgLoadedCnt==IMG_CNT){

@@ -2,7 +2,7 @@ var loadPfnw=performance.now();//ページが開かれた時間を記録して�
 var loadedPfnw=-1,loadingCount=0;
 
 // ページの読み込みを待つ
-var bgm;
+var bgm,se;
 
 function setSounds(){//サウンドのセットを行う
     bgm = [ //BGM
@@ -39,6 +39,40 @@ function setSounds(){//サウンドのセットを行う
                 volue:0.5,
                 onload:(e)=>{imgLoadedCnt++}}),
     ]
+    se = [ //SE
+        new Howl({src:['./sound/Battle_Maniacs.mp3'],
+                loop:false,//type　要編集
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Cyber_Story.mp3'],
+                loop:false,//miss　要編集
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/enter.mp3'],
+                loop:false,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/enter.mp3'],
+                loop:false,//enterS　要編集
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/cancel.mp3'],
+                loop:false,//type　要編集
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/Cyber_Story.mp3'],
+                loop:false,//count　要編集
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/cursor.mp3'],
+                loop:false,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/buy.mp3'],
+                loop:false,
+                volue:0.5,
+                onload:(e)=>{imgLoadedCnt++}}),
+            ]
 }
 
 window.addEventListener('load', init); //ロードイベント登録
