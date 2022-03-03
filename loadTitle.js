@@ -140,6 +140,42 @@ function setSounds(){//サウンドのセットを行う
                 loop:false,
                 volume:0.6,
                 onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/statusUp.mp3'], //25
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/missionClear.mp3'], //26
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/msg.mp3'], //27
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/exp.mp3'], //28
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/pWin.mp3'], //29
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/bonus.mp3'], //30
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/bonusD.mp3'], //31
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/badge.mp3'], //32
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/screenshot.mp3'], //3
+                loop:false,
+                volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
     ]
 }
 

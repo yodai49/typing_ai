@@ -664,7 +664,7 @@ function setNCMBEnemyAvator(force){
             if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=1.4;
             if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=0.6;
             tempLocalAvator[i].recommendation = (0.5 + 1/(Math.abs(avatorData[playData.settings[0]].cp - tempLocalAvator[i].cp)+1));//ここからおすすめ度をセットする処理を追加
-            tempLocalAvator[i].recommendation*=(10 + battleData.detail[tempClass].battle) / (10+battleData.detail[0].battle+battleData.detail[1].battle+battleData.detail[2].battle);
+            //tempLocalAvator[i].recommendation*=(10 + battleData.detail[tempClass].battle) / (10+battleData.detail[0].battle+battleData.detail[1].battle+battleData.detail[2].battle);
             tempLocalAvator[i].recommendation*=tempTeamCoef;
             if(isMyId(tempLocalAvator[i].id)) tempLocalAvator[i].recommendation*=0.6;
         }
@@ -906,6 +906,24 @@ function setOrderButton(){
         }
     }
 }
+function analyzeEnemyTypeData(myEnemyTypeData){
+    let sum=0;
+    for(let i = 0;i < myEnemyTypeData.length;i++){
+        sum+=60000*myEnemyTypeData[i].length/myEnemyTypeData[i][myEnemyTypeData[i].length-1].time;
+    }
+    return sum/30;
+}
+function analyzeTypeData(typeData){
+    let sum=0;
+    for(let i = 0;i < CLASS_KPM_RATIO.length;i++){
+        for(let j = 0;j < CLASS_KPM_RATIO.length;j++){
+            for(let k = 0;k < CLASS_KPM_RATIO.length;k++){
+                sum+=typeData.speedTensor[i][j][k].kpm;
+            }       
+        }    
+    }
+    console.log(sum/Math.pow(CLASS_KPM_RATIO.length,3))
+}
 function getAvailableCreateAvator(){
 //アバター作成ステータスを返す　作成可能なら１，更新可能なら２，更新不可能なら３，作成不可能なら４ 読込中なら5
     if(dataFetchStatus == 0 || dataSaveStatus==0) return 5;
@@ -969,6 +987,7 @@ function setlocalStorageString(txt){
         avatorData = JSON.parse(txtLine[5])
         battleDataSave = JSON.parse(txtLine[6])
         tempLocalAvator = JSON.parse(txtLine[7])
+        saveData();
     } catch(err){
         return -1;
     }
