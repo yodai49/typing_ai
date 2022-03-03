@@ -1458,7 +1458,7 @@ function drawBattle(){ ///バトル画面の描画関数
                 ctx2d.beginPath();
                 ctx2d.strokeStyle=getRGBA(0,0,0.5-(t-lossTimeT)/400);
                 ctx2d.lineWidth=3;
-                ctx2d.arc((WIDTH+30*1.78*(battleResult.now-12.5))/2+24,HEIGHT/2-70,20/((t-lossTimeT)/200+2)+10,0,Math.PI*2);
+                ctx2d.arc((WIDTH+30*1.78*((battleResult.now-1)-12.5))/2+24,HEIGHT/2-70,20/((t-lossTimeT)/200+2)+10,0,Math.PI*2);
                 ctx2d.fill();
                 ctx2d.stroke();
             } else{
