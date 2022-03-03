@@ -19,6 +19,7 @@ var showEnemyAvator=[];//tempLocalAvatorから加工したアバターデータ�
 var onlineAvatorCol=[],onlineAvatorOrder=0,onlineAvatorStyle=[1,1],onlineShowPage=0,onlineMyStyle=0;//表示オプション
 var createAvatorStyle=0,dataFetchStatus=0,dataSaveStatus=0;//datafetchstatusは0が待機中、1は読み込み済み、2はエラー
 var deleteClass=0;
+let countDownSec;//カウントダウンを保持用
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
 var playData; //システムデータ系
@@ -826,27 +827,33 @@ function setOrderButton(){
             if(prls[i].id == onlineAvatorOrder){
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
+                prls[i].sound="cursor";
             } else{
                 prls[i].colSet=0;
                 prls[i].hoverColSet=1;
+                prls[i].sound="cursor";
             }
         }else if(prls[i].id == 9){//アバター作成ボタンなら
             if(getAvailableCreateAvator()==1){//新規作成可能時
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
                 prls[i].text="アバターを作成！";
+                prls[i].sound="enter";
             } else if(getAvailableCreateAvator()==2){//更新可能時
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
                 prls[i].text="アバターを更新！";
+                prls[i].sound="enter";
             } else if(getAvailableCreateAvator()==3){//更新不可能時
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
                 prls[i].text="アバターを更新！";
+                prls[i].sound="error";
             } else {//作成不可能時
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
                 prls[i].text="アバターを作成！";
+                prls[i].sound="error";
             }
         }else if(prls[i].id>=10 && prls[i].id<=11){//入力方式のボタンなら
             if(onlineAvatorStyle[prls[i].id-10]){
@@ -856,6 +863,7 @@ function setOrderButton(){
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
             }
+            prls[i].sound="cursor";
         } else if(prls[i].id>=20 && prls[i].id<=22){//入力方式のボタンなら
             if(onlineAvatorCol[prls[i].id-20]){
                 prls[i].colSet=5+(prls[i].id-20)*2;
@@ -864,6 +872,7 @@ function setOrderButton(){
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
             }
+            prls[i].sound="cursor";
         }else if(prls[i].id>=30 && prls[i].id<=33){//ダウンロードボタンなら
             if(showEnemyAvator.length > prls[i].id-30+4*onlineShowPage){
                 if(!getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).isUnknown && 
@@ -871,19 +880,23 @@ function setOrderButton(){
                     prls[i].colSet=3;//未保存で保存可能
                     prls[i].hoverColSet=4;
                     prls[i].text=ONLINE_AVATOR_STATUS[0];
+                    prls[i].sound="decide";
                 } else if(isMyId(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id)){
                     prls[i].colSet=1;//自分のアバター
                     prls[i].hoverColSet=2;
                     prls[i].text=ONLINE_AVATOR_STATUS[1];
+                    prls[i].sound="decide";
                 } else if(!getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).isUnknown && 
                     getLocalAvator(showEnemyAvator[prls[i].id-30+4*onlineShowPage].id).date == showEnemyAvator[prls[i].id-30+4*onlineShowPage].date) {//更新
                     prls[i].colSet=13;//保存済みだが更新なし
                     prls[i].hoverColSet=13;
                     prls[i].text=ONLINE_AVATOR_STATUS[3];
+                    prls[i].sound="error";
                 } else {//保存済みで更新可能
                     prls[i].colSet=3;
                     prls[i].hoverColSet=4;
-                    prls[i].text=ONLINE_AVATOR_STATUS[2];    
+                    prls[i].text=ONLINE_AVATOR_STATUS[2];
+                    prls[i].sound="decide";
                 }
             } else{//保存できないとき
                 prls[i].colSet=13;
@@ -906,6 +919,7 @@ function getAvailableCreateAvator(){
             let myH = ('00' +  myDate.getHours()).slice(-2);
             let nowDate = myY+ myM + myD +myH;
             if(nowDate != tempLocalAvator[i].date){
+                if(tempLocalAvator[i].typingData.stroke == avatorData[createAvatorStyle].typingData.stroke) return 3;
                 return 2;
             } else{
                 return 3;

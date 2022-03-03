@@ -5,6 +5,7 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
     if(scene==3){//バトル中
         if((myKeyCode == 27|| (myKey=="Q")) && nextScene!=2){//Escキー　タイトルへ戻る
             nextScene=2;sceneAni=t;
+            playSE("esc");
             clickX=0,clickY=0;
             battleData.esc++;
             saveData();
@@ -14,6 +15,7 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
                 //ローマ字なら最適化を実施する
                 battleResult.totalStroke++;
                 if((playData.settings[0]==0 && checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey,playData.settings[1]).isMiss==0) ||(playData.settings[0]==1 && checkKana(battleResult.wordSet[battleResult.now].myText,typedText + keyToKana(myKey,e.shiftKey)).isMiss==0)){
+                    playSE("typing1");
                     battleResult.myTypeData.push({time:Math.floor(t-battleResult.startTime-totalLossTime),key:myKey,shiftKey:e.shiftKey,isMiss:0,isFirst:(typedText.length==0)});
                     //受理可能な時の処理
                     battleResult.wordSet[battleResult.now].myText = checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey,playData.settings[1]).newTargetStr;
@@ -23,6 +25,7 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
                         typedText+=keyToKana(myKey,e.shiftKey);
                     }
                 } else{
+                    playSE("miss");
                     battleResult.myTypeData.push({time:(t-battleResult.startTime-totalLossTime),key:myKey,shiftKey:e.shiftKey,isMiss:1,isFirst:(typedText.length==0)});
                     //ミスの時の処理
                     battleResult.totalMiss++;
@@ -340,7 +343,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                                         btns1:{text:"OK",onClick:function(){}}
                                     })
                                 }},
-                                btns2:{text:"CANCEL",onClick:function(){msgBox.push({
+                                btns2:{text:"CANCEL",sound:"cancel",onClick:function(){msgBox.push({
                                     text:"名前の変更をキャンセルしました。",
                                     ani:t,
                                     btns1:{text:"OK",onClick:function(){}}
@@ -410,16 +413,20 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillText("を消費します。どのチームに変更しますか？",WIDTH/2-144,HEIGHT/2-10);
         }  else if(msgBox[0].selectBattleAvatorWindow){//戦う相手の選択ウィンドウ
             if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//ボタンをprlsへプッシュする
-                prls.push({isMsgBox:1,x1:WIDTH/2+50,y1:HEIGHT/2+112,x2:WIDTH/2+205,y2:HEIGHT/2+162,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,noDestruct:1,lineWidth:8,text:"BATTLE!",trans:-1,onClick:function(){
+                prls.push({isMsgBox:1,x1:WIDTH/2+50,y1:HEIGHT/2+112,x2:WIDTH/2+205,y2:HEIGHT/2+162,shadow:0,colSet:3,textSize:0.9,hoverColSet:4,hoverCounter:0,noDestruct:1,lineWidth:8,sound:"battle",text:"BATTLE!",trans:-1,onClick:function(){
                     if(localAvator[selectBattleAvatorClass].length > selectBattleAvator){
                         sceneAni=t;
                         nextScene=3;////バトル開始ボタン　敵データのセットなどをここにおく
                         battleAni=t;//バトル開始時のアニメーション
+                        setTimeout(function(){
+                            if(scene==3) playSE("battleStart");
+                        },500);
+                        playSE("battleStart");
                     } else{
                         //敵を選択していないのにバトルを押した時　効果音などをここに入れる
                     }
                 }});
-                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+132,x2:WIDTH/2+45,y2:HEIGHT/2+162,shadow:0,colSet:13,textSize:0.9,hoverColSet:14,hoverCounter:0,lineWidth:2,text:"CANCEL",trans:-1,onClick:function(){}});
+                prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+132,x2:WIDTH/2+45,y2:HEIGHT/2+162,shadow:0,colSet:13,textSize:0.9,hoverColSet:14,hoverCounter:0,lineWidth:2,text:"CANCEL",sound:"cancel",trans:-1,onClick:function(){}});
                 for(let i = 0;i < 5;i++){
                     prls.push({isMsgBox:1,x1:WIDTH/2-197+i*48,y1:HEIGHT/2-162,x2:WIDTH/2-152+i*48,y2:HEIGHT/2-142,id:i,shadow:0,colSet:0+(i == selectBattleAvatorClass),noDestruct:1,textSize:0.9,hoverColSet:1,hoverCounter:0,lineWidth:3,text:AVATOR_CLASS_TEXT[i],trans:-1,onClick:function(){
                         for(let j = 0;j < prls.length;j++){
@@ -436,7 +443,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     }});
                 }
                 setAvatorSelectButton(localAvator);
-                prls.push({isMsgBox:1,x1:WIDTH/2+130,y1:HEIGHT/2-162,x2:WIDTH/2+288,y2:HEIGHT/2-130,shadow:0,colSet:0,textSize:0.9,hoverColSet:1,lineWidth:4,hoverCounter:0,text:"オンラインアバター",trans:-1,onClick:function(){
+                prls.push({isMsgBox:1,x1:WIDTH/2+130,y1:HEIGHT/2-162,x2:WIDTH/2+288,y2:HEIGHT/2-130,shadow:0,colSet:0,textSize:0.9,hoverColSet:1,lineWidth:4,hoverCounter:0,sound:"enter",text:"オンラインアバター",trans:-1,onClick:function(){
                     sceneAni=t;
                     nextScene=6;
                 }});
@@ -510,7 +517,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                                     saveData();
                                     document.getElementById("nameBoxCreate").style.display="none";nextScene=2,sceneAni=t;
                                 }},
-                                btns2:{text:"CANCEL",onClick:function(){ //アバター作成の初期ウィンドウを表示
+                                btns2:{text:"CANCEL",suond:"cancel",onClick:function(){ //アバター作成の初期ウィンドウを表示
                                     msgBox.push({createAvatorWindow:1,
                                     text:"",
                                     ani:t+200,
@@ -822,10 +829,10 @@ function drawMsgbox(){//メッセージボックスの描画関数
             if(myCharAni<28 || myCharAni >= 56 || myCharAni >= msgBox[0].text.length) randomChar2 = "";
             if(msgBox[0].flg!=1 && msgBox[0].flg!=2){//指定されたボタンをprlsへプッシュする
                 if(msgBox[0].btns2!=undefined){ //ボタンが２つある時
-                    prls.push({isMsgBox:1,x1:WIDTH/2-100,y1:HEIGHT/2+30,x2:WIDTH/2-20,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
-                    prls.push({isMsgBox:1,x1:WIDTH/2+20,y1:HEIGHT/2+30,x2:WIDTH/2+100,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns2.text,trans:-1,onClick:msgBox[0].btns2.onClick});
+                    prls.push({isMsgBox:1,sound:msgBox[0].btns1.sound,x1:WIDTH/2-100,y1:HEIGHT/2+30,x2:WIDTH/2-20,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
+                    prls.push({isMsgBox:1,sound:msgBox[0].btns2.sound,x1:WIDTH/2+20,y1:HEIGHT/2+30,x2:WIDTH/2+100,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns2.text,trans:-1,onClick:msgBox[0].btns2.onClick});
                 } else{
-                    prls.push({isMsgBox:1,x1:WIDTH/2-50,y1:HEIGHT/2+30,x2:WIDTH/2+50,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
+                    prls.push({isMsgBox:1,sound:msgBox[0].btns1.sound,x1:WIDTH/2-50,y1:HEIGHT/2+30,x2:WIDTH/2+50,y2:HEIGHT/2+50,shadow:0,colSet:0,hoverColSet:1,hoverCounter:0,text:msgBox[0].btns1.text,trans:-1,onClick:msgBox[0].btns1.onClick});
                 }
                 msgBox[0].flg=1;
             }
@@ -1030,12 +1037,15 @@ function setAvatorSelectButton(myLocalAvator){
             if (myLocalAvator[selectBattleAvatorClass].length<=prls[i].id-10){
                 prls[i].colSet=13;
                 prls[i].hoverColSet=13;
+                prls[i].sound="error";
             } else if(prls[i].id-10==selectBattleAvator){
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
+                prls[i].sound="cursor";
             }  else{
                 prls[i].colSet=0;
                 prls[i].hoverColSet=1;
+                prls[i].sound="cursor";
             }
         }
     }
@@ -1440,7 +1450,7 @@ function drawBattle(){ ///バトル画面の描画関数
             drawStar(enemyAvatorData,WIDTH/2+10,HEIGHT-153,30);
         }
     } else{
-        if(battleStatus==0) battleStatus=1,battleAni=t;//カウントダウンを開始
+        if(battleStatus==0) battleStatus=1,battleAni=t,countDownSec=-1;//カウントダウンを開始
     }
     if(battleStatus ==1 || battleStatus==3||battleStatus==4||battleStatus==5){
         ctx2d.fillText("- - - - -",350-ctx2d.measureText("- - - - -").width/2,350);
@@ -1535,7 +1545,9 @@ function drawBattle(){ ///バトル画面の描画関数
     if(battleStatus==1){ //カウントダウン画面
         ctx2d.font= Math.floor((128+Math.min(124,512/((t-battleAni)%1000)))) +"pt " + MAIN_FONTNAME;
         let rawCountDownSec = 3-(t-battleAni)/1000;
-        let countDownSec = 3-Math.floor((t-battleAni)/1000);
+        if(countDownSec!= 3-Math.floor((t-battleAni)/1000) && 3-Math.floor((t-battleAni)/1000)>=1 && countDownSec!="GO") playSE("count");
+        if(0 >= 3-Math.floor((t-battleAni)/1000) && countDownSec!="GO") playSE("countGo");
+        countDownSec = 3-Math.floor((t-battleAni)/1000);
         if(countDownSec == 0) countDownSec="GO";
         if(rawCountDownSec<-0.3) battleAni=t,battleStatus=3,battleResult.startTime=t,lossTimeT=t;//カウントダウン終了　待機モードへ
         ctx2d.fillStyle="rgba(0,0,0,0.6)";
@@ -1951,6 +1963,15 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     }
     saveData();
 }
+function battleEndBGM(win){
+    //勝負終了時の効果音を処理する関数
+    processBGM(-1);//BGMを全てストップ
+    if(win){
+        playSE("win");
+    } else {
+        playSE("lose");
+    }
+}
 function processBattle(){ //バトルの処理関数　制御系はここへ
     if(battleStatus==2){//打っている途中
 /*        if(Math.random()<0.18) { //ランダムで打つ処理
@@ -1963,6 +1984,7 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
                 if(checkOpt(battleResult.wordSet[battleResult.now].enemyText,enemyTypedText+battleResult.enemyTypeData[battleResult.now][enemyTypingCharNum].char,1).isMiss){
                     enemyMissAni=t;
                 } else{
+                    playSE("typing2");
                     enemyTypedText+=battleResult.enemyTypeData[battleResult.now][enemyTypingCharNum].char;
                     battleResult.wordSet[battleResult.now].enemyText=
                         checkOpt(battleResult.wordSet[battleResult.now].enemyText,enemyTypedText,1).newTargetStr;
@@ -1972,6 +1994,7 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
         }
         if(battleResult.wordSet[battleResult.now].myText.length <= typedText.length){
             ///全部ワードを打ち切っていたら 　　ワード獲得処理
+            playSE("word1");
             lastKpm=Number(typedText.length / (t-wordT)*60000).toFixed(1);
             lastKpmE=Number(enemyTypedText.length / (t-wordT)*60000).toFixed(1);
             battleResult.point++;
@@ -1987,15 +2010,17 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
                 lossTimeT=t;
                 refreshWord();
                 getWord=1;
-                if(battleResult.point == 13) winLoseAni=t;
+                if(battleResult.point == 13) winLoseAni=t, playSE("winD");
             }  else{//終端ワードの処理
                 battleResult.now++;
                 battleStatus=4;
                 battleAni=t;
+                battleEndBGM(0);
                 processBattleResult();//バトルの終了処理
             }
         } else if(battleResult.wordSet[battleResult.now].enemyText.length <= enemyTypedText.length){
             ///相手が全部ワードを打ち切っていたら 　　ワード損失処理
+            playSE("word2");
             lastKpm=Number(typedText.length / (t-wordT)*60000).toFixed(1);
             lastKpmE=Number(enemyTypedText.length / (t-wordT)*60000).toFixed(1);
             battleResult.words[battleResult.now]=2;
@@ -2010,11 +2035,12 @@ function processBattle(){ //バトルの処理関数　制御系はここへ
                 lossTimeT=t;
                 refreshWord();
                 getWord=0;
-                if(battleResult.now-battleResult.point == 13) winLoseAni=-t;
+                if(battleResult.now-battleResult.point == 13) winLoseAni=-t, playSE("loseD");;
             } else{//終端ワードの処理
                 battleResult.now++;
                 battleStatus=4;
                 battleAni=t;
+                battleEndBGM(0);
                 processBattleResult();//バトルの終了処理
             }
         } 
@@ -2659,19 +2685,23 @@ function setItemButtons(parts){
                 }
                 prls[i].colSet=0;
                 prls[i].hoverColSet=1;
+                prls[i].sound="cursor";
             } else if(playData.item[parts][prls[i].id] == 1){
                 prls[i].text="装備中";
                 prls[i].colSet=3;
                 prls[i].hoverColSet=3;
+                prls[i].sound="cursor";
             } else if(playData.item[parts][prls[i].id] == 2){
                 prls[i].text="購入";
                 prls[i].colSet=3;
                 prls[i].hoverColSet=4;
+                prls[i].sound="cursor";
             } else if(playData.item[parts][prls[i].id] == 3){
                 prls[i].text="装備";
                 prls[i].colSet=14;
                 prls[i].hoverColSet=1;
-            }
+                prls[i].sound="puton";
+            } 
         }
     }
 }
@@ -2696,7 +2726,7 @@ function sendChangeRequest(parts,num){
             msgBox.push({
                 text:ITEM_DATA[parts][num][0] + "を購入しますか？",
                 ani:t,
-                btns1:{text:"YES",onClick:function(){
+                btns1:{sound:"buy",text:"YES",onClick:function(){
                     for(let i = 0;i < 10;i++) {
                         if(playData.item[parts][i] == 1) playData.item[parts][i] = 3;
                         if(playData.item[parts][i] == 2) playData.item[parts][i] = 0; 
@@ -2713,7 +2743,8 @@ function sendChangeRequest(parts,num){
                     sendChangeRequest(parts,num);
                     setItemButtons(parts);
                 }},
-                btns2:{text:"NO",onClick:function(){}}});
+                btns2:{sound:"cancel",text:"NO",onClick:function(){
+                }}});
 
         }
     } else if(playData.item[parts][num] == 3){ //持っているが未着用
@@ -2726,13 +2757,24 @@ function sendChangeRequest(parts,num){
     } 
     setItemButtons(parts);
 }
+function playPrlSE(myPrl){
+    if (myPrl.sound!=undefined){
+        playSE(myPrl.sound);
+    }else if(myPrl.colSet==13){
+        playSE("error");
+    } else if(myPrl.colSet==3){
+        playSE("enter");
+    } else {
+        playSE("cursor");
+    }                    
+}
 function processClick(){
     for(var i = 0;i < prls.length;i++){
         if(prls[i].hoverCounter && sceneAni==0) {
             if(clickY>prls[i].y1 && clickY<prls[i].y2 && clickX>prls[i].x1+(prls[i].y2-prls[i].y1)*0.3 && clickX<prls[i].x2-(prls[i].y2-prls[i].y1)*0.3){
                 if(!(msgBox.length && prls[i].isMsgBox!=1) && prls[i].onClick!=undefined){ //メッセージボックス表示中なら、メッセージボックス以外スルー　onclickが定義されていない場合もスルー
+                    playPrlSE(prls[i]);
                     prls[i].onClick();
-                    playSE("cursor");
                     clickX=0,clickY=0;
                     if(prls[i].isMsgBox&& prls[i].noDestruct!=1)  msgBox[0].ani=t,msgBox[0].flg=2;
                 } 
@@ -2741,26 +2783,61 @@ function processClick(){
     }
 }
 function playSE(str){
-    if(str=="type"){//タイピングの効果音
-
-    } else if(str == "miss"){//ミス時の効果音
-
+    if(playData==undefined) return 0;
+    if(playData.settings[4]) return 0;
+    if(str=="typing1"){//タイピングの効果音
+        if(playData.settings[5]) return 0;
+        se[16].play();
+    } else if(str=="typing2"){
+        if(playData.settings[7]) return 0;
+        se[17].play();
+    }else if(str == "miss"){//ミス時の効果音
+        if(playData.settings[6]) return 0;
+        se[21].play();
     } else if(str == "enter"){//決定時の効果音
         se[2].play();
     } else if(str == "enterS"){//重要な決定時の効果音
 
     } else if(str == "cancel"){//キャンセル時の効果音
-
+        se[4].play();
     } else if(str == "count"){//カウントダウン時の効果音
-
+        se[20].play();
+    }else if(str == "countGo"){//カウントダウン時の効果音
+        se[22].play();
     }else if(str == "cursor"){//カーソルをあわせた時の効果音
         se[6].play();
     }else if(str == "buy"){//購入した時の効果音
         se[7].play();
+    } else if(str=="puton"){//装着時の効果音
+        se[9].play();
+    } else if(str == "esc"){//エスケープ
+        se[8].play();
+    } else if(str=="error"){//エラー
+        se[10].play();
+    } else if(str=="window"){//ウィンドウ
+        se[11].play();
+    } else if(str=="battle"){//バトル
+        se[12].play();
+    } else if(str=="battleStart"){//バトルスタート
+        se[13].play();
+    }else if(str == "winD"){//勝ち確定
+        se[14].play();
+    } else if(str=="loseD"){//負け確定
+        se[15].play();
+    } else if(str=="word1"){//ワード獲得自分
+        se[18].play();
+    } else if(str=="word2"){//ワード獲得相手
+        se[19].play();
+    }  else if(str == "win"){//勝ち
+        se[23].play();
+    } else if(str == "lose"){//負け
+        se[24].play();
     }
 }
 function processBGM(prev,next){
     //BGMの再生とストップを管理する関数
+    if(playData==undefined) return 0;
+    if(playData.settings[3]) return 0;
     bgm[0].stop();
     bgm[1].stop();
     bgm[2].stop();
@@ -2772,22 +2849,24 @@ function processBGM(prev,next){
     let bgmNum=0;
     if(next==2) bgmNum=2;//1,2から選ぶ
     if(next==3) {
-        bgmNum=0;//0,4,5,6からランダム
-        if(enemyAvatorData.cp - avatorData[playData.settings[0]].cp > 50){
+        bgmNum=0;//0,4,5,6から選ぶ
+        if(enemyAvatorData.cp - avatorData[playData.settings[0]].cp > 20){
             bgmNum = 5;
-        } else if(enemyAvatorData.cp - avatorData[playData.settings[0]].cp > 10){
+        } else if(enemyAvatorData.cp - avatorData[playData.settings[0]].cp > 7){
             bgmNum = 0;
-        } else if (enemyAvatorData.cp - avatorData[playData.settings[0]].cp > -10){
+        } else if (enemyAvatorData.cp - avatorData[playData.settings[0]].cp > -7){
             bgmNum = 4;
         } else{
             bgmNum = 6;
         }
     }
-    if(next==4 || next==5) bgmNum=3;
+    if(next==4) bgmNum=3;//結果画面
+    if(next==5) bgmNum=7;
     if(next==6 || next==7) bgmNum=7;
     if(next!=1) {
         if(next==3){
-            setTimeout(function(){bgm[bgmNum].play();},4500)
+            setTimeout(function(){
+                if(scene == 3 && !sceneAni) bgm[bgmNum].play();},4700)
         } else{
             bgm[bgmNum].play(),bgm[bgmNum].fade(0,1,1000);
         }
@@ -2822,20 +2901,20 @@ function changeScene(prev,next){ //シーン遷移の関数
         }})
     } else if(next == 2){//メニュー
         ctx2dImg.drawImage(backImg[0],0,0,WIDTH,HEIGHT);
-        prls.push({x1:570,y1:110,x2:873,y2:205,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,text:"TITLE",subText:"タイトル",onClick:function(){
+        prls.push({x1:570,y1:110,x2:873,y2:205,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,sound:"cursor",text:"TITLE",subText:"タイトル",onClick:function(){
             msgBox.push({
                 text:"本当にタイトルに戻りますか？",
                 ani:t,
                 btns1:{text:"OK",onClick:function(){nextScene=1;sceneAni=t}},
-                btns2:{text:"CANCEL",onClick:function(){return 0;}}});}})
-        prls.push({x1:540,y1:225,x2:843,y2:320,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,text:"SETTING",subText:"設定",onClick:function(){
+                btns2:{text:"CANCEL",sound:"cancel",onClick:function(){return 0;}}});}})
+        prls.push({x1:540,y1:225,x2:843,y2:320,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,sound:"enter",text:"SETTING",subText:"設定",onClick:function(){
             nextScene=7,sceneAni=t;
             for(let i = 0;i < 9;i++){previousSettings[i] = playData.settings[i]}}})
         prls.push({x1:540,y1:340,x2:861,y2:495,colSet:1,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"",rev:1,onClick:function(){
             return 0;}})
-        prls.push({x1:100,y1:110,x2:578,y2:320,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,text:"BATTLE!",subText:"対戦",rev:0,onClick:function(){
+        prls.push({x1:100,y1:110,x2:578,y2:320,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,sound:"window",text:"BATTLE!",subText:"対戦",rev:0,onClick:function(){
             msgBox.push({selectBattleAvatorWindow:1,ani:t});}})
-        prls.push({x1:100,y1:340,x2:558,y2:495,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,text:"AVATOR",subText:"アバター",rev:1,onClick:function(){
+        prls.push({x1:100,y1:340,x2:558,y2:495,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.4,sound:"enter",text:"AVATOR",subText:"アバター",rev:1,onClick:function(){
             nextScene=5,sceneAni=t;}})
     }  else if(next==3){//試合
         battleStatus=0;//バトル開始のアニメーションモードへ
@@ -2857,7 +2936,7 @@ function changeScene(prev,next){ //シーン遷移の関数
             battleAni=t;//バトル開始時のアニメーション
         } 
         }});
-        prls.push({x1:664,y1:HEIGHT-90,x2:WIDTH-25-96,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"BACK",subText:"戻る",onClick:function(){
+        prls.push({x1:664,y1:HEIGHT-90,x2:WIDTH-25-96,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,sound:"cancel",text:"BACK",subText:"戻る",onClick:function(){
             if(t-resultAni < 2500){
                 t=resultAni+2500;
             } else{
@@ -2866,7 +2945,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                 sceneAni=t;
             } 
         }});
-        prls.push({x1:WIDTH-65,y1:148,x2:WIDTH-38,y2:165,lineWidth:2,shadow:0,isTop:1,colSet:13,hoverColSet:14,hoverCounter:0,textSize:1.4,text:"？",onClick:function(){
+        prls.push({x1:WIDTH-65,y1:148,x2:WIDTH-38,y2:165,lineWidth:2,shadow:0,isTop:1,colSet:13,hoverColSet:14,hoverCounter:0,textSize:1.4,sound:"window",text:"？",onClick:function(){
             msgBox.push({bonusHelpWindow:1,
                 text:"",
                 ani:t,
@@ -2875,7 +2954,7 @@ function changeScene(prev,next){ //シーン遷移の関数
     } else if(next==5){//アバター　きせかえ
         ctx2dImg.drawImage(backImg[5],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:14,textSize:0.8,text:"AVATOR"});
-        prls.push({x1:430,y1:90,x2:663,y2:130,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"オンラインアバター",onClick:function(){nextScene=6,sceneAni=t}});
+        prls.push({x1:430,y1:90,x2:663,y2:130,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,sound:"enter",text:"オンラインアバター",onClick:function(){nextScene=6,sceneAni=t}});
         for(let i = 0;i < 5;i++){
             prls.push({x1:675+i*50,y1:100,x2:722+i*50,y2:120,shadow:0,colSet:0+(i==0),hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,id:i+10,text:PARTS_TEXT[i],onClick:function(){
                 selectParts=i,selectPartsAni=t,setItemButtons(selectParts);
@@ -2899,7 +2978,7 @@ function changeScene(prev,next){ //シーン遷移の関数
             }});
         }
         setItemButtons(selectParts);
-        prls.push({x1:650,y1:HEIGHT-90,x2:826,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"BACK",subText:"戻る",onClick:function(){
+        prls.push({x1:650,y1:HEIGHT-90,x2:826,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,sound:"cancel",text:"BACK",subText:"戻る",onClick:function(){
             /* 試着中のアイテムをチェック　*/
             let selectingFlg=0;
             for(let i = 0;i < 5;i++){
@@ -2957,13 +3036,13 @@ function changeScene(prev,next){ //シーン遷移の関数
 
         }});
         prls.push({x1:700,y1:145,x2:940,y2:HEIGHT-130,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
-        prls.push({x1:620,y1:115,x2:699,y2:140,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,shadow:0,text:"削除",onClick:function(){
+        prls.push({x1:620,y1:115,x2:699,y2:140,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,shadow:0,sound:"window",text:"削除",onClick:function(){
             msgBox.push({
                 ani:t,
                 avatorDeleteWindow:1,
                 flg:0});    
         }});
-        prls.push({x1:680,y1:HEIGHT-120,x2:858,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"BACK",subText:"戻る",onClick:function(){
+        prls.push({x1:680,y1:HEIGHT-120,x2:858,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,sound:"cancel",text:"BACK",subText:"戻る",onClick:function(){
             saveData();
             nextScene=2;
             sceneAni=t;}});
@@ -3081,7 +3160,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                     btns2:{text:"NO",onClick:function(){return 0;}}})    
             } else if(getAvailableCreateAvator() == 3){
                 msgBox.push({
-                    text:"アバターの更新は1時間に1回までです。時間が経ってからもう一度お試しください。",
+                    text:"既にアバターのアップロードが完了しています。また、アバターの更新は1時間に1回までです。",
                     ani:t,
                     btns1:{text:"OK",onClick:function(){}}});
             } else if(getAvailableCreateAvator() == 4){
@@ -3098,16 +3177,16 @@ function changeScene(prev,next){ //シーン遷移の関数
         ctx2dImg.drawImage(backImg[2],0,0,WIDTH,HEIGHT);
         prls.push({x1:30,y1:30,x2:450,y2:130,colSet:14,hoverColSet:14,hoverCounter:0,textSize:0.8,text:"SETTING"});
         prls.push({x1:65,y1:160,x2:640,y2:HEIGHT-60,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
-        prls.push({x1:550,y1:HEIGHT-120,x2:720,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"SAVE",subText:"保存",onClick:function(){
+        prls.push({x1:550,y1:HEIGHT-120,x2:720,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,sound:"enter",text:"SAVE",subText:"保存",onClick:function(){
             nextScene=2,sceneAni=t,saveData();}});
-        prls.push({x1:710,y1:HEIGHT-120,x2:880,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"CANCEL",subText:"キャンセル",onClick:function(){
+        prls.push({x1:710,y1:HEIGHT-120,x2:880,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:"CANCEL",sound:"cursor",subText:"キャンセル",onClick:function(){
             msgBox.push({
                 text:"変更を保存せずにメニュー画面へ戻りますか？",
                 ani:t,
-                btns1:{text:"YES",onClick:function(){nextScene=2,sceneAni=t;
+                btns1:{text:"YES",sound:"cancel",onClick:function(){nextScene=2,sceneAni=t;
                 for(let i = 0;i < 9;i++){playData.settings[i] = previousSettings[i]};
                 saveData()}},
-                btns2:{text:"NO",onClick:function(){return 0;}}})
+                btns2:{text:"NO",sound:"cursor",onClick:function(){return 0;}}})
         }});
         for(let i = 0; i < 9;i++){
             let offset= 10*(i >= 3) + 10*(i>=8);
@@ -3121,7 +3200,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                         ani:t,
                         btns1:{text:"OK",onClick:function(){resetData(),
                             msgBox.push({text:"すべてのプレイデータをリセットしました。タイトル画面へ戻ります。",ani:t,btns1:{text:"OK",onClick:function(){nextScene=1,sceneAni=t;}}})}},
-                        btns2:{text:"CANCEL",onClick:function(){return 0;}}})
+                        btns2:{text:"CANCEL",sound:"cancel",onClick:function(){return 0;}}})
                     }
                 })
             }
