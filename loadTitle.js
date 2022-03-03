@@ -187,6 +187,7 @@ window.addEventListener('DOMContentLoaded', function(){ //クリックイベン�
     ctx2dCr=document.getElementById("myCanvas2_3").getContext("2d");
     ctx2dSt2=document.getElementById("myCanvas3_5").getContext("2d");
     ctx2d2=document.getElementById("myCanvas4").getContext("2d");
+    ctxHid=document.getElementById("hiddenCanvas").getContext("2d");
     setSounds();
 });
 function drawLoadingCircle(x,y,size,t,speed,trans,isTopLevel){
@@ -256,6 +257,10 @@ function init() {
     nWinImg=new Image();
     nWinImg.src="./img/nwin.png";
     nWinImg.onload=()=>{imgLoadedCnt++};
+    for(let i = 0;i < 6;i++) efImg[i] = new Image(),efImg[i].src="./img/typingEf" + i + ".png",efImg[i].onload=()=>{
+        imgLoadedCnt++
+        ctxHid.drawImage(efImg[i],0,i*120,1200,120);
+    };
     for(var i = 0;i < 7;i++) starImg[i] = new Image(),starImg[i].src="./img/star_" + i + ".png";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < starImg.length;i++) starImg[i].onload=()=>{imgLoadedCnt++};

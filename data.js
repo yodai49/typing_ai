@@ -2,7 +2,7 @@ var t = 0; //グローバルタイム 毎ターンperformance.now()を格納
 var scene=0;//シーン遷移  0:ローディング画面　1:タイトル画面
 var nextScene=0;//次のシーン
 var sceneAni=0;//シーンのアニメーション
-var ctx2d,ctx2dImg,ctx2dSt,ctx2dCr,ctx2dSt2,ctx2d2;//キャンバス（メイン）とキャンバス（背景画像）とキャンバス（静止用）
+var ctx2d,ctx2dImg,ctx2dSt,ctx2dCr,ctx2dSt2,ctx2d2,ctxHid;//キャンバス（メイン）とキャンバス（背景画像）とキャンバス（静止用）
 // ctx2d 動く一番上　＞　ctx2dSt2 静止の一番上　＞　ctx2d メインキャンバス　＞　ctx2dSt 静止用　＞　ctx2dCr　サークル用　＞　ctx2dImg　背景用　の順番に積み上げ
 var mouseX=0,mouseY=0,clickX=0,clickY=0,mouseStatus=0;
 var backImg= [],imgLoadedCnt=0;//背景イメージ格納用
@@ -10,6 +10,7 @@ var starImg=[];//スターの画像格納用
 var otherPartsImg=[];//冠、剣の画像
 var coinImg,arrowImg;//コインと矢印の画像
 var pWinImg,kWinImg,nWinImg;
+var efImg=[];
 var firstLaunchFlg=0;//初回起動を検知するフラグ
 var selectParts=0,selectPartsAni=0;//着せかえ画面で選択中のパーツを保存
 var battleAni=0,enemyAvatorData,battleResult,battleStatus=0,typedText="",enemyTypedText="",totalLossTime=0,lossTimeT=0,lossTimeSum=0,getWord=0;//バトルデータの保持用 battlestatusは0ならアニメーション中、1ならカウントダウン中、2ならゲーム中、3ならゲームの待機中、4なら終了アニメーション中

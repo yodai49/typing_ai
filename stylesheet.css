@@ -61,6 +61,13 @@ font-display: swap;
 .gameCanvas2_3{
     z-index:23;
 }
+.displayNone{
+    display:none;
+}
+.hidCanvas{
+    width:1200;
+    height:600;
+}
 .nameBoxCreate{
     z-index:100;
     position:absolute;

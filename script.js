@@ -3059,7 +3059,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                 ani:t,
                 flg:0});
             }});//ボーナスのヘルプウィンドウ
-        prls.push({x1:510,y1:110,x2:555,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"window",text:"Cp",onClick:function(){
+        prls.push({x1:490,y1:110,x2:545,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"window",text:"Copy",onClick:function(){
             //結果のコピー
             if(navigator.clipboard){
                  navigator.clipboard.writeText(getBattleResultText())
@@ -3082,13 +3082,13 @@ function changeScene(prev,next){ //シーン遷移の関数
                     btns1:{text:"OK",onClick:function(){}}});
             }
         }});
-        prls.push({x1:465,y1:110,x2:510,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"window",text:"Tw",onClick:function(){
+        prls.push({x1:435,y1:110,x2:490,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"window",text:"Tweet",onClick:function(){
             //結果のツイート
             window.open("https://twitter.com/share?url=https://avatype.typworld.net/&text=" + 
             getBattleResultText(1) + "%0a%23AVATYPE %23タイピング %23TypWorld" 
             + "&count=none&lang=ja");
             }});
-        prls.push({x1:555,y1:110,x2:600,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"screenshot",text:"Sc",onClick:function(){
+        prls.push({x1:545,y1:110,x2:600,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"screenshot",text:"ScShot",onClick:function(){
             drawImgToMainCanvas();
             drawResult();
             let resultCanvas=document.getElementById("myCanvas");
