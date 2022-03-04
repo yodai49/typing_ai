@@ -510,6 +510,7 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
         setDailyMission();
     }
     if(battleDataSave==null || force) battleDataSave =[];
+    if(tempLocalAvator==null || force) tempLocalAvator =[];
 }
 function loadData(){//データをローカルストレージから読み込む関数
     avatorData = JSON.parse(localStorage.getItem('avatorData'));

@@ -551,7 +551,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                                 btns2:{text:"CANCEL",suond:"cancel",onClick:function(){ //アバター作成の初期ウィンドウを表示
                                     msgBox.push({createAvatorWindow:1,
                                     text:"",
-                                    ani:t+200,
+                                   ani:t+200,
                                     flg:0,
                                     });}}});
                         }
@@ -882,13 +882,13 @@ function drawMsgbox(){//メッセージボックスの描画関数
                 if(avatorData[0].team!=i){ //選択チームではないとき
                     drawPrl({x1:WIDTH/2-160+i*50,y1:HEIGHT/2+50,x2:WIDTH/2-120+i*50,y2:HEIGHT/2+80,colSet:11,hoverColSet:11,lineWidth:0.1,shadow:0,hoverCounter:0,text:"",trans:myAni*1.1})
                 } else{//選択チーム
-                    drawPrl({x1:WIDTH/2-160+i*50,y1:HEIGHT/2+50,x2:WIDTH/2-120+i*50,y2:HEIGHT/2+80,colSet:12,hoverColSet:12,lineWidth:5,shadow:0,hoverCounter:0,text:"",trans:myAni*1.1})
+                    drawPrl({x1:WIDTH/2-160+i*50,y1:HEIGHT/2+50,x2:WIDTH/2-120+i*50,y2:HEIGHT/2+80,colSet:12,hoverColSet:12,lineWidth:3,shadow:0,hoverCounter:0,text:"",trans:0.5+0.5*Math.sin(t/120)})
                 }
             }
             const INPUT_TYPE=["ローマ字","カナ"]; 
             for(var i = 0;i < 2;i++){ //入力方式選択
                 if(playData.settings[0] == i){
-                    drawPrl({isMsgBox:1,x1:WIDTH/2-143.5+i*85,y1:HEIGHT/2-5,x2:WIDTH/2-68.5+i*85,y2:HEIGHT/2+25,shadow:0,colSet:3,lineWidth:4,hoverColSet:4,hoverCounter:0,lineWidth:6,textSize:0.9,text:INPUT_TYPE[i],trans:-1,noDestruct:1});
+                    drawPrl({isMsgBox:1,x1:WIDTH/2-143.5+i*85,y1:HEIGHT/2-5,x2:WIDTH/2-68.5+i*85,y2:HEIGHT/2+25,shadow:0,colSet:3,lineWidth:4,hoverColSet:4,hoverCounter:0,lineWidth:4+2*Math.sin(t/120),textSize:0.9,text:INPUT_TYPE[i],trans:-1,noDestruct:1});
                 } else{
                     drawPrl({isMsgBox:1,x1:WIDTH/2-143.5+i*85,y1:HEIGHT/2-5,x2:WIDTH/2-68.5+i*85,y2:HEIGHT/2+25,shadow:0,colSet:13,lineWidth:4,hoverColSet:13,hoverCounter:0,lineWidth:2,textSize:0.9,text:INPUT_TYPE[i],trans:-1,noDestruct:1});
                 }
