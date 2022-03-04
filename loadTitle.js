@@ -102,7 +102,7 @@ function setSounds(){//サウンドのセットを行う
                 onload:(e)=>{imgLoadedCnt++}}),
         new Howl({src:['./sound/loseD.mp3'],
                 loop:false,
-                volume:0.5,
+                volume:1,
                 onload:(e)=>{imgLoadedCnt++}}),
         new Howl({src:['./sound/typing1.mp3'], //16
                 loop:false,
@@ -188,6 +188,7 @@ window.addEventListener('DOMContentLoaded', function(){ //クリックイベン�
     ctx2dSt2=document.getElementById("myCanvas3_5").getContext("2d");
     ctx2d2=document.getElementById("myCanvas4").getContext("2d");
     ctxHid=document.getElementById("hiddenCanvas").getContext("2d");
+    canHid=document.getElementById("hiddenCanvas");
     setSounds();
 });
 function drawLoadingCircle(x,y,size,t,speed,trans,isTopLevel){
@@ -276,7 +277,7 @@ function init() {
         otherPartsImg[i].onload=()=>{imgLoadedCnt++;};
     }
     ctx2dImg.fillStyle="rgba(0,0,0,1)";
-    ctx2dImg.fillRect(0,0,WIDTH,HEIGHT);    
+    ctx2dImg.fillRect(0,0,WIDTH,HEIGHT);
 
     tick();
 
@@ -300,6 +301,6 @@ function init() {
         }
         drawLoadingCircle(WIDTH/2,HEIGHT/2,100,t,1000,1);
         if(DEBUG_MODE) SCENE_ANI=100;
-        if(imgLoadedCnt!=IMG_CNT || sceneAni || performance.now() - sceneAni < SCENE_ANI*2.5) requestAnimationFrame(tick);
+        if(imgLoadedCnt!=IMG_CNT || sceneAni || performance.now() - sceneAni < SCENE_ANI*2) requestAnimationFrame(tick);
     }
 }

@@ -196,7 +196,7 @@ function drawLimbs(myAvator,x1,y1,x2,y2,t,trans){ //手足を描画
         return 0;
     } 
     if(myAvator.item[3]==0 ||myAvator.item[3]==1 ||myAvator.item[3]==2 ||myAvator.item[3]==3 ||myAvator.item[3]==4){//ノーマルの手足
-        ctx2d.fillStyle="rgba(140,60,0," + trans + ")";
+        ctx2d.fillStyle="rgba(80,30,0," + trans + ")";
         ctx2d.fillRect(getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.28)-getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
         ctx2d.fillRect(getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.79)-getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
         ctx2d.fillRect(getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.745),getDrawPos(x1,x2,0.46)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.9)-getDrawPos(y1,y2,0.74));
@@ -212,9 +212,9 @@ function drawLimbs(myAvator,x1,y1,x2,y2,t,trans){ //手足を描画
         limbsGradR.addColorStop(0.4,"rgba("+LIMBS_COLSET[myAvator.item[3]-1][1][0]+","+LIMBS_COLSET[myAvator.item[3]-1][1][1]+","+LIMBS_COLSET[myAvator.item[3]-1][1][2]+","+LIMBS_COLSET[myAvator.item[3]-1][1][3]*trans+")")
         limbsGradR.addColorStop(1.0,"rgba("+LIMBS_COLSET[myAvator.item[3]-1][2][0]+","+LIMBS_COLSET[myAvator.item[3]-1][2][1]+","+LIMBS_COLSET[myAvator.item[3]-1][2][2]+","+LIMBS_COLSET[myAvator.item[3]-1][2][3]*trans+")")
         ctx2d.fillStyle=limbsGradL;
-        ctx2d.fillRect(getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.46)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.37),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.46)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
         ctx2d.fillStyle=limbsGradR;
-        ctx2d.fillRect(getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.62)-getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.63)-getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
     } else if(myAvator.item[3] >= 5 && myAvator.item[3] <= 9){
         var limbsGradL = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.61),getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.43));    // 足
         var limbsGradR = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.61),getDrawPos(x1,x2,0.79),getDrawPos(y1,y2,0.43));

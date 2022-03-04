@@ -3,6 +3,7 @@ var scene=0;//シーン遷移  0:ローディング画面　1:タイトル画面
 var nextScene=0;//次のシーン
 var sceneAni=0;//シーンのアニメーション
 var ctx2d,ctx2dImg,ctx2dSt,ctx2dCr,ctx2dSt2,ctx2d2,ctxHid;//キャンバス（メイン）とキャンバス（背景画像）とキャンバス（静止用）
+var canHid;
 // ctx2d 動く一番上　＞　ctx2dSt2 静止の一番上　＞　ctx2d メインキャンバス　＞　ctx2dSt 静止用　＞　ctx2dCr　サークル用　＞　ctx2dImg　背景用　の順番に積み上げ
 var mouseX=0,mouseY=0,clickX=0,clickY=0,mouseStatus=0;
 var backImg= [],imgLoadedCnt=0;//背景イメージ格納用
@@ -702,6 +703,8 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
     .set("avatorID",myAvatorData.id)
     .save()
     .then(function(item){
+        let avaCheck=JSON.stringify(myAvatorData,undefined,1);
+        avaCheck=JSON.parse(avaCheck);//パース時のエラーを防ぐ
         dataSaveStatus=1;
         msgBox.push({
             text:"アバターのアップロードに成功しました！",
@@ -741,6 +744,8 @@ function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロ�
         return Promise.all(promises);
     })
     .then(function(result){
+        let avaCheck=JSON.stringify(myAvatorData,undefined,1);
+        avaCheck=JSON.parse(avaCheck);//パース時のエラーを防ぐ
         item.set("avatorData",JSON.stringify(myAvatorData,undefined,1))
         .set("avatorID",myAvatorData.id)
         .save()

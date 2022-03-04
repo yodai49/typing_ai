@@ -65,8 +65,8 @@ font-display: swap;
     display:none;
 }
 .hidCanvas{
-    width:1200;
-    height:600;
+    width:1200px;
+    height:600px;
 }
 .nameBoxCreate{
     z-index:100;
