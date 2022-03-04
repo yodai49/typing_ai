@@ -6,6 +6,7 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
     if(scene==3){//バトル中
         if((myKeyCode == 27|| (myKey=="Q")) && nextScene!=2){//Escキー　タイトルへ戻る
             nextScene=2;sceneAni=t;
+            clearTimeout(lastBGMID);
             playSE("esc");
             clickX=0,clickY=0;
             battleData.esc++;
@@ -469,7 +470,6 @@ function drawMsgbox(){//メッセージボックスの描画関数
                         }
                         selectBattleAvatorClass=i;
                         selectBattleAvator=0;
-//                        setAvatorSelectButtonEach(localAvator);
                         setAvatorSelectButton(localAvator);
                     }});
                 }
@@ -1487,7 +1487,11 @@ function drawBattle(){ ///バトル画面の描画関数
         ctx2d.fillText(processShowData(Math.floor(avatorData[playData.settings[0]].cp),1),70,HEIGHT-40);
         ctx2d.fillText(processShowData(Math.floor(enemyAvatorData.cp),1),WIDTH-130,HEIGHT-180);
         ctx2d.fillStyle="rgba(200,0,0,"+Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))/200)))+")";
-        ctx2d.fillText("VS",(WIDTH-ctx2d.measureText("VS").width)/2,HEIGHT/2);
+        let effectVSTrans = 1-Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))-1400)/50));
+        ctx2d.fillStyle="rgba(200,0,0,"+effectVSTrans+")";
+        let effectFontSize=28*(1-1/1.1+1/(effectVSTrans+0.1));
+        ctx2d.font=effectFontSize+"pt " + MAIN_FONTNAME + "," + JAPANESE_FONTNAME;
+        ctx2d.fillText("VS",(WIDTH-ctx2d.measureText("VS").width)/2,HEIGHT/2+4);
         drawTeamCircle(37+battleOpeningOffset,157,16,avatorData[0].team,Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))/200))));
         drawTeamCircle(-battleOpeningOffset+WIDTH-333,HEIGHT-93,16,enemyAvatorData.team,Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))/200))));
         drawPrl({x1:WIDTH/2-120,y1:HEIGHT-75,x2:WIDTH/2-110+180,y2:HEIGHT-85+43,colSet:2,trans:Math.min(1,Math.max(0,((BATTLE_ANI-(t-battleAni))/200))),hoverColSet:2,hoverCounter:0,textSize:0.6,text:""});
@@ -1496,6 +1500,9 @@ function drawBattle(){ ///バトル画面の描画関数
             drawStar(avatorData[0],WIDTH/2-110,HEIGHT-73,30);
             drawStar(enemyAvatorData,WIDTH/2+10,HEIGHT-153,30);
         }
+        let effectPosX=Math.max(0,(BATTLE_ANI-(t-battleAni))-1400);
+        if(Math.random()<0.3 && t-battleAni<BATTLE_ANI-200) typingEffect.push({x:effectPosX+WIDTH/2+45+Math.random()*25,y:HEIGHT/3+50+Math.random()*25,col:Math.floor(enemyAvatorData.star/5),ani:0});
+        if(Math.random()<0.3 && t-battleAni<BATTLE_ANI-200) typingEffect.push({x:-effectPosX+WIDTH/2-105+Math.random()*25,y:HEIGHT/3+50+Math.random()*25,col:Math.floor(avatorData[playData.settings[0]].star/5),ani:0});
     } else{
         if(battleStatus==0) battleStatus=1,battleAni=t,countDownSec=-1;//カウントダウンを開始
     }
@@ -2892,28 +2899,33 @@ function processClick(){
     }
 }
 function playSE(strAr){
+    let offSE=0;
+    let offTyp=0;
+    let offETyp=0;
+    let offMiss=0;
+    if(playData!=undefined){
+        offSE=playData.settings[4];
+        offTyp=playData.settings[5];
+        offETyp=playData.settings[7];
+        offMiss=playData.settings[6];    
+    }
     strEach=strAr.split(" ");
     for(let i = 0;i < strEach.length;i++){
         str=strEach[i];
-        if(playData==undefined) {
-            if(str!="battle") return 0;
-            se[12].play();
-            return 0;
-        }
-        if(playData.settings[4]) return 0;
+        if(offSE) return 0;
         if(str=="typing1"){//タイピングの効果音
-            if(playData.settings[5]) return 0;
+            if(offTyp) return 0;
             se[17].play();
         } else if(str=="typing2"){
-            if(playData.settings[7]) return 0;
+            if(offETyp) return 0;
             se[16].play();
         }else if(str == "miss"){//ミス時の効果音
-            if(playData.settings[6]) return 0;
+            if(offMiss) return 0;
             se[21].play();
         } else if(str == "enter"){//決定時の効果音
             se[2].play();
         } else if(str == "enterS"){//重要な決定時の効果音
-    
+            //未実装
         } else if(str == "cancel"){//キャンセル時の効果音
             se[4].play();
         } else if(str == "count"){//カウントダウン時の効果音
@@ -2933,7 +2945,8 @@ function playSE(strAr){
         } else if(str=="window"){//ウィンドウ
             se[11].play();
         } else if(str=="battle"){//バトル
-            se[12].play();
+            if(!firstLaunchFlg) se[12].play();
+//            se[12].play();
         } else if(str=="battleStart"){//バトルスタート
             se[13].play();
         }else if(str == "winD"){//勝ち確定
@@ -3007,7 +3020,7 @@ function processBGM(prev,next){
     if(next==6 || next==7) bgmNum=7;
     if(next!=1) {
         if(next==3){
-            setTimeout(function(){
+            lastBGMID = setTimeout(function(){
                 if(scene == 3 && !sceneAni) bgm[bgmNum].play();},4700)
         } else{
             bgm[bgmNum].play(),bgm[bgmNum].fade(0,1,1000);
@@ -3021,15 +3034,22 @@ function getBattleResultText(twitterMode){
     let text="";
     if(twitterMode) text+="アバタイプで";
     text +=enemyAvatorData.name + "(CP:" +enemyAvatorData.cp +")に";
-    if(battleResult.win) text+="勝利！"
-    if(!battleResult.win) text+="敗北..."
+    if(battleResult.pWin){
+        text+="【パーフェクト勝利！】";
+    } else if(battleResult.kWin){
+        text+="【完全勝利！】";
+    } else if(battleResult.win){
+        text+="勝利！"
+    } else {
+        text+="敗北...";
+    }
     text+=spChar;
     text+="WORD: " + battleResult.point + " / 25"+spChar;
     text+="CP:" + battleResult.cp + " ACC:" + battleResult.acc;
     text+=spChar+spChar;
     for(let i = 0;i <battleResult.words.length;i++){
         if(battleResult.words[i]==1){
-            text+="⚪"
+            text+="🔴"
         } else if(battleResult.words[i]==2){
             text+="⚫"
         } else{

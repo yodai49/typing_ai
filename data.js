@@ -22,6 +22,7 @@ var onlineAvatorCol=[],onlineAvatorOrder=0,onlineAvatorStyle=[1,1],onlineShowPag
 var createAvatorStyle=0,dataFetchStatus=0,dataSaveStatus=0;//datafetchstatusは0が待機中、1は読み込み済み、2はエラー
 var deleteClass=0;
 let countDownSec;//カウントダウンを保持用
+let lastBGMID;//BGMのsetTimeOutのID保持用
 if(localStorage.getItem("avatorData") == null) firstLaunchFlg=1;
 
 var playData; //システムデータ系
@@ -238,7 +239,7 @@ function setEventAvator(event){
                         tempEventAvatorData.name = tempEventAvatorData.name.replace("*",TEAM_TEXT_JPN[event%3]);
                         tempEventAvatorData.team = event%3;
                         for(let j = 0;j < 5;j++){
-                            if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=event;
+                            if(tempEventAvatorData.item[j] == -1) tempEventAvatorData.item[j]=(tempEventAvatorData.team+1)%3;
                         }    
                     } else{
                         let eventEnemyTeam = getPseudoRandom(120,5+i)%3;
