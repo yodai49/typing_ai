@@ -3049,9 +3049,9 @@ function getBattleResultText(twitterMode){
     text+=spChar+spChar;
     for(let i = 0;i <battleResult.words.length;i++){
         if(battleResult.words[i]==1){
-            text+="🔴"
+            text+="🔶"
         } else if(battleResult.words[i]==2){
-            text+="⚫"
+            text+="⬛"
         } else{
             text+="・"
         }
