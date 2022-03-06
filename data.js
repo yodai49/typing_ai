@@ -456,7 +456,7 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
             }    
         }
     }
-    if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]]};
+    if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]],itemLevel:[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]};
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) {
         localAvator = [ //デフォルトアバターのデータ
@@ -512,6 +512,15 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
     if(battleDataSave==null || force) battleDataSave =[];
     if(tempLocalAvator==null || force) tempLocalAvator =[];
 }
+function processAddFunction(){
+    //後から追加した機能のエラーを防ぐ関数
+    if(playData.itemLevel==undefined){
+        playData.itemLevel=[];
+        for(let i = 0;i < 5;i++){
+            playData.itemLevel[i] = [0,0,0,0,0,0,0,0,0,0];
+        }
+    }
+}
 function loadData(){//データをローカルストレージから読み込む関数
     avatorData = JSON.parse(localStorage.getItem('avatorData'));
     playData = JSON.parse(localStorage.getItem('playData'));
@@ -521,6 +530,7 @@ function loadData(){//データをローカルストレージから読み込む�
     dailyMission = JSON.parse(localStorage.getItem('dailyMission'));
     battleDataSave=JSON.parse(localStorage.getItem('battleDataSave'));
     tempLocalAvator=JSON.parse(localStorage.getItem('tempLocalAvator'));
+    processAddFunction();
     setDefault();
 }
 function resetData(){//データをリセットし、変数に既定値をセットする関数

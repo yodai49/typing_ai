@@ -688,7 +688,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
             ctx2d.fillText(itemGetText,-225+(WIDTH)/2,HEIGHT/2+1.5-55);
             ctx2d.fillText("今すぐ装備しますか？",-225+(WIDTH)/2,HEIGHT/2+1.5-31);
             ctx2d.font="9pt "+JAPANESE_FONTNAME;
-            let itemGetExp = "効果：" + ITEM_DATA[msgBox[0].itemClass][msgBox[0].itemNum][2];
+            let itemGetExp = "効果：" + ITEM_DATA[msgBox[0].itemClass][msgBox[0].itemNum][2].replace("*",ITEM_DATA[msgBox[0].itemClass][msgBox[0].itemNum][3][0]);
             ctx2d.fillText(itemGetExp.substr(0,24),-239+(WIDTH)/2,HEIGHT/2+5);
             ctx2d.fillText(itemGetExp.substr(24,24),-239+(WIDTH)/2,HEIGHT/2+22);
             
@@ -997,6 +997,9 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     drawAvator(localAvator[selectBattleAvatorClass][selectBattleAvator],WIDTH/2+145,HEIGHT/2-105,WIDTH/2+255,HEIGHT/2+5,t*1.1,1);
                     drawStar(localAvator[selectBattleAvatorClass][selectBattleAvator],WIDTH/2+140,HEIGHT/2,15);
                     drawTeamCircle(WIDTH/2+150,HEIGHT/2-10,5,localAvator[selectBattleAvatorClass][selectBattleAvator].team);    
+                }
+                if(localAvator[selectBattleAvatorClass][selectBattleAvator].dropItem != undefined){
+                    drawPrl({isMsgBox:0,x1:650,y1:253,x2:720,y2:268,shadow:0,colSet:16,noDestruct:1,hoverColSet:3,hoverCounter:0,lineWidth:0.1,textSize:1.3,text:"DROP " + Math.round(localAvator[selectBattleAvatorClass][selectBattleAvator].dropProb*100) + "%",trans:-1});    
                 }
             } else{
                 drawGhost(WIDTH/2+140,HEIGHT/2-115,WIDTH/2+260,HEIGHT/2+5,t*1.1,1);
@@ -1679,84 +1682,85 @@ function getItemBonus(myAvatorData,isArray,isCoin){
     let tempBonusArray=[0,0,0,0,0];
     //ここからhead
     if(myAvatorData[0].item[0] == 1){
-        if(myAvatorData[0].team == 0) tempBonus+=5;
+        if(myAvatorData[0].team == 0) tempBonus+=ITEM_DATA[0][1][3][playData.itemLevel[0][1]];
     } else if(myAvatorData[0].item[0] == 2){
-        if(myAvatorData[0].team == 1) tempBonus+=5;
+        if(myAvatorData[0].team == 1) tempBonus+=ITEM_DATA[0][2][3][playData.itemLevel[0][2]];
     }else if(myAvatorData[0].item[0] == 3){
-        if(myAvatorData[0].team == 2) tempBonus+=5;
+        if(myAvatorData[0].team == 2) tempBonus+=ITEM_DATA[0][3][3][playData.itemLevel[0][3]];
     }else if(myAvatorData[0].item[0] == 4){
-        tempBonus+=8;        
+        tempBonus+=ITEM_DATA[0][4][3][playData.itemLevel[0][4]];;
     }else if(myAvatorData[0].item[0] == 8){
-        tempBonus+=12;
+        tempBonus+=ITEM_DATA[0][8][3][playData.itemLevel[0][8]];;
     }else if(myAvatorData[0].item[0] == 9){
-        tempBonus+=16;
+        tempBonus+=ITEM_DATA[0][9][3][playData.itemLevel[0][9]];;
     }
     tempBonusArray[0]+=tempBonus;
     //ここからbody1
     if(myAvatorData[0].item[1] == 1){
-        if(myAvatorData[0].team == 0) tempBonus+=6;
+        if(myAvatorData[0].team == 0) tempBonus+=ITEM_DATA[1][1][3][playData.itemLevel[1][1]];
     } else if(myAvatorData[0].item[1] == 2){
-        if(myAvatorData[0].team == 1) tempBonus+=6;
+        if(myAvatorData[0].team == 1) tempBonus+=ITEM_DATA[1][2][3][playData.itemLevel[1][2]];
     }else if(myAvatorData[0].item[1] == 3){
-        if(myAvatorData[0].team == 2) tempBonus+=6;
+        if(myAvatorData[0].team == 2) tempBonus+=ITEM_DATA[1][3][3][playData.itemLevel[1][3]];
     }else if(myAvatorData[0].item[1] == 4){
-        tempBonus+=10;
+        tempBonus+=ITEM_DATA[1][4][3][playData.itemLevel[1][4]];;
     }else if(myAvatorData[0].item[1] == 8){
-        tempBonus+=15;
+        tempBonus+=ITEM_DATA[1][8][3][playData.itemLevel[1][8]];
     }else if(myAvatorData[0].item[1] == 9){
-        tempBonus+=20;
+        tempBonus+=ITEM_DATA[1][9][3][playData.itemLevel[1][9]];
     }
     tempBonusArray[1]+=tempBonus-tempBonusArray[0];
     //ここからbody2
     if(myAvatorData[0].item[2] == 1){
-        if(myAvatorData[0].team == 0) tempBonus+=6;
+        if(myAvatorData[0].team == 0) tempBonus+=ITEM_DATA[2][1][3][playData.itemLevel[2][1]];
     } else if(myAvatorData[0].item[2] == 2){
-        if(myAvatorData[0].team == 1) tempBonus+=6;
+        if(myAvatorData[0].team == 1) tempBonus+=ITEM_DATA[2][2][3][playData.itemLevel[2][2]];
     }else if(myAvatorData[0].item[2] == 3){
-        if(myAvatorData[0].team == 2) tempBonus+=6;
+        if(myAvatorData[0].team == 2) tempBonus+=ITEM_DATA[2][3][3][playData.itemLevel[2][3]];
     }else if(myAvatorData[0].item[2] == 4){
-        if(enemyAvatorData.kind==1 || enemyAvatorData.kind==2) tempBonus+=5;
+        if(enemyAvatorData.kind==1 || enemyAvatorData.kind==2) tempBonus+=ITEM_DATA[2][4][3][playData.itemLevel[2][4]];
     }else if(myAvatorData[0].item[2] == 5){
-        if(enemyAvatorData.kind==1 || enemyAvatorData.kind==2) tempBonus+=15;
+        if(enemyAvatorData.kind==1 || enemyAvatorData.kind==2) tempBonus+=ITEM_DATA[2][5][3][playData.itemLevel[2][5]];
     }else if(myAvatorData[0].item[2] == 6){
-        if(battleResult.acc >= 98) tempBonus+=10;
+        if(battleResult.acc >= 98) tempBonus+=ITEM_DATA[2][6][3][playData.itemLevel[2][6]];
     }else if(myAvatorData[0].item[2] == 7){
-        if(dailyMission.detail[0].progress == dailyMission.detail[0].max && dailyMission.detail[1].progress == dailyMission.detail[1].max && dailyMission.detail[2].progress == dailyMission.detail[2].max) tempBonus+=15;
+        if(dailyMission.detail[0].progress == dailyMission.detail[0].max && dailyMission.detail[1].progress == dailyMission.detail[1].max && dailyMission.detail[2].progress == dailyMission.detail[2].max) 
+            tempBonus+=ITEM_DATA[2][7][3][playData.itemLevel[2][7]];
     }else if(myAvatorData[0].item[2] == 8){
-        if(battleResult.kWin) tempBonus+=15;
+        if(battleResult.kWin) tempBonus+=ITEM_DATA[2][8][3][playData.itemLevel[2][8]];
     }else if(myAvatorData[0].item[2] == 9){
-        if(battleResult.pWin) tempBonus+=30;
+        if(battleResult.pWin) tempBonus+=ITEM_DATA[2][9][3][playData.itemLevel[2][9]];
     }
     tempBonusArray[2]+=tempBonus-(tempBonusArray[0]+tempBonusArray[1]);
     //ここからlimbs
     if(myAvatorData[0].item[3] == 1){
-        if(dailyMission.date == 6) tempBonus+=12;
+        if(dailyMission.date == 6) tempBonus+=ITEM_DATA[3][1][3][playData.itemLevel[3][1]];
     } else if(myAvatorData[0].item[3] == 2){
-        if(dailyMission.date == 0) tempBonus+=12;
+        if(dailyMission.date == 0) tempBonus+=ITEM_DATA[3][2][3][playData.itemLevel[3][2]];
     }else if(myAvatorData[0].item[3] == 3){
-        if(dailyMission.date > 0 && dailyMission.date < 6) tempBonus+=10;
+        if(dailyMission.date > 0 && dailyMission.date < 6) tempBonus+=ITEM_DATA[3][3][3][playData.itemLevel[3][3]];
     }else if(myAvatorData[0].item[3] == 4){//闇の靴
         let myDate = new Date();
-        if(myDate.getHours() < 5 || myDate.getHours() >= 19) tempBonus+=8;
+        if(myDate.getHours() < 5 || myDate.getHours() >= 19) tempBonus+=ITEM_DATA[3][4][3][playData.itemLevel[3][4]];
     }else if(myAvatorData[0].item[3] == 8){
-        tempBonus+=10;
+        tempBonus+=ITEM_DATA[3][8][3][playData.itemLevel[3][8]];
     }else if(myAvatorData[0].item[3] == 9){
-        tempBonus+=15;
+        tempBonus+=ITEM_DATA[3][9][3][playData.itemLevel[3][9]];
     }
     tempBonusArray[3]+=tempBonus-(tempBonusArray[0]+tempBonusArray[1]+tempBonusArray[2]);
     //ここから金銀銅の処理
     if(myAvatorData[0].item[0] == 5 && myAvatorData[0].item[1] == 5 && myAvatorData[0].item[3] == 5){
-        tempBonus+=15;
+        tempBonus+=ITEM_DATA[0][5][3][playData.itemLevel[0][5]];
         tempBonusArray[0] = 5;
         tempBonusArray[1] = 8;
         tempBonusArray[2] = 2;
     } else if(myAvatorData[0].item[0] == 6 && myAvatorData[0].item[1] == 6 && myAvatorData[0].item[3] == 6){
-        tempBonus+=25;
+        tempBonus+=ITEM_DATA[0][6][3][playData.itemLevel[0][6]];
         tempBonusArray[0] = 8;
         tempBonusArray[1] = 12;
         tempBonusArray[2] = 5;
     } else if(myAvatorData[0].item[0] == 7 && myAvatorData[0].item[1] == 7 && myAvatorData[0].item[3] == 7){
-        tempBonus+=35;
+        tempBonus+=ITEM_DATA[0][7][3][playData.itemLevel[0][7]];
         tempBonusArray[0] = 10;
         tempBonusArray[1] = 20;
         tempBonusArray[2] = 5;
@@ -1764,21 +1768,21 @@ function getItemBonus(myAvatorData,isArray,isCoin){
 
     //ここからothers
     if(myAvatorData[0].item[4] == 1){
-        tempCoin++;
+        tempCoin+=ITEM_DATA[4][1][3][playData.itemLevel[4][1]];
     } else if(myAvatorData[0].item[4] == 3){
-        if(battleResult.acc <= 90) tempBonus+=10;
+        if(battleResult.acc <= 90) tempBonus+=ITEM_DATA[4][3][3][playData.itemLevel[4][3]];
     }else if(myAvatorData[0].item[4] == 4){
-        if(battleResult.pWin) tempCoin+=3;
+        if(battleResult.pWin) tempCoin+=ITEM_DATA[4][4][3][playData.itemLevel[4][4]];
     }else if(myAvatorData[0].item[4] == 5){
-        if(battleResult.cp >= 500 && battleResult.win) tempBonus+=5;
+        if(battleResult.cp >= 500 && battleResult.win) tempBonus+=ITEM_DATA[4][5][3][playData.itemLevel[4][5]];
     }else if(myAvatorData[0].item[4] == 6){
-        if(battleResult.cp >= 600 && battleResult.win) tempBonus+=10;
+        if(battleResult.cp >= 600 && battleResult.win) tempBonus+=ITEM_DATA[4][6][3][playData.itemLevel[4][6]];
     }else if(myAvatorData[0].item[4] == 7){
-        if(battleResult.cp >= 650 && battleResult.win) tempBonus+=15;
+        if(battleResult.cp >= 650 && battleResult.win) tempBonus+=ITEM_DATA[4][7][3][playData.itemLevel[4][7]];
     }else if(myAvatorData[0].item[4] == 8){
-        if(battleResult.cp >= 650 && battleResult.win && battleResult.acc >= 97) tempBonus+=20,tempCoin+=2;
+        if(battleResult.cp >= 650 && battleResult.win && battleResult.acc >= 97) tempBonus+=ITEM_DATA[4][8][3][playData.itemLevel[4][8]],tempCoin+=2;
     }else if(myAvatorData[0].item[4] == 9){
-        if(battleResult.cp >= 700 && battleResult.win && battleResult.acc >= 97) tempBonus+=25,tempCoin+=4;
+        if(battleResult.cp >= 700 && battleResult.win && battleResult.acc >= 97) tempBonus+=ITEM_DATA[4][9][3][playData.itemLevel[4][9]],tempCoin+=4;
     }
     tempBonusArray[4]+=tempBonus-(tempBonusArray[0]+tempBonusArray[1]+tempBonusArray[2]+tempBonusArray[3]);
     if(isArray) return tempBonusArray;
@@ -2520,8 +2524,8 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     drawPrl({x1:60,y1:143,x2:648,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
     drawPrl({x1:125,y1:152,x2:378,y2:331,lineWidth:2,shadow:0,colSet:11,hoverColSet:11,hoverCounter:0,textSize:0.6,text:""});
     drawPrl({x1:572,y1:90,x2:WIDTH-25,y2:HEIGHT-100,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,text:""});
-    drawPrl({x1:592,y1:140,x2:910,y2:400,shadow:0,colSet:1,hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,text:""});
-    drawPrl({x1:600,y1:348,x2:842,y2:395,shadow:0,colSet:1,trans:Math.min(1,Math.max(0,(t-selectPartsAni)/300-11/5)),hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,text:""});
+    drawPrl({x1:592,y1:140,x2:910,y2:410,shadow:0,colSet:1,hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,text:""});
+    drawPrl({x1:599,y1:348,x2:842,y2:406,shadow:0,colSet:1,trans:Math.min(1,Math.max(0,(t-selectPartsAni)/300-0/5)),hoverColSet:1,hoverCounter:0,lineWidth:3,textSize:0.95,text:""});
     for(let i = 0;i < 5;i++){
         drawPrl({x1:467+i*23,y1:312,x2:487+i*23,y2:320,lineWidth:3,shadow:0,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
         if(battleData.battle && Math.max(0,(battleData.win-battleData.battle*0.2*i)/(battleData.battle*0.2))>0) drawPrl({x1:467+i*23,y1:312,x2:469+i*23+18*Math.min(1,Math.max(0,(battleData.win-battleData.battle*0.2*i)/(battleData.battle*0.2))),y2:320,lineWidth:3,shadow:0,colSet:5,hoverColSet:0,hoverCounter:0,textSize:0.6,text:""});
@@ -2615,24 +2619,26 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
         }
         if((playData.item[selectParts][i]==0 || playData.item[selectParts][i] == 2) && ITEM_DATA[selectParts][i][1]!=-1){
             ctx2d.fillText(ITEM_DATA[selectParts][i][0],675-i*6,156+i*20);
-            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,755-i*6,142+i*20,18,18);
-            ctx2d.fillText(ITEM_DATA[selectParts][i][1],775-i*6,156+i*20);
-            ctx2d.fillText("ゴールド",805-i*6,156+i*20);
+            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,142+i*20,18,18);
+            ctx2d.fillText(ITEM_DATA[selectParts][i][1],815-i*6,156+i*20);
         } else if((playData.item[selectParts][i]==0 || playData.item[selectParts][i] == 2) && ITEM_DATA[selectParts][i][1]==-1){
             ctx2d.fillText("？？？",675-i*6,156+i*20);
-            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,755-i*6,142+i*20,18,18);
-            ctx2d.fillText("- - -",775-i*6,156+i*20);
-            ctx2d.fillText("ゴールド",805-i*6,156+i*20);
+            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,142+i*20,18,18);
+            ctx2d.fillText("- - -",815-i*6,156+i*20);
         }else{
             ctx2d.fillText(ITEM_DATA[selectParts][i][0],675-i*6,156+i*20);
             if(ITEM_DATA[selectParts][i][0]!="装備なし"){
-                ctx2d.fillText("購入済み",795-i*6,156+i*20);
+                ctx2d.fillText("購入済み",802-i*6,156+i*20);
             }
         }
     }
-    ctx2d.fillStyle=getRGBA(0,0,Math.min(1,Math.max(0,(t-selectPartsAni)/300-11/5)));
-    ctx2d.fillText(ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].substr(0,19),620,366);
-    ctx2d.fillText(ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].substr(19,19),620,383);
+    ctx2d.fillStyle=getRGBA(0,0,Math.min(1,Math.max(0,(t-selectPartsAni)/300-0/5)));
+    let itemExp = ITEM_DATA[selectParts][avatorData[0].item[selectParts]][2].replace("*",
+                ITEM_DATA[selectParts][avatorData[0].item[selectParts]][3][playData.itemLevel[selectParts][avatorData[0].item[selectParts]]]);
+    ctx2d.fillText(itemExp.substr(0,19),620,363);
+    ctx2d.fillText(itemExp.substr(19,19),620-5.1,378);
+    drawStrengthText(selectParts,avatorData[0].item[selectParts]);//強化関連テキストを描く
+    ctx2d.font="8pt " + JAPANESE_FONTNAME;
     drawStar(avatorData[0],165,368,20);
     drawTeamCircle(459,196,6,avatorData[0].team);
 
@@ -2790,6 +2796,59 @@ function processMouseEvent(){ //平行四辺形ボタンに対してのホバー
         }
     }
 }
+function drawStrengthText(parts,num){
+    //強化出来ない場合の例外処理をあとで追加　現状はundefined表示
+    ctx2d.fillText("LV" + (playData.itemLevel[parts][num]+1),660-5.1,400);
+    let strengthItem="ボーナス";
+    let strengthItem2="%";
+    if(parts==4 && num == 4 || parts==4 && num == 1) strengthItem="コイン",strengthItem2="";//PF冠のみ例外
+    ctx2d.font="7pt " + JAPANESE_FONTNAME;
+    ctx2d.fillText(strengthItem + ITEM_DATA[parts][num][3][(playData.itemLevel[parts][num])] + strengthItem2,690-5.1,400);
+    if (ITEM_DATA[parts][num][3].length-1>playData.itemLevel[parts][num]){
+        ctx2d.fillText(">" +ITEM_DATA[parts][num][3][(playData.itemLevel[parts][num]+1)] +strengthItem2,750-5.1,400);
+        ctx2d.fillText(getStrengthMoney(parts,num),800-5.1,400);
+    } else {
+        ctx2d.fillText("> - - -",750-5.1,400);
+        ctx2d.fillText("---",800-5.1,400);
+    }
+    ctx2d.drawImage(coinImg,773,384,25,25);
+}
+function processStrength(parts,num){
+    //強化を実行する関数
+    if(getStrengthAvailable(parts,num)==0) return 0;
+    if(getStrengthAvailable(parts,num)==1){
+        msgBox.push({
+            text:"強化に必要なお金が足りません。",
+            ani:t,
+            btns1:{text:"OK",onClick:function(){}}});
+        return 0;
+    }
+    msgBox.push({
+        text:getStrengthMoney(parts,num) + "ゴールドを消費して、アイテム" + ITEM_DATA[parts][num][0]+"を強化しますか？",
+        ani:t,
+        btns1:{text:"YES",onClick:function(){
+            playData.itemLevel[parts][num]++;
+            saveData();
+            msgBox.push({//何かここに強化の演出を追加したい
+                text:"アイテム"+ITEM_DATA[parts][num][0]+"を強化しました！",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){}}});    
+        }},
+        btns2:{text:"NO",onClick:function(){}}});
+}
+function getStrengthMoney(parts,num){
+    //強化に必要なお金を計算　基本、アイテムの値段で固定 -1のものは例外処理
+    let strengthMoney= Math.floor(ITEM_DATA[parts][num][1] * (0.6+playData.itemLevel[parts][num]/4));
+    if(strengthMoney<0) strengthMoney= Math.floor(ITEM_DATA[parts][num][4] * (0.6+playData.itemLevel[parts][num]/4));
+    return strengthMoney;
+}
+function getStrengthAvailable(parts,num){
+    //強化可能かどうかを判定 0なら不可能（レベルマックスor未所持）　1ならお金が足りない　2なら可能
+    if(playData.itemLevel[parts][num] >= ITEM_DATA[parts][num][3].length-1) return 0;
+    if(playData.item[parts][num]!=1) return 0;
+    if(playData.coin < getStrengthMoney) return 1;
+    return 2;
+}
 function setItemButtons(parts){
     for(let i = 0;i < prls.length;i++){
         if(0<=prls[i].id && prls[i].id<=9){ //装着のボタンなら
@@ -2804,8 +2863,8 @@ function setItemButtons(parts){
                 prls[i].sound="cursor";
             } else if(playData.item[parts][prls[i].id] == 1){
                 prls[i].text="装備中";
-                prls[i].colSet=3;
-                prls[i].hoverColSet=3;
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
                 prls[i].sound="cursor";
             } else if(playData.item[parts][prls[i].id] == 2){
                 prls[i].text="購入";
@@ -2814,10 +2873,18 @@ function setItemButtons(parts){
                 prls[i].sound="cursor";
             } else if(playData.item[parts][prls[i].id] == 3){
                 prls[i].text="装備";
-                prls[i].colSet=14;
-                prls[i].hoverColSet=1;
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
                 prls[i].sound="puton";
             } 
+        } else if(prls[i].id==99){//強化ボタンなら
+            if(0!=getStrengthAvailable(selectParts,avatorData[0].item[parts])){
+                prls[i].colSet=3;
+                prls[i].hoverColSet=4;
+            } else {
+                prls[i].colSet=13;
+                prls[i].hoverColSet=13;
+            }
         }
     }
 }
@@ -3207,7 +3274,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                 sendChangeRequest(selectParts,i);
             }});
         }
-        setItemButtons(selectParts);
+//        setItemButtons(selectParts);
         prls.push({x1:650,y1:HEIGHT-90,x2:826,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,sound:"cancel",text:"BACK",subText:"戻る",onClick:function(){
             /* 試着中のアイテムをチェック　*/
             let selectingFlg=0;
@@ -3234,6 +3301,10 @@ function changeScene(prev,next){ //シーン遷移の関数
             } else {
                 nextScene=2,sceneAni=t,setAvatorData(0),saveData();}}
             });
+        prls.push({x1:604,y1:388,x2:650,y2:403,shadow:0,lineWidth:2,id:99,colSet:3,hoverColSet:4,hoverCounter:0,textSize:1.2,text:"強化！",onClick:function(){
+            //強化の処理
+            processStrength(selectParts,avatorData[0].item[selectParts]);
+        }});
         prls.push({x1:589,y1:157,x2:629,y2:177,shadow:0,lineWidth:2,colSet:13,hoverColSet:11,hoverCounter:0,textSize:1,text:"変更",onClick:function(){
             msgBox.push({changeNameWindow:1,
                 text:"",
@@ -3251,6 +3322,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                     ani:t,
                     btns1:{text:"OK",onClick:function(){}}})
             }}});
+        setItemButtons(selectParts);
     
     } else if(next==6){//アバター管理
         ctx2dImg.drawImage(backImg[4],0,0,WIDTH,HEIGHT);
@@ -3372,7 +3444,7 @@ function changeScene(prev,next){ //シーン遷移の関数
         prls.push({x1:776,y1:152,x2:930,y2:182,id:9,shadow:0,colSet:3,hoverColSet:4,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバター作成！",onClick:function(){
             if(getAvailableCreateAvator()==1){//新規作成
                 msgBox.push({
-                    text:"アバターを作成すると、誰でもあなたのアバターと対戦出来るようになります。アバターを作成しますか？",
+                    text:"アバターをオンライン上に作成すると、誰でもあなたのアバターと対戦出来るようになります。アバターを作成しますか？",
                     ani:t,
                     btns1:{text:"YES",onClick:function(){
                         //自分のアバターを作成する処理をここに追加
