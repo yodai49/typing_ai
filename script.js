@@ -2548,8 +2548,8 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText("LV.",120,360);
     ctx2d.fillText("EXP",210,360);
     ctx2d.font="12pt " + JAPANESE_FONTNAME;
-    ctx2d.drawImage(coinImg,590,408,33,33);
-    ctx2d.fillText("所持コイン",620,430);
+    ctx2d.drawImage(coinImg,584,408,33,33);
+    ctx2d.fillText("所持コイン",614,430);
     ctx2d.font="10pt " + JAPANESE_FONTNAME;
     ctx2d.fillText("ゴールド",775,430);
     ctx2d.fillText("CP(" + INPUT_STYLE_SHORT[playData.settings[0]] +")",367,242);
@@ -2827,8 +2827,10 @@ function processStrength(parts,num){
         text:getStrengthMoney(parts,num) + "ゴールドを消費して、アイテム" + ITEM_DATA[parts][num][0]+"を強化しますか？",
         ani:t,
         btns1:{text:"YES",onClick:function(){
+            playData.coin=Math.max(0,playData.coin-getStrengthMoney(parts,num));
             playData.itemLevel[parts][num]++;
             saveData();
+            setItemButtons(selectParts);
             msgBox.push({//何かここに強化の演出を追加したい
                 text:"アイテム"+ITEM_DATA[parts][num][0]+"を強化しました！",
                 ani:t,
@@ -2846,7 +2848,7 @@ function getStrengthAvailable(parts,num){
     //強化可能かどうかを判定 0なら不可能（レベルマックスor未所持）　1ならお金が足りない　2なら可能
     if(playData.itemLevel[parts][num] >= ITEM_DATA[parts][num][3].length-1) return 0;
     if(playData.item[parts][num]!=1) return 0;
-    if(playData.coin < getStrengthMoney) return 1;
+    if(playData.coin < getStrengthMoney(parts,num)) return 1;
     return 2;
 }
 function setItemButtons(parts){
@@ -3331,11 +3333,12 @@ function changeScene(prev,next){ //シーン遷移の関数
         prls.push({x1:51,y1:280,x2:116,y2:340,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"＜",onClick:function(){
             onlineShowPage--;
             if(onlineShowPage<0) onlineShowPage=Math.max(0,Math.floor((showEnemyAvator.length-1)/4));
+            setOrderButton();
         }});
         prls.push({x1:641,y1:280,x2:706,y2:340,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.8,text:"＞",onClick:function(){
             onlineShowPage++;
             if(onlineShowPage && Math.floor((showEnemyAvator.length-1)/4)<onlineShowPage) onlineShowPage= 0;
-
+            setOrderButton();
         }});
         prls.push({x1:700,y1:145,x2:940,y2:HEIGHT-130,colSet:0,hoverColSet:0,hoverCounter:0,textSize:0.8,text:""});
         prls.push({x1:620,y1:115,x2:699,y2:140,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,shadow:0,sound:"window",text:"削除",onClick:function(){
