@@ -258,6 +258,10 @@ function init() {
     nWinImg=new Image();
     nWinImg.src="./img/nwin.png";
     nWinImg.onload=()=>{imgLoadedCnt++};
+    for(let i = 0;i < 3;i++) silhoutteImg[i]= new Image();
+    silhoutteImg[0].src="./img/return.png";
+    silhoutteImg[1].src="./img/battle.png";
+    silhoutteImg[2].src="./img/setting.png";
     for(let i = 0;i < 6;i++) efImg[i] = new Image(),efImg[i].src="./img/typingEf" + i + ".png",efImg[i].onload=()=>{
         imgLoadedCnt++
         ctxHid.drawImage(efImg[i],0,i*120,1200,120);
@@ -265,6 +269,7 @@ function init() {
     for(var i = 0;i < 7;i++) starImg[i] = new Image(),starImg[i].src="./img/star_" + i + ".png";
     for(var i = 0;i < backImg.length;i++) backImg[i].onload=()=>{imgLoadedCnt++};
     for(var i = 0;i < starImg.length;i++) starImg[i].onload=()=>{imgLoadedCnt++};
+    for(var i = 0;i < 3;i++) silhoutteImg[i].onload=()=>{imgLoadedCnt++};
     for(var i  = 0;i < 7;i++){
         otherPartsImg[i] = new Image();
         if(i ==0){

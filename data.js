@@ -11,6 +11,7 @@ var starImg=[];//スターの画像格納用
 var otherPartsImg=[];//冠、剣の画像
 var coinImg,arrowImg;//コインと矢印の画像
 var pWinImg,kWinImg,nWinImg;
+var silhoutteImg=[];//シルエットの画像
 var efImg=[];
 var firstLaunchFlg=0;//初回起動を検知するフラグ
 var selectParts=0,selectPartsAni=0;//着せかえ画面で選択中のパーツを保存
@@ -456,7 +457,9 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
             }    
         }
     }
-    if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]],itemLevel:[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]};
+    if(playData==null || force) playData = {coin:0,exp:0,level:1,settings:[0,1,0,0,0,0,0,0,0],item:[[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0]],
+        itemLevel:[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]],
+        itemDiscount:[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]};
     if (battleData==null || force) battleData = {battle:0,win:0,esc:0,stroke:0,word:0,miss:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(localAvator==null || force) {
         localAvator = [ //デフォルトアバターのデータ
@@ -518,6 +521,12 @@ function processAddFunction(){
         playData.itemLevel=[];
         for(let i = 0;i < 5;i++){
             playData.itemLevel[i] = [0,0,0,0,0,0,0,0,0,0];
+        }
+    }
+    if(playData.itemDiscount==undefined){//割引
+        playData.itemDiscount=[];
+        for(let i = 0;i < 5;i++){
+            playData.itemDiscount[i] = [0,0,0,0,0,0,0,0,0,0];
         }
     }
 }

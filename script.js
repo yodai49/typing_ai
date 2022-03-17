@@ -47,6 +47,40 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
                 }
             }
         }
+    } else{//ショートカットキーの場合　シーンごとに分岐→キーを判断
+        if(msgBox.length){//メッセージボックス表示中
+            if(scene==2 && msgBox[0].selectBattleAvatorWindow){//相手の選択ウィンドウ
+                if(myKey=="b") clickX=WIDTH/2+130,clickY=HEIGHT/2+135;
+                if(myKey=="c") clickX=WIDTH/2,clickY=HEIGHT/2+145;
+                if(myKey=="f") clickX=WIDTH/2-197+(selectBattleAvatorClass-1)*48+20,clickY=HEIGHT/2-152;
+                if(myKey=="j") clickX=WIDTH/2-197+(selectBattleAvatorClass+1)*48+20,clickY=HEIGHT/2-152;
+                if(myKey=="i") clickX=WIDTH/2-25-(selectBattleAvator-1)*9+15,clickY=HEIGHT/2-78+(selectBattleAvator-1)*30+10;
+                if(myKey=="m") clickX=WIDTH/2-25-(selectBattleAvator+1)*9+15,clickY=HEIGHT/2-78+(selectBattleAvator+1)*30+10;
+            } else if(msgBox[0].btns2!=undefined) {//ニ択のメッセージボックス
+                if(myKey==String(msgBox[0].btns1.text.substr(0,1)).toLowerCase())  clickX=WIDTH/2-60,clickY=HEIGHT/2+40;
+                if(myKey==String(msgBox[0].btns2.text.substr(0,1)).toLowerCase()) clickX=WIDTH/2+60,clickY=HEIGHT/2+40;
+            } else if(msgBox[0].btns1!=undefined){
+                if(myKey==String(msgBox[0].btns1.text.substr(0,1)).toLowerCase() || myKeyCode==13 || myKeyCode==32)  clickX=WIDTH/2,clickY=HEIGHT/2+40;
+            }
+        } else if(scene==2){//メニュー
+            if(myKey=="b") clickX=250,clickY=200;
+            if(myKey=="t") clickX=650,clickY=150;
+            if(myKey=="s") clickX=650,clickY=250;
+            if(myKey=="a") clickX=250,clickY=400;    
+        } else if(scene==4){ //結果
+            if(myKey=="t") clickX=460,clickY=120;
+            if(myKey=="c") clickX=525,clickY=120;
+            if(myKey=="s") clickX=570,clickY=120;
+            if(myKey=="r") clickX=720,clickY=HEIGHT-130;    
+            if(myKey=="b") clickX=700,clickY=HEIGHT-60;    
+        } else if(scene==5){//アバターきせかえ
+            if(myKey=="b") clickX=700,clickY=HEIGHT-60;
+        } else if(scene==6){//アバターダウンロード
+            if(myKey=="b") clickX=760,clickY=HEIGHT-90;
+        }else if(scene==7){//設定
+            if(myKey=="c") clickX=800,clickY=HEIGHT-90;
+            if(myKey=="s") clickX=630,clickY=HEIGHT-90;
+        }
     }
 }  
 
@@ -1087,10 +1121,9 @@ function setAvatorSelectButton(myLocalAvator){
 }
 function drawMenuOnce(){
     //メニュー画面のうち一回しか描画しないものを描画　一時的にctx2dを変更
-    ctx2d=document.getElementById("myCanvas3_5").getContext("2d");
-
-
-    ctx2d=document.getElementById("myCanvas").getContext("2d");
+    var ctx2dSil=document.getElementById("myCanvas3_5").getContext("2d");
+/*    ctx2d=document.getElementById("myCanvas3_5").getContext("2d");
+    ctx2d=document.getElementById("myCanvas").getContext("2d");*/
 }
 function drawMenu(){
     pfnw=performance.now();
@@ -1136,6 +1169,11 @@ function drawMenu(){
     ctx2d.fillText("LV. " + playData.level,WIDTH-ctx2d.measureText("LV. " + playData.level).width-30,24);
     drawStar(avatorData[0],WIDTH-122,32,21);
     drawAvator(avatorData[0],5,5,55,55,t,1);//アバターの画像
+    //シルエット
+    ctx2d.drawImage(silhoutteImg[1],140,230,80,80);
+    ctx2d.drawImage(silhoutteImg[2],590,249,30,50);
+    ctx2d.drawImage(silhoutteImg[0],610,130,45,50);
+
     drawLoadingCircle(WIDTH/2+110,30,15,-t/2.7,1000); //メニューバーここまで
     drawAvator(avatorData[0],165,375,245,455,t+72,1);//アバター横のアバター画像
     ctx2d.font="14pt " + JAPANESE_FONTNAME;
@@ -2548,10 +2586,10 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText("LV.",120,360);
     ctx2d.fillText("EXP",210,360);
     ctx2d.font="12pt " + JAPANESE_FONTNAME;
-    ctx2d.drawImage(coinImg,584,408,33,33);
-    ctx2d.fillText("所持コイン",614,430);
+    ctx2d.drawImage(coinImg,578,408,33,33);
+    ctx2d.fillText("所持コイン",608,430);
     ctx2d.font="10pt " + JAPANESE_FONTNAME;
-    ctx2d.fillText("ゴールド",775,430);
+    ctx2d.fillText("ゴールド",769,430);
     ctx2d.fillText("CP(" + INPUT_STYLE_SHORT[playData.settings[0]] +")",367,242);
     ctx2d.fillText("kpm(R)",358,272);
     ctx2d.fillText("kpm(K)",349,302);
@@ -2581,7 +2619,7 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
     ctx2d.fillText(processShowData(battleData.stroke),472,437,100);
     ctx2d.fillText(processShowData(battleData.battle),464.5,462);
     ctx2d.fillText(processShowData(battleData.esc),457,487);
-    ctx2d.fillText(playData.coin,765-ctx2d.measureText(playData.coin).width,430);
+    ctx2d.fillText(playData.coin,759-ctx2d.measureText(playData.coin).width,430);
     ctx2d.fillText(processShowData(getNextLvExp(playData)),160-ctx2d.measureText(processShowData(getNextLvExp(playData))).width/2,457);
     ctx2d.strokeStyle=getRGBA(0,0,1);//　　円（星）
     ctx2d.lineWidth=5;
@@ -2619,16 +2657,25 @@ function drawAvator1(){ ///アバターきせかえ画面の描画関数
         }
         if((playData.item[selectParts][i]==0 || playData.item[selectParts][i] == 2) && ITEM_DATA[selectParts][i][1]!=-1){
             ctx2d.fillText(ITEM_DATA[selectParts][i][0],675-i*6,156+i*20);
-            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,142+i*20,18,18);
-            ctx2d.fillText(ITEM_DATA[selectParts][i][1],815-i*6,156+i*20);
+            ctx2d.fillText(getDiscountPrice(ITEM_DATA[selectParts][i][1],playData.itemDiscount[selectParts][i]),814-i*6,156+i*20);
+            if(playData.itemDiscount[selectParts][i]){
+                ctx2d.fillRect(798-i*6,145+i*20,20,1);
+                ctx2d.font="6pt " + JAPANESE_FONTNAME;
+                ctx2d.fillText(getDiscountPrice(ITEM_DATA[selectParts][i][1],0),800-i*6,148+i*20,23);
+                drawPrl({x1:815-i*6-75,y1:156+i*20-11,x2:815-i*6-28,y2:156+i*20+3,lineWidth:0.1,shadow:0,colSet:3,hoverColSet:13,hoverCounter:0,trans:Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5)),textSize:1.2,text:"50%OFF"});
+                ctx2d.font="8pt " + JAPANESE_FONTNAME;
+                if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,144+i*20,18,18);
+            } else{
+                if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,144+i*20,18,18);
+            }
         } else if((playData.item[selectParts][i]==0 || playData.item[selectParts][i] == 2) && ITEM_DATA[selectParts][i][1]==-1){
             ctx2d.fillText("？？？",675-i*6,156+i*20);
-            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,142+i*20,18,18);
+            if(Math.min(1,Math.max(0,(t-selectPartsAni)/300-i/5))>0.5) ctx2d.drawImage(coinImg,795-i*6,144+i*20,18,18);
             ctx2d.fillText("- - -",815-i*6,156+i*20);
         }else{
             ctx2d.fillText(ITEM_DATA[selectParts][i][0],675-i*6,156+i*20);
             if(ITEM_DATA[selectParts][i][0]!="装備なし"){
-                ctx2d.fillText("購入済み",802-i*6,156+i*20);
+                ctx2d.fillText("購入済み",772-i*6,156+i*20);
             }
         }
     }
@@ -2851,6 +2898,22 @@ function getStrengthAvailable(parts,num){
     if(playData.coin < getStrengthMoney(parts,num)) return 1;
     return 2;
 }
+function setDiscount(){//割引額をセットする関数
+    for(let i = 0;i < 5;i++){
+        for(let j = 0;j < 10;j++){
+            //ここに割引をセットする処理を追加
+            playData.itemDiscount[i][j] = 0;
+            if(getPseudoRandom(30+j,13+10*i+j) < 2){
+                playData.itemDiscount[i][j]=1;
+            }
+        }
+    }
+}
+function getDiscountPrice(price,discount){
+    //値引き後の値段を返す関数
+    if(discount) return Math.ceil(price/2);
+    return price;
+}
 function setItemButtons(parts){
     for(let i = 0;i < prls.length;i++){
         if(0<=prls[i].id && prls[i].id<=9){ //装着のボタンなら
@@ -2902,7 +2965,7 @@ function sendChangeRequest(parts,num){
 
     } else if(playData.item[parts][num] == 2){ //試着時
         //購入の可否を判断
-        if(playData.coin < ITEM_DATA[parts][num][1]){
+        if(playData.coin < getDiscountPrice(ITEM_DATA[parts][num][1],playData.itemDiscount[parts][num])){
             msgBox.push({
                 text:"コインが足りません。",
                 ani:t,
@@ -2917,7 +2980,7 @@ function sendChangeRequest(parts,num){
                         if(playData.item[parts][i] == 2) playData.item[parts][i] = 0; 
                     }
                     playData.item[parts][num] = 1;
-                    playData.coin-=ITEM_DATA[parts][num][1];
+                    playData.coin-=getDiscountPrice(ITEM_DATA[parts][num][1],playData.itemDiscount[parts][num]);
                     avatorData[0].item[parts] = num;
                     setAvatorData(0);
                     saveData();
@@ -2951,11 +3014,11 @@ function playPrlSE(myPrl){
         playSE("enter");
     } else {
         playSE("cursor");
-    }                    
+    }
 }
 function processClick(){
     for(var i = 0;i < prls.length;i++){
-        if(prls[i].hoverCounter && sceneAni==0) {
+        if(sceneAni==0) {
             if(clickY>prls[i].y1 && clickY<prls[i].y2 && clickX>prls[i].x1+(prls[i].y2-prls[i].y1)*0.3 && clickX<prls[i].x2-(prls[i].y2-prls[i].y1)*0.3){
                 if(!(msgBox.length && prls[i].isMsgBox!=1) && prls[i].onClick!=undefined){ //メッセージボックス表示中なら、メッセージボックス以外スルー　onclickが定義されていない場合もスルー
                     playPrlSE(prls[i]);
@@ -3158,6 +3221,7 @@ function changeScene(prev,next){ //シーン遷移の関数
         }})
     } else if(next == 2){//メニュー
         ctx2dImg.drawImage(backImg[0],0,0,WIDTH,HEIGHT);
+        drawMenuOnce();
         prls.push({x1:570,y1:110,x2:873,y2:205,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.5,sound:"cursor",text:"TITLE",subText:"タイトル",onClick:function(){
             msgBox.push({
                 text:"本当にタイトルに戻りますか？",
@@ -3245,10 +3309,6 @@ function changeScene(prev,next){ //シーン遷移の関数
             a.href = resultCanvas.toDataURL('image/jpeg', 0.85);
             a.download = 'AVA-TYPE_'+enemyAvatorData.name + '_'+ getDayText() + '.jpg';
             a.click();
-/*            msgBox.push({
-                text:"リザルト画面のスクリーンショットを保存しました！",
-                ani:t,
-                btns1:{text:"OK",onClick:function(){}}});*/
         }});//結果のスクショ
     } else if(next==5){//アバター　きせかえ
         ctx2dImg.drawImage(backImg[5],0,0,WIDTH,HEIGHT);
@@ -3276,7 +3336,6 @@ function changeScene(prev,next){ //シーン遷移の関数
                 sendChangeRequest(selectParts,i);
             }});
         }
-//        setItemButtons(selectParts);
         prls.push({x1:650,y1:HEIGHT-90,x2:826,y2:HEIGHT-30,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,sound:"cancel",text:"BACK",subText:"戻る",onClick:function(){
             /* 試着中のアイテムをチェック　*/
             let selectingFlg=0;
@@ -3324,6 +3383,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                     ani:t,
                     btns1:{text:"OK",onClick:function(){}}})
             }}});
+        setDiscount();
         setItemButtons(selectParts);
     
     } else if(next==6){//アバター管理
