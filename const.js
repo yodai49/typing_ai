@@ -6,7 +6,7 @@ const JAPANESE_FONTNAME = "Stick";
 const TYPING_FONTNAME="sans-serif";
 const DEBUG_MODE=0;//数字の番号のシーンからスタート ONにするとアバターは毎回更新
 var tuningX=[0,0,0,0,0],tuningY=[0,0,0,0,0];//位置の調整用
-const IMG_CNT = 76;//読みこむイメージ等の総数
+const IMG_CNT = 77;//読みこむイメージ等の総数
 const FETCH_NUM=500;//一度にアバター一覧から取ってくる個数
 const COEF_R2K=1.5;//ローマ字からカナへのkpm変換の係数
 const TEAM_BONUS = 25;//チームのボーナス値　%で指定
@@ -40,6 +40,7 @@ const SETTING_NAME=[
     "相手の打鍵音",
     "データのリセット"
 ]
+const EVENT_NAME=["","RED","BLUE","YELLOW","EXP","ゴールド大放出"];
 const EVENT_EXP=[
     ["ミッションをクリアしてコインを貯めよう！","全ミッションクリア後に勝利で2コイン獲得！"],
     ["イベント限定アバター出現中！","REDチームはボーナス25%＋1ゴールド獲得！","全ミッションクリア後に勝利で2コイン獲得！"],

@@ -172,9 +172,13 @@ function setSounds(){//サウンドのセットを行う
                 loop:false,
                 volume:0.6,
                 onload:(e)=>{imgLoadedCnt++}}),
-        new Howl({src:['./sound/screenshot.mp3'], //3
+        new Howl({src:['./sound/screenshot.mp3'], //33
                 loop:false,
                 volume:0.6,
+                onload:(e)=>{imgLoadedCnt++}}),
+        new Howl({src:['./sound/star.mp3'], //34
+                loop:false,
+                volume:1,
                 onload:(e)=>{imgLoadedCnt++}}),
     ]
 }

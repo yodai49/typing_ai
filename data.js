@@ -510,7 +510,7 @@ function setDefault(force){ //プレイデータの変数に既定値をセッ�
     if(todayBattleData==null || force) todayBattleData = {battle:0,win:0,esc:0,stroke:0,miss:0,word:0,detail:[{battle:0,win:0},{battle:0,win:0},{battle:0,win:0}]};
     if(dailyMission==null || force) {
         dailyMission = {date:null,battle:0,win:0,totalStroke:0,word:0,event:0,detail:[{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0},{type:0,require:0,team:0,max:0,progress:0,achieve:0}]};
-        setDailyMission();
+//        setDailyMission();
     }
     if(battleDataSave==null || force) battleDataSave =[];
     if(tempLocalAvator==null || force) tempLocalAvator =[];
@@ -654,6 +654,19 @@ function setBattleDataSave(myId,myBattleResult){
     battleDataSave.push({id:myId,battle:1,win:myBattleResult.win,kWin:myBattleResult.kWin,pWin:myBattleResult.pWin,date:"00000000"});
     return 1;
 }
+function setRankToLocalAvator(){
+    //CP順に並び替え
+    tempLocalAvator.sort((a,b)=>-Number(a.cp)+Number(b.cp));
+    let tempRankGen=1,tempRankK=1,tempRankR=1;
+    for(let i = 0;i < tempLocalAvator.length;i++){
+        tempLocalAvator[i].rankGen=-1;
+        tempLocalAvator[i].rankK=-1;
+        tempLocalAvator[i].rankR=-1;
+        tempLocalAvator[i].rankGen=tempRankGen,tempRankGen++;
+        if(tempLocalAvator[i].style == 0) tempLocalAvator[i].rankR=tempRankR,tempRankR++;
+        if(tempLocalAvator[i].style == 1) tempLocalAvator[i].rankK=tempRankK,tempRankK++;
+    }
+}
 function setNCMBEnemyAvator(force){
     let ncmb = new NCMB(
         "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
@@ -686,14 +699,15 @@ function setNCMBEnemyAvator(force){
             if(tempLocalAvator[i].cp-avatorData[playData.settings[0]].cp > 50) tempClass=0;//格上
             if(tempLocalAvator[i].cp-avatorData[playData.settings[0]].cp < -50) tempClass=2;//格下
             let tempTeamCoef = 1;
+            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 1) tempTeamCoef=0.95;
             if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=1.2;
-            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=0.8;
-            tempLocalAvator[i].recommendation = (0.5 + 1/(Math.abs(avatorData[playData.settings[0]].cp - tempLocalAvator[i].cp)+1));//ここからおすすめ度をセットする処理を追加
+            tempLocalAvator[i].recommendation = (0.5 + Math.pow(Math.abs(avatorData[playData.settings[0]].cp - tempLocalAvator[i].cp)+1,-0.5));//ここからおすすめ度をセットする処理を追加
             //tempLocalAvator[i].recommendation*=(10 + battleData.detail[tempClass].battle) / (10+battleData.detail[0].battle+battleData.detail[1].battle+battleData.detail[2].battle);
             tempLocalAvator[i].recommendation*=tempTeamCoef;
             if(isMyId(tempLocalAvator[i].id)) tempLocalAvator[i].recommendation*=0.6;
         }
         dataFetchStatus=1;
+        setRankToLocalAvator();//ランクをセットする
         setShowLocalAvator(0);//表示を既定値でセットする
         setOrderButton();
         saveData();//取得後にセーブする

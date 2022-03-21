@@ -19,7 +19,7 @@ const OPT_SET=[
     ["zya","ja"],["zi","ji"],["zyu","ju"],["zye","je"],["zyo","jo"],
     ["hu","fu","cs"],["ti","chi"],["si","shi"]]
 
-function getParialKpm(myTypingData,begin,end){//beginからendまでのkpmを計測　初速は省いて処理
+function getPartialKpm(myTypingData,begin,end){//beginからendまでのkpmを計測　初速は省いて処理
     let tempCount=0,tempKpm=-1;
     for(let i = 0;i < end-begin;i++){
 //        console.log(begin+i+1,myTypingData.length);
@@ -81,7 +81,7 @@ function analyzeTyping(style,typingData){
         }
         if(!typingData[i].isMiss){//ミスではない時
             if(!typingData[i].isFirst){//1文字目ではなかったら、データの分析に加算
-                let charKpm= Math.min(
+                let charKpm= Math.max(
                     60000/(typingData[i].time-tempCorrectTime),
                     baseKpm/5);//その文字のkpm 全体の5分の1以下は外れ値として処理
                 let charStab=Math.min(Math.pow(baseKpm,2),Math.pow(charKpm-baseKpm,2))/Math.pow(baseKpm,2);//乱れ度合い　baseKpmの2倍の二乗まで
@@ -102,9 +102,9 @@ function analyzeTyping(style,typingData){
                 }
                 if(i>=10){//10文字目以降、スピードテンソルの処理
                     let kpmRatio369=[
-                        getParialKpm(typingData,i-4,i-1)/baseKpm,
-                        getParialKpm(typingData,i-7,i-1)/baseKpm,
-                        getParialKpm(typingData,i-10,i-1)/baseKpm];
+                        getPartialKpm(typingData,i-4,i-1)/baseKpm,
+                        getPartialKpm(typingData,i-7,i-1)/baseKpm,
+                        getPartialKpm(typingData,i-10,i-1)/baseKpm];
                     let class369=[CLASS_KPM_RATIO.length-1,CLASS_KPM_RATIO.length-1,CLASS_KPM_RATIO.length-1];
                     for(let i = 0;i < 3;i++){
                         for(let j = 0;j<CLASS_KPM_RATIO.length;j++){
