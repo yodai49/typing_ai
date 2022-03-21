@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta charset="utf-8"/>
     <script src="./const.js"></script>
     <script src="./loadTitle.js"></script>
     <script src="./data.js"></script>
@@ -16,25 +16,46 @@
     <link rel="stylesheet" href="./stylesheet.css">
   </head>
   <body>
-    <div class="canvasWrapper" id="canvasWrapper">
-      <canvas class="gameCanvas gameCanvas4" id="myCanvas4" width="960" height="540"></canvas>
-      <canvas class="gameCanvas gameCanvas3_5" id="myCanvas3_5" width="960" height="540"></canvas>
-      <canvas class="gameCanvas gameCanvas2_5" id="myCanvas2_5" width="960" height="540"></canvas>
-      <canvas class="gameCanvas gameCanvas2_3" id="myCanvas2_3" width="960" height="540"></canvas>
-      <canvas class="gameCanvas gameCanvas3"  id="myCanvas" width="960" height="540"></canvas>
-      <canvas class="gameCanvas gameCanvas1" id="myCanvas2" width="960" height="540"></canvas>
-      <canvas class="hidCanvas displayNone" id="hiddenCanvas" width="1200" height="720"></canvas>
-      <input type="text" class="nameBoxCreate" id="nameBoxCreate">
-      <input type="text" class="nameBoxChange" id="nameBoxChange">
+    <div class="header">
+      <div >
+        <a class="logo" href="./index.html">AVA-TYPE</a>
+        
+      </div>
+    </div>
+    <div class="forPC">
+      <div class="backBlack">
+      </div>
+      <div class="canvasWrapper" id="canvasWrapper">
+        <canvas class="gameCanvas gameCanvas4" id="myCanvas4" width="960" height="540"></canvas>
+        <canvas class="gameCanvas gameCanvas3_5" id="myCanvas3_5" width="960" height="540"></canvas>
+        <canvas class="gameCanvas gameCanvas2_5" id="myCanvas2_5" width="960" height="540"></canvas>
+        <canvas class="gameCanvas gameCanvas2_3" id="myCanvas2_3" width="960" height="540"></canvas>
+        <canvas class="gameCanvas gameCanvas3"  id="myCanvas" width="960" height="540"></canvas>
+        <canvas class="gameCanvas gameCanvas1" id="myCanvas2" width="960" height="540"></canvas>
+        <canvas class="hidCanvas displayNone" id="hiddenCanvas" width="1200" height="720"></canvas>
+        <input type="text" class="nameBoxCreate" id="nameBoxCreate">
+        <input type="text" class="nameBoxChange" id="nameBoxChange">
+      </div>
+      <div class="pad20"></div>
+      <div class="dataButtons">
+        <label class="dataButton dataButtonsLeft">
+          プレイデータの読込
+          <input class="dataButton-bt" type="file" id="uploadFile" accept=".ava">
+        </label>
+        <label class="dataButton dataButtonsRight">
+          プレイデータの保存
+          <button class="dataButton-bt" id="downloadFile"></button>
+        </label>  
+      </div>
     </div>
     <div class="pad20"></div>
-    <label class="dataButton">
-      プレイデータの読込
-      <input class="dataButton-bt" type="file" id="uploadFile" accept=".ava">
-    </label>
-    <label class="dataButton">
-      プレイデータの保存
-      <button class="dataButton-bt" id="downloadFile"></button>
-    </label>
+    <h1>遊び方</h1>
+    <h1>動作環境</h1>
+    <div class="forTablet">
+      このウィンドウサイズではプレイできません！
+    </div>
+    <div class="footer">
+      Copyright © 2021- TOL All Rights Reserved.　<a href="./kiyaku">利用規約</a>
+    </div>
   </body>
 </html>

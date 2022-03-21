@@ -3,7 +3,9 @@
     padding:0;
 }
 body{
-    min-width:1020px;
+    color:white;
+    font-family:"Orbitron","Stick";
+    background-color: rgb(201, 201, 212);
 }
 @font-face {
 src: url("./font/Stick.woff") format("woff");
@@ -31,6 +33,21 @@ font-display: swap;
     font-style: normal;
     font-display: swap;
 }
+.header{
+    background-color: rgba(100,100,110,0.8);
+    color:black;
+    padding:20px;
+    position:fixed;
+    top:0;
+    z-index:1000;
+}
+:link,:visited,:hover,:active{
+    color: white;
+    text-decoration: none;
+}
+.logo{
+    font-size:20px;
+}
 .gameCanvas{
     position:absolute;
     left:0;
@@ -42,6 +59,17 @@ font-display: swap;
     position:relative;
     height:540px;
     width:100%;
+    margin-top:80px;
+}
+.backBlack{
+    position:fixed;
+    background-color: rgba(0,0,0,0.9);
+    top:0;
+    width:1060px;
+    margin-left:calc(50% - 530px);
+    margin-right:calc(50% - 530px);
+    height:100%;
+    z-index:-1;
 }
 .gameCanvas1{
     z-index:10;
@@ -97,20 +125,21 @@ font-display: swap;
     transition:all 0.3s;
 }
 .dataButton{
-    height:40px;
+    position:absolute;
     width:300px;
     font-family:"Stick";
     color:white;
-    background-color:black;
+    background-color:rgba(40,40,40,1);;
     transition: all 0.3s;
     padding:10px;
     margin:20px;
+    text-align: center;
     border-bottom-style:solid;
     border-bottom-width:1px;
-    border-bottom-color:gray;
+    border-bottom-color:rgba(0,0,0,1);
     border-right-style:solid;
     border-right-width:1px;
-    border-right-color:gray;
+    border-right-color:rgba(0,0,0,1);
 }
 .dataButton:hover{
     background-color:rgba(60,60,60,1);
@@ -118,6 +147,43 @@ font-display: swap;
 .dataButton-bt{
     display:none;
 }
+.dataButtons{
+    left:0;
+    right:0;
+    height:100px;
+    position:relative;
+    margin:auto;
+}
+.dataButtonsLeft{
+    left:calc(50% - 320px);
+}
+.dataButtonsRight{
+    left:calc(50% + 20px);
+}
+@media (max-width : 960px) {
+    .forPC{
+        display: none;
+    }
+    .forTablet{
+        display:inline;
+    }
+}
+@media (min-width : 961px) {
+    .forPC{
+        display:inline;
+    }
+    .forTablet{
+        display: none;
+    }
+}
 .pad20{
     height:20px;
+}
+.footer{
+    background-color:black;
+    color:white;
+    text-align:center;
+    font-size:0.8rem;
+    padding:15px;
+    z-index:1000;
 }
