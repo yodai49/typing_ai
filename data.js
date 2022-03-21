@@ -5,7 +5,7 @@ var sceneAni=0;//シーンのアニメーション
 var ctx2d,ctx2dImg,ctx2dSt,ctx2dCr,ctx2dSt2,ctx2d2,ctxHid;//キャンバス（メイン）とキャンバス（背景画像）とキャンバス（静止用）
 var canHid;
 // ctx2d 動く一番上　＞　ctx2dSt2 静止の一番上　＞　ctx2d メインキャンバス　＞　ctx2dSt 静止用　＞　ctx2dCr　サークル用　＞　ctx2dImg　背景用　の順番に積み上げ
-var mouseX=0,mouseY=0,clickX=0,clickY=0,mouseStatus=0;
+var mouseX=0,mouseY=0,clickX=0,clickY=0,mouseStatus=0,delayMouseX=WIDTH/2,delayMouseY=HEIGHT/2;
 var backImg= [],imgLoadedCnt=0;//背景イメージ格納用
 var starImg=[];//スターの画像格納用
 var otherPartsImg=[];//冠、剣の画像
@@ -433,10 +433,10 @@ function saveData(){//データをローカルストレージへ保存する関�
 function setDefault(force){ //プレイデータの変数に既定値をセットする関数 forceに1をセットすると強制でセット
     if(avatorData==null || force) {
         avatorData = [
-            {name:"NAME",team:0,id:generateUuid(),star:0,item:[0,0,0,0,0],style:0,typingData:{
+            {name:"NAME",team:0,id:generateUuid(),star:0,item:[0,0,0,0,0],style:0,uploaded:0,typingData:{
                 kpm:0,stroke:0,miss:0,play:0,
                 keyData:[],missChain:0,firstSpeed:0,optData:[],kpm:0,acc:0,speedTensor:[],cong:{prob:0,key:0,count:0}},kind:0,cp:0},
-            {name:"NAME",team:0,id:generateUuid(),star:0,item:[0,0,0,0,0],style:1,typingData:{
+            {name:"NAME",team:0,id:generateUuid(),star:0,item:[0,0,0,0,0],style:1,uploaded:0,typingData:{
                 kpm:0,stroke:0,miss:0,play:0,
                 keyData:[],missChain:0,firstSpeed:0,optData:[],kpm:0,acc:0,speedTensor:[],cong:{prob:0,key:0,count:0}},kind:0,cp:0}];
         for(let ii = 0;ii < 2;ii++){
@@ -529,6 +529,8 @@ function processAddFunction(){
             playData.itemDiscount[i] = [0,0,0,0,0,0,0,0,0,0];
         }
     }
+    if(avatorData[0].uploaded==undefined) avatorData[0].uploaded=0;//アップロード済みか？
+    if(avatorData[1].uploaded==undefined) avatorData[1].uploaded=0;
 }
 function loadData(){//データをローカルストレージから読み込む関数
     avatorData = JSON.parse(localStorage.getItem('avatorData'));
@@ -684,8 +686,8 @@ function setNCMBEnemyAvator(force){
             if(tempLocalAvator[i].cp-avatorData[playData.settings[0]].cp > 50) tempClass=0;//格上
             if(tempLocalAvator[i].cp-avatorData[playData.settings[0]].cp < -50) tempClass=2;//格下
             let tempTeamCoef = 1;
-            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=1.4;
-            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=0.6;
+            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=1.2;
+            if(((3+avatorData[0].team-tempLocalAvator[i].team) % 3) == 2) tempTeamCoef=0.8;
             tempLocalAvator[i].recommendation = (0.5 + 1/(Math.abs(avatorData[playData.settings[0]].cp - tempLocalAvator[i].cp)+1));//ここからおすすめ度をセットする処理を追加
             //tempLocalAvator[i].recommendation*=(10 + battleData.detail[tempClass].battle) / (10+battleData.detail[0].battle+battleData.detail[1].battle+battleData.detail[2].battle);
             tempLocalAvator[i].recommendation*=tempTeamCoef;
@@ -727,6 +729,8 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
         let avaCheck=JSON.stringify(myAvatorData,undefined,1);
         avaCheck=JSON.parse(avaCheck);//パース時のエラーを防ぐ
         dataSaveStatus=1;
+        avatorData[createAvatorStyle].uploaded=1;//アップロード済みにする
+        saveData();//データをセーブ
         msgBox.push({
             text:"アバターのアップロードに成功しました！",
             ani:t,

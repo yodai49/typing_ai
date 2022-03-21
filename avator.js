@@ -55,7 +55,8 @@ function drawBody1(myAvator,x1,y1,x2,y2,t,trans){//体を描画
         [[210,210,240,1,0.2],[240,210,213,1,0.4],[244,244,244,1,1]]];//幻    
     var bodyGrad = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.742),getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.35));
     if(myAvator==-1) {
-        ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
+        ctx2d.fillStyle="rgba(0,0,0," + trans + ")";
+        ctx2d.lineWidth=0.01;
         ctx2d.fillRect(getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.35),getDrawPos(x1,x2,0.72)-getDrawPos(x1,x2,0.28),getDrawPos(y1,y2,0.742)-getDrawPos(y1,y2,0.35));
         return 0;    
     }for(var i = 0;i < BODY1_GRAD_COLSET[myAvator.item[1]].length;i++){
@@ -188,7 +189,8 @@ function drawLimbs(myAvator,x1,y1,x2,y2,t,trans){ //手足を描画
         [[210,210,240,1,0.2],[240,210,213,1,0.4],[244,244,244,1,1]]//幻
     ]
     if(myAvator==-1){
-        ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
+        ctx2d.fillStyle="rgba(0,0,0," + trans + ")";
+        ctx2d.lineWidth=0.01;
         ctx2d.fillRect(getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.28)-getDrawPos(x1,x2,0.21),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
         ctx2d.fillRect(getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.44),getDrawPos(x1,x2,0.79)-getDrawPos(x1,x2,0.72),getDrawPos(y1,y2,0.61)-getDrawPos(y1,y2,0.43));
         ctx2d.fillRect(getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.745),getDrawPos(x1,x2,0.46)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.9)-getDrawPos(y1,y2,0.74));
@@ -212,7 +214,7 @@ function drawLimbs(myAvator,x1,y1,x2,y2,t,trans){ //手足を描画
         limbsGradR.addColorStop(0.4,"rgba("+LIMBS_COLSET[myAvator.item[3]-1][1][0]+","+LIMBS_COLSET[myAvator.item[3]-1][1][1]+","+LIMBS_COLSET[myAvator.item[3]-1][1][2]+","+LIMBS_COLSET[myAvator.item[3]-1][1][3]*trans+")")
         limbsGradR.addColorStop(1.0,"rgba("+LIMBS_COLSET[myAvator.item[3]-1][2][0]+","+LIMBS_COLSET[myAvator.item[3]-1][2][1]+","+LIMBS_COLSET[myAvator.item[3]-1][2][2]+","+LIMBS_COLSET[myAvator.item[3]-1][2][3]*trans+")")
         ctx2d.fillStyle=limbsGradL;
-        ctx2d.fillRect(getDrawPos(x1,x2,0.37),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.46)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
+        ctx2d.fillRect(getDrawPos(x1,x2,0.37),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.47)-getDrawPos(x1,x2,0.38),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
         ctx2d.fillStyle=limbsGradR;
         ctx2d.fillRect(getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.85),getDrawPos(x1,x2,0.63)-getDrawPos(x1,x2,0.54),getDrawPos(y1,y2,0.92)-getDrawPos(y1,y2,0.85));
     } else if(myAvator.item[3] >= 5 && myAvator.item[3] <= 9){
@@ -289,7 +291,8 @@ function drawHead(myAvator,x1,y1,x2,y2,t,trans){//頭を描画
         [[210,210,240,1,0.2],[240,210,213,1,0.4],[244,244,244,1,1]]];//幻
     var headGrad = ctx2d.createLinearGradient(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35),getDrawPos(x1,x2,0.65),getDrawPos(y1,y2,0.1));
     if(myAvator==-1) {
-        ctx2d.fillStyle="rgba(30,30,30," + trans + ")";
+        ctx2d.fillStyle="rgba(0,0,0," + trans + ")";
+        ctx2d.lineWidth=0.01;
         ctx2d.fillRect(getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.16),getDrawPos(x1,x2,0.65)-getDrawPos(x1,x2,0.35),getDrawPos(y1,y2,0.35)-getDrawPos(y1,y2,0.1));
         return 0;    
     }

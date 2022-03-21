@@ -241,7 +241,7 @@ function init() {
     backImg[1].src="./img/back_battle.jpeg";
     backImg[2].src="./img/back_battle2.jpeg";
     backImg[3].src="./img/back_win.jpeg";
-    backImg[4].src="./img/back_lose.jpeg";
+    backImg[4].src="./img/back_title.jpeg";
     backImg[5].src="./img/back_avator.jpeg";
     coinImg=new Image();
     coinImg.src="./img/coin.png";
@@ -259,7 +259,7 @@ function init() {
     nWinImg.src="./img/nwin.png";
     nWinImg.onload=()=>{imgLoadedCnt++};
     for(let i = 0;i < 3;i++) silhoutteImg[i]= new Image();
-    silhoutteImg[0].src="./img/return.png";
+    silhoutteImg[0].src="./img/online.png";
     silhoutteImg[1].src="./img/battle.png";
     silhoutteImg[2].src="./img/setting.png";
     for(let i = 0;i < 6;i++) efImg[i] = new Image(),efImg[i].src="./img/typingEf" + i + ".png",efImg[i].onload=()=>{
