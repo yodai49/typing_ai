@@ -3516,7 +3516,7 @@ function getBattleResultText(twitterMode){
     if(twitterMode) spChar="%0a";
     //バトルの結果をコピーする関数
     let text="";
-    if(twitterMode) text+="『アバタイプ』で";
+    if(twitterMode) text+="『AVA-TYPE』で";
     text +=enemyAvatorData.name + "(CP:" +enemyAvatorData.cp +")に";
     if(battleResult.pWin){
         text+="【✨パーフェクト勝利！】";
