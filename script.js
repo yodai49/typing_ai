@@ -16,6 +16,12 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
             if(battleStatus==2){//入力受理中なら
                 //ローマ字なら最適化を実施する
                 battleResult.totalStroke++;
+                //ここから応急バッチ　かな入力で「ろ」と「ー」が一部反応しない
+                if(playData.settings[0] == 1){
+                    if(myKeyCode==165) myKey="¥";
+                    if(myKeyCode==95) myKey="_";
+                }
+                //
                 if((playData.settings[0]==0 && checkOpt(battleResult.wordSet[battleResult.now].myText,typedText + myKey,playData.settings[1]).isMiss==0) ||(playData.settings[0]==1 && checkKana(battleResult.wordSet[battleResult.now].myText,typedText + keyToKana(myKey,e.shiftKey)).isMiss==0)){
                     let efX,efY=402;
                     ctx2d.font="13pt " + TYPING_FONTNAME;
@@ -895,7 +901,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                 ctx2d.fillText("あなたの速度や正確性、得意なキー、最適化などが反映されます。",292,173);
 
                 ctx2d.fillText("ローマ字入力とカナ入力のアバターのタイピングデータはそれぞれ",285,216);
-                ctx2d.fillText("別々に作成されます。ただし、見た目は共通です。",280.5,231);
+                ctx2d.fillText("別々に作成されます。ただし、見た目やスターは共通です。",280.5,231);
 
                 ctx2d.fillText("毎朝5時に、デイリーミッションとイベントが更新されます！　デイリー",253,306);
                 ctx2d.fillText("ミッションをクリアすると、大量のコインをゲット可能です。イベント",248.5,321);
@@ -990,8 +996,8 @@ function drawMsgbox(){//メッセージボックスの描画関数
             drawPrl({x1:WIDTH/2-230,y1:HEIGHT/2+60,x2:WIDTH/2-19,y2:HEIGHT/2+90,shadow:0,lineWidth:1,textSize:1.5,colSet:16,hoverColSet:11,hoverCounter:0,text:"",trans:myAni*1.5})
             drawPrl({x1:WIDTH/2-17,y1:HEIGHT/2+60,x2:WIDTH/2+197,y2:HEIGHT/2+90,shadow:0,lineWidth:1,textSize:1.5,colSet:11,hoverColSet:11,hoverCounter:0,text:"",trans:myAni*1.5})
             ctx2d.fillStyle=getRGBA(2,0,myAni);
-            ctx2d.font="21pt "+JAPANESE_FONTNAME;
-            ctx2d.fillText("デイリーミッション！",310.5,125);
+            ctx2d.font="21pt "+MAIN_FONTNAME;
+            ctx2d.fillText("DAILY MISSION!",310.5,127);
             ctx2d.fillStyle=getRGBA(0,0,myAni);
             ctx2d.font="11pt "+JAPANESE_FONTNAME;
             ctx2d.fillText("本日のデイリーミッションが更新されました！",301.5,160);

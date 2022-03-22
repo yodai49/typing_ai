@@ -84,6 +84,21 @@ font-display: swap;
     z-index:1000;
     box-shadow: 0 10px 35px 0 rgba(0, 0, 0, .9);
 }
+.share{
+    z-index:100;
+    width:64px;
+    right:0;
+    padding-top:5px;
+    position:fixed;
+    top:calc(50% - 75px);
+    background-color:rgba(30,30,80,1);
+    box-shadow: 0 0px 10px 3px rgba(0, 0, 0, .6);
+}
+.shareButton{
+    width:40px;
+    margin:12px;
+    transition:all 0.3s;
+}
 :link,:visited,:hover,:active{
     color: white;
     text-decoration: none;
@@ -293,6 +308,10 @@ font-display: swap;
 }
 .jpnFont{
     font-family:sans-serif;
+}
+.noticeOfData{
+    text-align:center;
+    font-size:0.8rem;
 }
 .footer{
     background-color:rgba(30,30,30,1);
