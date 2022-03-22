@@ -118,12 +118,17 @@ window.addEventListener('DOMContentLoaded', function(){ ///キー入力イベン
             return 0;
         } 
         if(window.confirm("データをアップロードすると、現在の全てのデータが上書きされます。現在のデータを残したい場合は先にバックアップを取ることをおすすめします。\n本当にデータを読み込みますか？")){
-            var file = e.target.files;
-            var reader = new FileReader();
-            reader.readAsText(file[0]);
-            reader.onload=function(e2){
+                var file = e.target.files;
+                var reader = new FileReader();
+                reader.readAsText(file[0]);
+                reader.onload=function(e2){
                 let readtxt=reader.result;
-                readtxt=decodeURIComponent(escape(atob(readtxt)));
+                try{
+                    readtxt=decodeURIComponent(escape(atob(readtxt)));
+                } catch(er){
+                    window.alert("形式にエラーがあります。正常に上書き出来ませんでした。");
+                    return 0;
+                }
                 //チェック処理
                 let readResult = setlocalStorageString(readtxt);
                 if(readResult==0){
@@ -1518,9 +1523,11 @@ function drawMenu(){
     //デイリーミッションここまで
 
 }
-function getLastEnemyKpmClass(myTypingData,num,baseKpm){
+function getLastEnemyKpmClass(myTypingData,num,baseKpm,isKPM){
     //タイピングデータから直前のnumキーまでの平均KPMを計算
     let realNum=0,aveKpm=0;
+    let kpmMode=isKPM;
+    if (kpmMode==undefined) kpmMode=0;
     for(let i = 0;i < num;i++){
         if(myTypingData.length-2-i < 0) break;
         let lastKpm = 60000/(myTypingData[myTypingData.length-1-i].time-myTypingData[myTypingData.length-2-i].time);
@@ -1528,6 +1535,7 @@ function getLastEnemyKpmClass(myTypingData,num,baseKpm){
         aveKpm = (aveKpm * realNum + lastKpm) / (realNum+1);
         realNum++;
     }
+    if(kpmMode) return aveKpm;
     for(let i = 0;i < CLASS_KPM_RATIO.length;i++){
         if(aveKpm/baseKpm<CLASS_KPM_RATIO[i]) return i;
     }
@@ -1557,6 +1565,19 @@ function replaceEnemyOpt(plainText,prob,bf,af,replacement){
     afterText+=plainText;
     return afterText;
 }
+function modifyEnemyTypeData(){
+    //敵のタイピングデータを調整する関数
+    //平均的なKPMが最高でもCP*1.2におさまるようにする
+    let counter=0;
+    while (enemyTypingAnalysis() > enemyAvatorData.typingData.kpm +30){
+        counter++;
+        for(let i = 0;i < 25;i++){
+            for(let j = 1;j < battleResult.enemyTypeData[i].length;j++){
+                battleResult.enemyTypeData[i][j].time*=1.03;
+            }    
+        }
+    }
+}
 function getEnemyTypeData(i,mode,str){
     ////敵のタイピングデータの生成を行う関数
 
@@ -1574,7 +1595,7 @@ function getEnemyTypeData(i,mode,str){
     }
     while(true){
         let thisChar=enemyTextAfterOpt.substr(enemyTypingChar,1);//次に打つべき文字
-        let charKpm=(2.2*enemyAvatorData.typingData.kpm+2*enemyAvatorData.typingData.keyData[getAllCharaSetNum(thisChar)].kpm)/2;//その文字の打鍵までにかかる時間（ミリ秒）
+        let charKpm=(2*enemyAvatorData.typingData.kpm+2.3*enemyAvatorData.typingData.keyData[getAllCharaSetNum(thisChar)].kpm)/2;//その文字のkpm
         let myStab = enemyAvatorData.typingData.keyData[getAllCharaSetNum(thisChar)].stability;
         charKpm=charKpm*Math.max(0.3,(1+6*(Math.random()-0.5)*myStab));//キーごとの安定性でぶらす
         if(Math.random()<0.3){//speedTensorの影響を受ける
@@ -1584,7 +1605,14 @@ function getEnemyTypeData(i,mode,str){
             charKpm = charKpm * 0.35 + enemyAvatorData.typingData.speedTensor[lastClass3][lastClass6][lastClass9].kpm*0.7; 
         }
         charKpm = charKpm * (1 + Math.max(0.5,myStab*2)*(0.7*(Math.random()-0.5)));//ランダム性をもたせる
-        let charTime=60000/charKpm;
+        if(getLastEnemyKpmClass(battleResult.enemyTypeData[i],6,enemyAvatorData.typingData.kpm,1) > enemyAvatorData.typingData.kpm*1.5 || 
+           getLastEnemyKpmClass(battleResult.enemyTypeData[i],9,enemyAvatorData.typingData.kpm,1) > enemyAvatorData.typingData.kpm*1.25){
+            charKpm=Math.min(charKpm*0.5,enemyAvatorData.typingData.kpm*0.9);
+        }
+        if(charKpm>enemyAvatorData.typingData.kpm*1.8 && Math.random()<0.25){
+            charKpm=Math.min(charKpm*0.8,enemyAvatorData.typingData.kpm*1.8);
+        }
+        let charTime=60000/charKpm;//その文字の打鍵までにかかる時間（ミリ秒）
         if(enemyTypingChar!=0) enemyTypingTime+=charTime;//1文字目以外のときは所要時間を足す
         if((!enemyLastMiss && Math.random()*100 > enemyAvatorData.typingData.acc) ||
                 (enemyLastMiss && Math.random() > 1/enemyAvatorData.typingData.missChain)){ //ミスの時
@@ -1639,6 +1667,7 @@ function setBattleResultDefault(){ //ワードもここで選ぶ
         }
         battleResult.enemyTypeData[i]=getEnemyTypeData(i);
     }
+    modifyEnemyTypeData();
     battleResult.wordSet[25]={};
     battleResult.wordSet[25].enemyText="";
     battleResult.wordSet[25].text="";
@@ -1647,6 +1676,16 @@ function setBattleResultDefault(){ //ワードもここで選ぶ
     totalLossTime=0;
     winLoseAni=0;
     typingEffect=[];
+}
+function enemyTypingAnalysis(){
+    let aveKpm=0;
+    for(let i =0;i < 25;i++){
+        let thistimeKpm=60000/battleResult.enemyTypeData[i][battleResult.enemyTypeData[i].length-1].time;
+        thistimeKpm*=battleResult.wordSet[i].enemyText.length;
+        aveKpm+=thistimeKpm;
+    }
+    aveKpm/=25;
+    return aveKpm;
 }
 function drawBattleCircle(myBattleResult,x,y,size,time,resultMode){
     if(time==undefined) time = t;
@@ -2213,6 +2252,19 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     } else{
         battleResult.pointRank=5;
     }
+    //アバター新規作成可能時の通知は最後に出す（最初にpushしておく）
+    if(avatorData[inputStyle].typingData.stroke<10000 && avatorData[inputStyle].typingData.stroke +battleResult.totalStroke-battleResult.totalMiss>=10000){
+        battleResult.notice.push({
+            text:"新しいオンラインアバターを作成可能になりました！　今すぐオンラインアバターを作成しますか？",
+            ani:t,
+            btns1:{text:"あとで",onClick:function(){
+                battleResult.notice.push({
+                    text:"メニュー画面→オンラインアバターから、いつでも作成可能です。",
+                    ani:t,
+                    btns1:{text:"OK",onClick:function(){}}})
+            }},
+            btns2:{text:"今すぐ作成！",onClick:function(){nextScene=6,sceneAni=t}}});
+    }
     //ボーナス等をセット
     battleResult.bonus[0] = Math.ceil(Math.max(0,2*battleResult.point-25)/1.5);//ワード補正
     battleResult.bonus[1] = Math.ceil(Math.pow(Math.max(0,(Number(battleResult.acc)-93)),1.5)*1.5);//正確性補正
@@ -2236,7 +2288,7 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     if(avatorData[inputStyle].cp>enemyAvatorData.cp){//自分のほうが強い
         battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 6.3/5* Math.max(0.3,Math.min(2,(1+Math.atan((-Number(avatorData[inputStyle].cp) + Number(enemyAvatorData.cp))/140)*2/Math.PI)))));
     } else{//格上に勝利
-        battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 6.3/5* Math.min(2,(1+Math.atan((-Number(avatorData[inputStyle].cp) + Number(enemyAvatorData.cp))/50)*2/Math.PI))));
+        battleResult.baseExp = Math.max(5,Math.ceil(playData.level * 8/5* Math.min(2,(1+Math.atan((-Number(avatorData[inputStyle].cp) + Number(enemyAvatorData.cp))/50)*2/Math.PI))));
     }
     if(battleResult.win == 0) battleResult.baseExp= Math.floor(battleResult.baseExp/2);
     battleResult.exp = Math.round(battleResult.baseExp * (100+battleResult.bonus[0]+battleResult.bonus[1]+battleResult.bonus[2]+battleResult.bonus[3]+battleResult.bonus[4])/100);
@@ -2255,24 +2307,25 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     //dailyMissionに関する更新
     dailyMission.battle++;
     dailyMission.win+=battleResult.win;
-    dailyMission.totalStroke+=battleResult.totalStroke;
+    dailyMission.totalStroke+=battleResult.totalStroke-battleResult.totalMiss;
     dailyMission.word+=battleResult.point;
     processDailyMission();
     //avatorDataに関する更新
-    avatorData[inputStyle].typingData.stroke += battleResult.totalStroke;
+    avatorData[inputStyle].typingData.stroke += battleResult.totalStroke-battleResult.totalMiss;
     avatorData[inputStyle].typingData.miss+=battleResult.totalMiss;
     avatorData[inputStyle].cp = avatorData[inputStyle].typingData.kpm;
     if(inputStyle) avatorData[inputStyle].cp = Number(avatorData[inputStyle].cp*COEF_R2K).toFixed(1);
     //battleDataに関する更新
     battleData.battle++;
     battleData.win += battleResult.win;
-    battleData.stroke+=battleResult.totalStroke;
+    battleData.stroke+=battleResult.totalStroke-battleResult.totalMiss;
     battleData.miss += battleResult.totalMiss;
     battleData.word+=battleResult.point;
     battleData.detail[enemyRank].battle++;
     battleData.detail[enemyRank].win+=battleResult.win;
     //battleDataSaveに関する更新
     setBattleDataSave(enemyAvatorData.id,battleResult);
+
     //playDataに関する更新
     let remainExp=battleResult.exp;
     while(remainExp>0){
@@ -2339,19 +2392,6 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
         }
     }
 
-    if(avatorData[inputStyle].typingData.stroke<10000 && avatorData[inputStyle].typingData.stroke +battleResult.totalStroke>=10000){
-        //アバター新規作成可能時の通知は最後
-        battleResult.notice.push({
-            text:"新しいオンラインアバターを作成可能になりました！　今すぐオンラインアバターを作成しますか？",
-            ani:t,
-            btns1:{text:"あとで",onClick:function(){
-                battleResult.notice.push({
-                    text:"メニュー画面→オンラインアバターから、いつでも作成可能です。",
-                    ani:t,
-                    btns1:{text:"OK",onClick:function(){}}})
-            }},
-            btns2:{text:"今すぐ作成！",onClick:function(){nextScene=6,sceneAni=t}}});
-    }
     saveData();
 }
 function processMsgBoxSE(){//msgBox関連の効果音を鳴らす関数
@@ -3723,6 +3763,7 @@ function changeScene(prev,next){ //シーン遷移の関数
                 flg:0});    
         }});
         prls.push({x1:680,y1:HEIGHT-120,x2:858,y2:HEIGHT-60,colSet:0,hoverColSet:1,hoverCounter:0,textSize:0.6,sound:"cancel",text:"BACK",subText:"戻る",onClick:function(){
+            if(dataSaveStatus==0 || dataFetchStatus==0) return 0;
             saveData();
             nextScene=2;
             sceneAni=t;}});
@@ -3755,6 +3796,7 @@ function changeScene(prev,next){ //シーン遷移の関数
         }
         for(let i = 0;i < 4;i++){//ダウンロードボタン
             prls.push({x1:90+i*130,y1:441,x2:90+i*130+100,y2:471,id:i+30,shadow:0,colSet:0,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバターを追加",onClick:function(){
+                if(dataSaveStatus==0 || dataFetchStatus==0) return 0;
                 let myText=getPrlsText(i+30);
                 if(myText==ONLINE_AVATOR_STATUS[0]){//更新
                     for(let j = 0;j < 3;j++){
@@ -3821,6 +3863,7 @@ function changeScene(prev,next){ //シーン遷移の関数
             setOrderButton();
         }});
         prls.push({x1:776,y1:152,x2:930,y2:182,id:9,shadow:0,colSet:3,hoverColSet:4,lineWidth:3,hoverCounter:0,textSize:0.8,text:"アバター作成！",onClick:function(){
+            if(dataSaveStatus==0 || dataFetchStatus==0) return 0;
             if(getAvailableCreateAvator()==1){//新規作成
                 msgBox.push({
                     text:"アバターをオンライン上に作成すると、誰でもあなたのアバターと対戦出来るようになります。アバターを作成しますか？",

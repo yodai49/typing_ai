@@ -102,7 +102,7 @@ function setSounds(){//サウンドのセットを行う
                 onload:(e)=>{imgLoadedCnt++}}),
         new Howl({src:['./sound/loseD.mp3'],
                 loop:false,
-                volume:1,
+                volume:0.5,
                 onload:(e)=>{imgLoadedCnt++}}),
         new Howl({src:['./sound/typing1.mp3'], //16
                 loop:false,
