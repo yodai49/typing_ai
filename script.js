@@ -3664,7 +3664,7 @@ function changeScene(prev,next){ //シーン遷移の関数
         }});
         prls.push({x1:435,y1:110,x2:490,y2:133,lineWidth:3,shadow:0,isTop:1,colSet:0,hoverColSet:1,hoverCounter:0,textSize:1,sound:"window",text:"Tweet",onClick:function(){
             //結果のツイート
-            window.open("https://twitter.com/share?url=https://avatype.typworld.net/&text=" + 
+            window.open("https://twitter.com/share?url=https://typworld.net/avatype/&text=" + 
             getBattleResultText(1) + "%0a%23AVATYPE %23タイピング %23TypWorld" 
             + "&count=none&lang=ja");
             }});
