@@ -307,6 +307,9 @@ function init() {
         } else{
             ctx2d.fillStyle=getRGBA(2,1000,t);
             ctx2d.fillText("LOADING",(WIDTH-ctx2d.measureText("LOADING").width)/2,HEIGHT/2);
+            ctx2d.font="12px " + MAIN_FONTNAME;
+            ctx2d.fillStyle=getRGBA(2,0,1);
+            ctx2d.fillText(imgLoadedCnt + " / " + IMG_CNT,(WIDTH-ctx2d.measureText(imgLoadedCnt + " / " + IMG_CNT).width)/2,HEIGHT/2+25);
         }
         drawLoadingCircle(WIDTH/2,HEIGHT/2,100,t,1000,1);
         if(DEBUG_MODE) SCENE_ANI=100;

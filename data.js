@@ -743,15 +743,26 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
         let avaCheck=JSON.stringify(myAvatorData,undefined,1);
         avaCheck=JSON.parse(avaCheck);//パース時のエラーを防ぐ
         dataSaveStatus=1;
-        avatorData[createAvatorStyle].uploaded=1;//アップロード済みにする
+        if(avatorData[createAvatorStyle].uploaded==0){
+            playData.coin+=50;
+            avatorData[createAvatorStyle].uploaded=1;//アップロード済みにする
+            msgBox.push({
+                text:"アバターのアップロードに成功しました！　コイン50ゴールド獲得！",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){
+                    dataFetchStatus=0;
+                    setNCMBEnemyAvator(1);
+                }}});    
+        } else{
+            msgBox.push({
+                text:"アバターのアップロードに成功しました！",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){
+                    dataFetchStatus=0;
+                    setNCMBEnemyAvator(1);
+                }}});    
+        }
         saveData();//データをセーブ
-        msgBox.push({
-            text:"アバターのアップロードに成功しました！",
-            ani:t,
-            btns1:{text:"OK",onClick:function(){
-                dataFetchStatus=0;
-                setNCMBEnemyAvator(1);
-            }}});
     })
     .catch(function(error){//アップロード失敗
         dataSaveStatus=2;

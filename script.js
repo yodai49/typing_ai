@@ -1468,7 +1468,8 @@ function drawMenu(){
     ctx2d.fillStyle=getRGBA(0,0,1); //アバター作成可能な場合
     if(avatorData[playData.settings[0]].uploaded==0){
         if(avatorData[playData.settings[0]].typingData.stroke>=10000){
-            drawPrl({x1:735,y1:105,x2:880,y2:130,lineWidth:1,shadow:0,colSet:3,hoverColSet:0,trans:1.5,hoverCounter:0,textSize:1,text:"アバター新規作成可能！"});
+            ctx2d.fillStyle=getRGBA(2,0,1); 
+            drawPrl({x1:685,y1:105,x2:880,y2:130,lineWidth:1,shadow:0,colSet:3,hoverColSet:0,trans:1.5,hoverCounter:0,textSize:0.9,text:"アバター作成で50ゴールド獲得！"});
         } else {
             ctx2d.font="8pt " + JAPANESE_FONTNAME;
             ctx2d.fillText("作成まであと" + (10000-avatorData[playData.settings[0]].typingData.stroke)+"打鍵",860-ctx2d.measureText("作成まであと" + (10000-avatorData[playData.settings[0]].typingData.stroke)+"打鍵").width,125);    
@@ -2257,7 +2258,7 @@ function processBattleResult(){//バトル結果の処理関数　終了直後�
     //アバター新規作成可能時の通知は最後に出す（最初にpushしておく）
     if(avatorData[inputStyle].typingData.stroke<10000 && avatorData[inputStyle].typingData.stroke +battleResult.totalStroke-battleResult.totalMiss>=10000){
         battleResult.notice.push({
-            text:"新しいオンラインアバターを作成可能になりました！　今すぐオンラインアバターを作成しますか？",
+            text:"新しいオンラインアバターが作成可能です！　アバター作成で50コイン獲得出来ます。今すぐオンラインアバターを作成しますか？",
             ani:t,
             btns1:{text:"あとで",onClick:function(){
                 battleResult.notice.push({
@@ -3105,6 +3106,9 @@ function drawAvator2(){ ///アバター管理画面の描画関数
         ctx2d.fillText("LV " + drawLv,baseX+150-ctx2d.measureText("LV " + drawLv).width,baseY-124);
     }
 
+    if(avatorData[createAvatorStyle].uploaded==0 && getAvailableCreateAvator()==1){
+        drawPrl({x1:836,y1:142,x2:940,y2:158,shadow:0,colSet:16,hoverColSet:4,lineWidth:3,hoverCounter:0,textSize:1.2,text:"50ゴールド獲得！",onClick:function(){}});
+    }
     //画面右側　自分のアバター
     drawPrl({x1:732,y1:192,x2:916,y2:330,shadow:0,colSet:14,hoverColSet:1,lineWidth:3,hoverCounter:0,textSize:0.8,text:""});
     drawPrl({x1:850,y1:192,x2:916,y2:217,shadow:0,colSet:13,hoverColSet:1,lineWidth:0.1,hoverCounter:0,textSize:0.8,text:""});
