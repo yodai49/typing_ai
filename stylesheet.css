@@ -184,17 +184,17 @@ font-display: swap;
     width:300px;
     font-family:"Stick";
     color:white;
-    background-color:rgba(40,40,40,1);;
+    background-color:rgba(100,100,110,1);;
     transition: all 0.3s;
     padding:10px;
     margin:20px;
     text-align: center;
     border-bottom-style:solid;
-    border-bottom-width:1px;
-    border-bottom-color:rgba(0,0,0,1);
+    border-bottom-width:2px;
+    border-bottom-color:rgba(40,40,40,1);
     border-right-style:solid;
-    border-right-width:1px;
-    border-right-color:rgba(0,0,0,1);
+    border-right-width:2px;
+    border-right-color:rgba(40,40,40,1);
 }
 .dataButton:hover{
     background-color:rgba(60,60,60,1);

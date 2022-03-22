@@ -65,7 +65,9 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
                 if(myKey=="o"  || myKeyCode==13 || myKeyCode==32) clickX=WIDTH/2+180,clickY=HEIGHT/2+55;
             } else if(msgBox[0].firstWinWindow){//初勝利
                 if(myKey=="o"  || myKeyCode==13 || myKeyCode==32) clickX=WIDTH/2+180,clickY=HEIGHT/2+55;
-            } else if(msgBox[0].btns2!=undefined) {//ニ択のメッセージボックス
+            } else if(msgBox[0].refreshEventWindow){
+                if(myKeyCode==13 || myKeyCode==32) clickX=WIDTH/2+250,clickY=HEIGHT/2-168;
+            }else if(msgBox[0].btns2!=undefined) {//ニ択のメッセージボックス
                 if(myKey==String(msgBox[0].btns1.text.substr(0,1)).toLowerCase())  clickX=WIDTH/2-60,clickY=HEIGHT/2+40;
                 if(myKey==String(msgBox[0].btns2.text.substr(0,1)).toLowerCase()) clickX=WIDTH/2+60,clickY=HEIGHT/2+40;
             } else if(msgBox[0].btns1!=undefined){
@@ -1023,7 +1025,7 @@ function drawMsgbox(){//メッセージボックスの描画関数
                     ctx2d.fillText("etc...",baseX+20,baseY);
                 } else{
                     ctx2d.font="8pt "+JAPANESE_FONTNAME;
-                    ctx2d.fillText("・"+(localAvator[1][i].name),baseX,baseY);
+                    ctx2d.fillText("・"+(localAvator[1][i].name),baseX,baseY,75);
                     ctx2d.font="6pt "+MAIN_FONTNAME;
                     ctx2d.fillText("CP "+ (localAvator[1][i].cp),baseX+80,baseY);    
                 }
