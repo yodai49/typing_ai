@@ -18,7 +18,7 @@ function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シー
                 battleResult.totalStroke++;
                 //ここから応急バッチ　かな入力で「ろ」と「ー」が一部反応しない
                 if(playData.settings[0] == 1){
-                    if(myKeyCode==165) myKey="¥";
+                    if(myKeyCode==165 || myKeyCode==124) myKey="¥";
                     if(myKeyCode==95) myKey="_";
                 }
                 //
