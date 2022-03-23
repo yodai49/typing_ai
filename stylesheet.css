@@ -197,9 +197,8 @@ font-display: swap;
 .dataButton{
     position:absolute;
     width:300px;
-    font-family:"Stick";
     color:white;
-    background-color:rgba(100,100,110,1);;
+    background-color:rgba(80,80,90,1);;
     transition: all 0.3s;
     padding:10px;
     margin:20px;
@@ -224,6 +223,7 @@ font-display: swap;
     height:100px;
     position:relative;
     margin:auto;
+    font-family:sans-serif;
 }
 .dataButtonsLeft{
     left:calc(50% - 320px);

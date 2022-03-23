@@ -118,6 +118,7 @@ window.addEventListener('click',function(e){//クリックされた時に座標�
 })
 window.addEventListener('DOMContentLoaded', function(){ ///キー入力イベント登録
     window.addEventListener("keydown", function(e){
+        if(e.keyCode==32) e.preventDefault();
         processKeypress(e.key,e.keyCode,e);
     });
     document.getElementById("uploadFile").addEventListener("change",function(e){
