@@ -91,7 +91,7 @@ font-display: swap;
     padding-top:5px;
     position:fixed;
     top:calc(50% - 75px);
-    background-color:rgba(30,30,80,1);
+    background-color:rgba(30,30,80,0.9);
     box-shadow: 0 0px 10px 3px rgba(0, 0, 0, .6);
 }
 .shareButton{
@@ -195,13 +195,11 @@ font-display: swap;
     transition:all 0.3s;
 }
 .dataButton{
-    position:absolute;
-    width:300px;
+    width:250px;
     color:white;
     background-color:rgba(80,80,90,1);;
     transition: all 0.3s;
     padding:10px;
-    margin:20px;
     text-align: center;
     border-bottom-style:solid;
     border-bottom-width:2px;
@@ -217,19 +215,44 @@ font-display: swap;
 .dataButton-bt{
     display:none;
 }
-.dataButtons{
+.dataButtonWrapper{
+    padding-top:20px;
+    padding-bottom:20px;
     left:0;
     right:0;
-    height:100px;
     position:relative;
     margin:auto;
+    display:flex;
     font-family:sans-serif;
 }
 .dataButtonsLeft{
-    left:calc(50% - 320px);
+    margin-left:calc(50% - 290px);
 }
 .dataButtonsRight{
-    left:calc(50% + 20px);
+    margin-left:40px;
+}
+.adsWrapper{
+    padding-top:20px;
+    padding-bottom:20px;
+    display:flex;
+    left:0;
+    right:0;
+    margin:auto;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+.ad{
+    width:300px;
+    transition:all 0.3s;
+}
+.ad:hover{
+    filter:brightness(0.6);
+}
+.adLeft{
+    padding-left:calc(50% - 150px);
+}  
+.adRight{
+    padding-left:40px;
 }
 .bg_pt{
     background-color: #f3fcfa;
@@ -312,6 +335,13 @@ font-display: swap;
 .noticeOfData{
     text-align:center;
     font-size:0.8rem;
+}
+.noticeOfData a{
+    color:#bbe;
+}
+.noticeOfData a:hover{
+    color:#88a;
+    transition:all 0.3s;
 }
 .footer{
     background-color:rgba(30,30,30,1);

@@ -4,7 +4,7 @@ var previousSettings=[];//直前の設定を保存するため
 var typingEffect=[];//タイピングのエフェクト
 function processKeypress(myKey,myKeyCode,e){ //キー入力イベント　シーン→キー→条件の順番で分ける
     if(scene==3){//バトル中
-        if((myKeyCode == 27|| (myKey=="Q")) && nextScene!=2){//Escキー　タイトルへ戻る
+        if((myKeyCode == 27|| (myKey=="Q" && playData.settings[0]==0)) && nextScene!=2){//Escキー　タイトルへ戻る
             nextScene=2;sceneAni=t;
             clearTimeout(lastBGMID);
             playSE("esc");
