@@ -231,7 +231,8 @@ function checkOpt(targetStr,typingStr,typistMode){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "s" + targetStr.substr(typingStr.length-1)};
             }
         }
-    }//以下、「っ」が関係するもの
+    }
+    //以下、「っ」が関係するもの
     if(targetStr.substr(typingStr.length-1,1) == "k"){//// ca cu co
         if(typingStr.substr(typingStr.length-1,1) == "c"){
             if(targetStr.substr(typingStr.length,1) == "a" || targetStr.substr(typingStr.length,1) == "u" || targetStr.substr(typingStr.length,1) == "o"){
@@ -303,7 +304,7 @@ function checkOpt(targetStr,typingStr,typistMode){
     }
     if(targetStr.substr(typingStr.length-1,1) == "h"){ ///  hu>fu
         if(typingStr.substr(typingStr.length-1,1) == "f"){
-            if(typingStr.substr(typingStr.length,1) != "u"){
+            if(targetStr.substr(typingStr.length,1) == "u"){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "f" + targetStr.substr(typingStr.length)};
             }
         }
@@ -315,7 +316,29 @@ function checkOpt(targetStr,typingStr,typistMode){
             }
         }
     }
-
+    if(targetStr.substr(typingStr.length-1,1) == "i"){ ////i→yi
+        if(typingStr.substr(typingStr.length-1,1) == "y"){
+            if(targetStr.substr(typingStr.length-2,1) == "a" || targetStr.substr(typingStr.length-2,1) == "i" || targetStr.substr(typingStr.length-2,1) == "u" || targetStr.substr(typingStr.length-2,1) == "e" || targetStr.substr(typingStr.length-2,1) == "o" || 
+                (targetStr.substr(typingStr.length-2,1) == "n" && targetStr.substr(typingStr.length-3,1) != "a" &&  targetStr.substr(typingStr.length-3,1) != "i" && targetStr.substr(typingStr.length-3,1) != "u" && targetStr.substr(typingStr.length-3,1) != "e" && targetStr.substr(typingStr.length-3,1) != "o")){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "y" + targetStr.substr(typingStr.length-1)};
+            }
+        }
+    }
+    if(targetStr.substr(typingStr.length-1,1) == "u"){ ////u→wu
+        if(typingStr.substr(typingStr.length-1,1) == "w"){
+            if(targetStr.substr(typingStr.length-2,1) == "a" || targetStr.substr(typingStr.length-2,1) == "i" || targetStr.substr(typingStr.length-2,1) == "u" || targetStr.substr(typingStr.length-2,1) == "e" || targetStr.substr(typingStr.length-2,1) == "o" || 
+                (targetStr.substr(typingStr.length-2,1) == "n" && targetStr.substr(typingStr.length-3,1) != "a" &&  targetStr.substr(typingStr.length-3,1) != "i" && targetStr.substr(typingStr.length-3,1) != "u" && targetStr.substr(typingStr.length-3,1) != "e" && targetStr.substr(typingStr.length-3,1) != "o")){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "w" + targetStr.substr(typingStr.length-1)};
+            }
+        }
+    }    
+    if(targetStr.substr(typingStr.length-1,1) == "u"){ //wu→whu
+        if(typingStr.substr(typingStr.length-1,1) == "h"){
+            if(targetStr.substr(typingStr.length-2,1) == "w"){
+                return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "h" + targetStr.substr(typingStr.length-1)};
+            }
+        }
+    }
     if(typistMode) return {isMiss:1,newTargetStr:targetStr};//タイピストモードで受理するものはここまで
 
     //非効率なものの処理 sya→silyaなど

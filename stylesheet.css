@@ -194,6 +194,15 @@ font-display: swap;
     font-family:"Stick",sans-serif;
     transition:all 0.3s;
 }
+.adTwitterWrapper{
+    display:flex;
+    padding-top:30px;
+    padding-bottom:10px;
+}
+.adButtonWrapper{
+    width:700px;
+    position:relative;
+}
 .dataButton{
     width:250px;
     color:white;
