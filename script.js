@@ -2651,8 +2651,10 @@ function drawResult(){ ///結果画面の描画関数
             if(i==0 && j == 0) drawData=Math.floor(battleResult.kpm*realRatio*10)/10;
             if(i==0 && j ==1) drawData=Math.floor(battleResult.acc*realRatio*10)/10;
             if(i==0 && j == 2) {
-                drawData=Number(avatorData[0].cp*realRatio).toFixed(1);
-                let drawDataRaw=Number(avatorData[0].cp).toFixed(1);
+//                drawData=Number(avatorData[0].cp*realRatio).toFixed(1);
+                drawData=Number(avatorData[playData.settings[0]].cp).toFixed(1);
+                let drawDataRaw=Number(avatorData[playData.settings[0]].cp).toFixed(1);
+//                let drawDataRaw=Number(avatorData[0].cp).toFixed(1);
                 if(drawDataRaw< battleResult.cp) ctx2d.drawImage(arrowImg,200+ctx2d.measureText(drawDataRaw).width-22*0.3*(j+1)+60,185+j*22 - (8)*Math.max(0,Math.sin(t/150)*3-2.7),15,15);
             }
             if(i==1 && j == 0) drawData=Math.floor(battleResult.point*realRatio);
@@ -2668,7 +2670,7 @@ function drawResult(){ ///結果画面の描画関数
     if(!getNextStarKPM(avatorData,battleData).value){
         ctx2d.fillText(processShowData("---"),198-195*0.3,489);
     } else{
-        ctx2d.fillText(processShowData(getNextStarKPM(avatorData,battleData).value),198-195*0.3,489);        
+        ctx2d.fillText(processShowData(getNextStarKPM(avatorData,battleData).value),198-195*0.3,489);
     }
 
     //勝率のグラフ

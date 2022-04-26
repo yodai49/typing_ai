@@ -199,9 +199,9 @@ function checkOpt(targetStr,typingStr,typistMode){
         if(typingStr.substr(typingStr.length-1,1) == "x"){//まず、n(子音)のパターンを分ける
             if(targetStr.substr(typingStr.length-2,1) != "x" && !(targetStr.substr(typingStr.length,1) == "a"||targetStr.substr(typingStr.length,1) == "i"||targetStr.substr(typingStr.length,1) == "u"||targetStr.substr(typingStr.length,1) == "e"||targetStr.substr(typingStr.length,1) == "o"||targetStr.substr(typingStr.length,1) == "n")){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "x" + targetStr.substr(typingStr.length-1)};
-            } else if(targetStr.substr(typingStr.length-2,1) != "x" && targetStr.substr(typingStr.length,1) == "n" && !(targetStr.substr(typingStr.length+1,1) == "a"||targetStr.substr(typingStr.length+1,1) == "i"||targetStr.substr(typingStr.length+1,1) == "u"||targetStr.substr(typingStr.length+1,1) == "e"||targetStr.substr(typingStr.length+1,1) == "o")){
+            } else if(targetStr.substr(typingStr.length-2,1) != "x" && targetStr.substr(typingStr.length,1) == "n" && ((targetStr.substr(typingStr.length-2,1) == "a"||targetStr.substr(typingStr.length-2,1) == "i"||targetStr.substr(typingStr.length-2,1) == "u"||targetStr.substr(typingStr.length-2,1) == "e"||targetStr.substr(typingStr.length-2,1) == "o") || !(targetStr.substr(typingStr.length+1,1) == "a"||targetStr.substr(typingStr.length+1,1) == "i"||targetStr.substr(typingStr.length+1,1) == "u"||targetStr.substr(typingStr.length+1,1) == "e"||targetStr.substr(typingStr.length+1,1) == "o"))){
                 return {isMiss:0,newTargetStr:targetStr.substr(0,typingStr.length-1) + "x" + targetStr.substr(typingStr.length)};
-            }
+            } 
         }
     }
     if(targetStr.substr(typingStr.length-1,1) == "l"){ /// la>xa

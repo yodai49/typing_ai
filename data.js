@@ -35,9 +35,10 @@ var avatorData;
 var battleDataSave;
 var tempLocalAvator;
 
-function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
+function getNextLvExp(myPlayData,ratioMode,offSet,ignoreErr){ //次レベルまでの必要EXPを計算する ratioModeが1なら現状の達成割合を返す
     let lv=myPlayData.level;
     let tempExp=8,prevTempExp=0;
+    if(ignoreErr==undefined) ignoreErr=1;
     if(offSet == undefined || isNaN(offSet)) offSet=0;//アニメーション用のズレ
     for(let i = 2;i <= lv;i++){
         prevTempExp=tempExp;
@@ -45,6 +46,9 @@ function getNextLvExp(myPlayData,ratioMode,offSet){ //次レベルまでの必�
     }
     if(ratioMode){
         if(lv==99) return 1;
+        if(ignoreErr){
+            return (myPlayData.exp-prevTempExp-offSet)/(tempExp-prevTempExp);
+        }
         return Math.min(1,Math.max(0,(myPlayData.exp-prevTempExp-offSet)/(tempExp-prevTempExp)));
     } else{
         return tempExp-myPlayData.exp+offSet;
@@ -727,6 +731,22 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
         "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
     let Item = ncmb.DataStore("Avators");
     let item = new Item();
+    if (getNextLvExp(playData,1,0,1) < 0 ||getNextLvExp(playData,1,0,1) > 1 || myAvatorData.cp > 1200) {
+        dataSaveStatus=0;
+        let timeout = setTimeout(function(){
+            dataSaveStatus=1;
+            msgBox.push({
+                text:"アバターのアップロードに成功しました！　コイン50ゴールド獲得！",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){
+                    dataFetchStatus=0;
+                    setNCMBEnemyAvator(1);
+                    tempLocalAvator.push(myAvatorData);
+                    tempLocalAvator[tempLocalAvator.length-1].recommendation=999;
+                }}});
+        },1200);
+        return 0;
+    }
     myAvatorData.style=createAvatorStyle;//スタイルを修正
     myAvatorData.level = playData.level;
     let myDate = new Date();
@@ -772,15 +792,31 @@ function uploadNCMBAvatorData(myAvatorData){//アバターをアップロード
             btns1:{text:"OK",onClick:function(){}}});
     });
 }
-function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップロード
+function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップデート
     let ncmb = new NCMB(
         "a547f609bad881bc03104d7b2f8f6359a4bce06cdf283092bdb996d2dd698ed1",
         "75167c4e0d9e9a7297d32d2b3db43aaed2683d84f5c5498c78e64c2584008c4f");
     let Item = ncmb.DataStore("Avators");
-    
     let item = new Item();
     myAvatorData.style=createAvatorStyle;//スタイルを修正
     myAvatorData.level = playData.level;
+    if (getNextLvExp(playData,1,0,1) < 0 ||getNextLvExp(playData,1,0,1) > 1 || myAvatorData.cp > 1200) {
+        dataSaveStatus=0;
+        let timeout = setTimeout(function(){
+            dataSaveStatus=1;
+            msgBox.push({
+                text:"アバターの更新に成功しました！",
+                ani:t,
+                btns1:{text:"OK",onClick:function(){
+                    dataFetchStatus=0;
+                    setNCMBEnemyAvator(1);
+                    tempLocalAvator.push(myAvatorData);
+                    tempLocalAvator[tempLocalAvator.length-1].recommendation=999;
+                }}});
+        },1200);
+        return 0;
+    }
+
     let myDate = new Date();
     let myY = ('0000' +  myDate.getFullYear()).slice(-4);
     let myM = ('00' + myDate.getMonth()).slice(-2);
