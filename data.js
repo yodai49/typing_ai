@@ -1018,7 +1018,6 @@ function analyzeTypeData(typeData){
 }
 function getAvailableCreateAvator(){
 //アバター作成ステータスを返す　作成可能なら１，更新可能なら２，更新不可能なら３，作成不可能なら４ 読込中なら5
-    return 2; /// DEBUG!!! 10/23
     if(dataFetchStatus == 0 || dataSaveStatus==0) return 5;
     for(let i = 0;i < tempLocalAvator.length;i++){
         if(tempLocalAvator[i].id == avatorData[createAvatorStyle].id){
