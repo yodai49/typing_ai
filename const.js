@@ -7,7 +7,7 @@ const TYPING_FONTNAME="sans-serif";
 const DEBUG_MODE=0;//数字の番号のシーンからスタート ONにするとアバターは毎回更新
 var tuningX=[0,0,0,0,0],tuningY=[0,0,0,0,0];//位置の調整用
 const IMG_CNT = 77;//読みこむイメージ等の総数
-const FETCH_NUM=500;//一度にアバター一覧から取ってくる個数
+const FETCH_NUM=50;//一度にアバター一覧から取ってくる個数
 const COEF_R2K=1.65;//ローマ字からカナへのkpm変換の係数
 const TEAM_BONUS = 25;//チームのボーナス値　%で指定
 var SCENE_ANI=400; //ロード終了後のアニメーション時間(DEBUGMODEによって変更するためvarで宣言)

@@ -695,7 +695,7 @@ function setNCMBEnemyAvator(force){
     tempLocalAvator=[];
     //ここからNCMBとの通信を行うデータの書き込み処理
     let avators = ncmb.DataStore("Avators");
-    avators.limit(FETCH_NUM).fetchAll().then(function(avators){
+    avators.order("updateDate",true).limit(FETCH_NUM).fetchAll().then(function(avators){
         tempLocalAvator=avators;
         for(let i = 0;i < tempLocalAvator.length;i++){
             tempLocalAvator[i] = JSON.parse(tempLocalAvator[i].avatorData);
@@ -824,8 +824,8 @@ function updateNCMBAvatorData(oldID,myAvatorData){//アバターをアップデ�
     let myH = ('00' +  myDate.getHours()).slice(-2);
     myAvatorData.date = myY+ myM + myD +myH;
     dataSaveStatus=0;
-    Item.equalTo("avatorID",oldID).limit(FETCH_NUM).fetchAll()
-    .then(function(result){
+    Item.equalTo("avatorID",oldID).fetchAll()
+   .then(function(result){
         var promises = [result[0].delete()];
         return Promise.all(promises);
     })
@@ -1018,6 +1018,7 @@ function analyzeTypeData(typeData){
 }
 function getAvailableCreateAvator(){
 //アバター作成ステータスを返す　作成可能なら１，更新可能なら２，更新不可能なら３，作成不可能なら４ 読込中なら5
+    return 2; /// DEBUG!!! 10/23
     if(dataFetchStatus == 0 || dataSaveStatus==0) return 5;
     for(let i = 0;i < tempLocalAvator.length;i++){
         if(tempLocalAvator[i].id == avatorData[createAvatorStyle].id){
